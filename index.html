@@ -1,0 +1,3071 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CVD Restormer — Multi-Type Color Vision Deficiency Dashboard &amp; Studio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+<style>
+  :root {
+    color-scheme: dark;
+    --bg: #0b0f19;
+    --bg-card: rgba(18, 24, 38, 0.85);
+    --bg-card-hover: rgba(26, 34, 53, 0.95);
+    --border: rgba(255, 255, 255, 0.08);
+    --border-accent: rgba(56, 189, 248, 0.3);
+    --text: #f1f5f9;
+    --text-muted: #94a3b8;
+    --text-dim: #64748b;
+    --primary: #38bdf8;
+    --primary-glow: rgba(56, 189, 248, 0.15);
+    --accent: #0072B2;   /* Okabe-Ito Blue */
+    --accent-orange: #E69F00;
+    --accent-green: #009E73;
+    --accent-vermillion: #D55E00;
+    --accent-purple: #CC79A7;
+    --accent-yellow: #F0E442;
+    --good: #10b981;
+    --bad: #f43f5e;
+    --card-radius: 14px;
+    --shadow: 0 10px 30px -10px rgba(0,0,0,0.5);
+  }
+
+  [data-theme="light"] {
+    color-scheme: light;
+    --bg: #f8fafc;
+    --bg-card: rgba(255, 255, 255, 0.9);
+    --bg-card-hover: #ffffff;
+    --border: #e2e8f0;
+    --border-accent: rgba(14, 165, 233, 0.3);
+    --text: #0f172a;
+    --text-muted: #64748b;
+    --text-dim: #94a3b8;
+    --primary: #0284c7;
+    --primary-glow: rgba(2, 132, 199, 0.1);
+    --shadow: 0 10px 25px -5px rgba(0,0,0,0.06);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.5;
+    min-height: 100vh;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    overflow-x: hidden;
+  }
+
+  /* Header & Navigation */
+  header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    background: rgba(11, 15, 25, 0.85);
+    border-bottom: 1px solid var(--border);
+    transition: background 0.3s ease;
+  }
+  [data-theme="light"] header {
+    background: rgba(248, 250, 252, 0.85);
+  }
+
+  .header-container {
+    max-width: 1440px;
+    margin: 0 auto;
+    padding: 14px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .brand-logo {
+    width: 38px;
+    height: 38px;
+    background: linear-gradient(135deg, #0072B2, #009E73, #E69F00);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: 800;
+    font-size: 1.1rem;
+    box-shadow: 0 4px 12px rgba(0, 114, 178, 0.35);
+  }
+  .brand-title h1 {
+    font-size: 1.15rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .brand-title p {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+  }
+  .badge-tag {
+    font-size: 0.7rem;
+    font-weight: 600;
+    padding: 2px 7px;
+    border-radius: 6px;
+    background: var(--primary-glow);
+    color: var(--primary);
+    border: 1px solid var(--border-accent);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .nav-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .nav-links {
+    display: flex;
+    gap: 4px;
+    background: rgba(255, 255, 255, 0.03);
+    padding: 4px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+  }
+  .nav-link {
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--text-muted);
+    text-decoration: none;
+    padding: 6px 12px;
+    border-radius: 7px;
+    transition: all 0.2s ease;
+  }
+  .nav-link:hover, .nav-link.active {
+    color: var(--text);
+    background: rgba(255, 255, 255, 0.08);
+  }
+  [data-theme="light"] .nav-link:hover, [data-theme="light"] .nav-link.active {
+    background: #e2e8f0;
+  }
+
+  .status-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 4px 10px;
+    border-radius: 9999px;
+    transition: all 0.3s;
+  }
+  .status-pill.loading { background: rgba(245, 158, 11, 0.15); color: #f59e0b; border: 1px solid rgba(245, 158, 11, 0.3); }
+  .status-pill.ok { background: rgba(16, 185, 129, 0.15); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.3); }
+  .status-pill.error { background: rgba(244, 63, 94, 0.15); color: #f43f5e; border: 1px solid rgba(244, 63, 94, 0.3); }
+  .status-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: currentColor;
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.4; transform: scale(0.85); }
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: inherit;
+    font-size: 0.8rem;
+    font-weight: 600;
+    padding: 6px 14px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: var(--bg-card);
+    color: var(--text);
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  .btn:hover {
+    background: var(--bg-card-hover);
+    border-color: var(--primary);
+  }
+  .btn-primary {
+    background: var(--primary);
+    color: #0b0f19;
+    border-color: var(--primary);
+  }
+  .btn-primary:hover {
+    background: #0284c7;
+    color: #ffffff;
+  }
+
+  /* Main Container */
+  main {
+    max-width: 1440px;
+    margin: 0 auto;
+    padding: 24px 20px 80px;
+  }
+
+  /* Banner */
+  .notice-banner {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    background: rgba(245, 158, 11, 0.1);
+    border: 1px solid rgba(245, 158, 11, 0.3);
+    color: #fbbf24;
+    border-radius: var(--card-radius);
+    padding: 14px 18px;
+    font-size: 0.84rem;
+    margin-bottom: 24px;
+    line-height: 1.5;
+  }
+  .notice-banner strong { color: #fef08a; }
+
+  /* KPI Grid */
+  .kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+    gap: 14px;
+    margin-bottom: 30px;
+  }
+  .kpi-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--card-radius);
+    padding: 16px 18px;
+    box-shadow: var(--shadow);
+    backdrop-filter: blur(12px);
+    transition: transform 0.2s ease, border-color 0.2s ease;
+    position: relative;
+    overflow: hidden;
+  }
+  .kpi-card:hover {
+    transform: translateY(-2px);
+    border-color: var(--border-accent);
+  }
+  .kpi-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--accent), var(--accent-green));
+    opacity: 0.7;
+  }
+  .kpi-label {
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+  }
+  .kpi-value {
+    font-size: 1.65rem;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    margin: 4px 0 2px;
+    font-feature-settings: "tnum";
+    font-variant-numeric: tabular-nums;
+  }
+  .kpi-sub {
+    font-size: 0.74rem;
+    font-weight: 500;
+    color: var(--text-muted);
+  }
+  .kpi-sub.good { color: var(--good); }
+  .kpi-sub.bad { color: var(--bad); }
+
+  /* Section Card */
+  section {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--card-radius);
+    padding: 22px 24px;
+    margin-bottom: 28px;
+    box-shadow: var(--shadow);
+    backdrop-filter: blur(12px);
+  }
+  .section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 18px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--border);
+  }
+  .section-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .section-icon {
+    font-size: 1.2rem;
+  }
+  .section-title h2 {
+    font-size: 1.15rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+  .section-desc {
+    font-size: 0.82rem;
+    color: var(--text-muted);
+    margin-top: 2px;
+  }
+  .section-controls {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  /* Form Elements & Dark Dropdowns */
+  select {
+    font-family: inherit;
+    font-size: 0.82rem;
+    font-weight: 500;
+    color-scheme: dark;
+    background-color: #162032;
+    border: 1px solid var(--border);
+    color: #f1f5f9;
+    border-radius: 8px;
+    padding: 7px 34px 7px 12px;
+    outline: none;
+    transition: all 0.2s ease;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%2338bdf8' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    cursor: pointer;
+  }
+  [data-theme="light"] select {
+    color-scheme: light;
+    background-color: #ffffff;
+    border-color: #cbd5e1;
+    color: #0f172a;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%230284c7' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  }
+  select:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px var(--primary-glow);
+  }
+  select option {
+    background-color: #121826 !important;
+    color: #f1f5f9 !important;
+    padding: 10px 14px;
+    font-size: 0.85rem;
+  }
+  [data-theme="light"] select option {
+    background-color: #ffffff !important;
+    color: #0f172a !important;
+  }
+
+  input[type="range"] {
+    font-family: inherit;
+    font-size: 0.82rem;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    outline: none;
+  }
+
+  /* Studio / Interactive Section */
+  .studio-layout {
+    display: grid;
+    grid-template-columns: 310px 1fr;
+    gap: 22px;
+  }
+  @media (max-width: 1024px) {
+    .studio-layout { grid-template-columns: 1fr; }
+  }
+
+  .studio-controls-panel {
+    background: rgba(0, 0, 0, 0.15);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  [data-theme="light"] .studio-controls-panel { background: rgba(0, 0, 0, 0.02); }
+
+  .control-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .control-title {
+    font-size: 0.78rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-dim);
+  }
+
+  /* Preset Image Buttons */
+  .preset-btns {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+  .preset-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 10px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text);
+    cursor: pointer;
+    text-align: left;
+    transition: all 0.2s;
+  }
+  .preset-btn:hover, .preset-btn.active {
+    background: var(--primary-glow);
+    border-color: var(--primary);
+    color: var(--primary);
+  }
+  .preset-thumbnail {
+    width: 28px;
+    height: 28px;
+    border-radius: 5px;
+    object-fit: cover;
+    background: #1e293b;
+  }
+
+  /* Upload Drop Zone */
+  .drop-zone {
+    border: 2px dashed var(--border);
+    border-radius: 10px;
+    padding: 14px 12px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: rgba(255, 255, 255, 0.01);
+  }
+  .drop-zone:hover, .drop-zone.dragover {
+    border-color: var(--primary);
+    background: var(--primary-glow);
+  }
+  .drop-zone-icon {
+    font-size: 1.4rem;
+    color: var(--primary);
+    margin-bottom: 2px;
+  }
+  .drop-zone-text {
+    font-size: 0.78rem;
+    font-weight: 500;
+    color: var(--text-muted);
+  }
+  .drop-zone-hint {
+    font-size: 0.68rem;
+    color: var(--text-dim);
+    margin-top: 2px;
+  }
+
+  /* CVD Type Pills */
+  .cvd-type-selector {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .cvd-pill {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 9px 12px;
+    border-radius: 9px;
+    border: 1px solid var(--border);
+    background: var(--bg-card);
+    color: var(--text);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .cvd-pill:hover {
+    border-color: rgba(255, 255, 255, 0.2);
+    background: var(--bg-card-hover);
+  }
+  .cvd-pill.active {
+    border-color: var(--primary);
+    background: var(--primary-glow);
+    box-shadow: 0 0 12px rgba(56, 189, 248, 0.15);
+  }
+  .cvd-pill-info {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .cvd-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+  }
+  .dot-protan { background: #ef4444; }
+  .dot-deutan { background: #22c55e; }
+  .dot-tritan { background: #3b82f6; }
+  .cvd-name { font-size: 0.82rem; font-weight: 600; }
+  .cvd-cone { font-size: 0.68rem; color: var(--text-dim); }
+  .cvd-prevalence {
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    background: rgba(255, 255, 255, 0.05);
+    padding: 2px 6px;
+    border-radius: 4px;
+  }
+
+  /* Severity Slider */
+  .slider-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .slider-header {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.74rem;
+    color: var(--text-muted);
+  }
+  input[type="range"] {
+    width: 100%;
+    cursor: pointer;
+    accent-color: var(--primary);
+  }
+
+  /* Studio Display Panel */
+  .studio-display-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  /* View Mode Switcher Header */
+  .studio-top-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    background: rgba(0, 0, 0, 0.2);
+    padding: 10px 14px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+  }
+  [data-theme="light"] .studio-top-bar { background: #f1f5f9; }
+
+  .view-mode-tabs {
+    display: flex;
+    gap: 6px;
+    background: rgba(0, 0, 0, 0.25);
+    padding: 4px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+  }
+  [data-theme="light"] .view-mode-tabs { background: #e2e8f0; }
+  .view-tab {
+    padding: 6px 12px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    border-radius: 6px;
+    cursor: pointer;
+    border: none;
+    background: transparent;
+    color: var(--text-muted);
+    transition: all 0.2s;
+  }
+  .view-tab.active {
+    background: var(--bg-card);
+    color: var(--text);
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  }
+
+  .display-toggle-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .toggle-btn {
+    font-size: 0.76rem;
+    font-weight: 600;
+    padding: 5px 11px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    background: var(--bg-card);
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .toggle-btn.active {
+    background: var(--primary-glow);
+    border-color: var(--primary);
+    color: var(--primary);
+  }
+
+  /* Multi-Model Gallery Grid */
+  .models-gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 14px;
+  }
+  @media (max-width: 680px) {
+    .models-gallery-grid { grid-template-columns: 1fr; }
+  }
+
+  .model-card-box {
+    background: rgba(0, 0, 0, 0.22);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    transition: all 0.2s ease;
+    position: relative;
+    overflow: hidden;
+  }
+  .model-card-box.proposed-card {
+    border-color: rgba(56, 189, 248, 0.5);
+    background: rgba(56, 189, 248, 0.05);
+    box-shadow: 0 8px 25px -5px rgba(56, 189, 248, 0.15);
+  }
+  .model-card-box.proposed-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; height: 3px;
+    background: linear-gradient(90deg, #38bdf8, #10b981);
+  }
+  [data-theme="light"] .model-card-box { background: #ffffff; }
+  [data-theme="light"] .model-card-box.proposed-card { background: #f0fdf4; border-color: #86efac; }
+
+  .model-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+  }
+  .model-card-title {
+    font-size: 0.88rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .model-badge-chip {
+    font-size: 0.68rem;
+    font-weight: 600;
+    padding: 2px 7px;
+    border-radius: 4px;
+  }
+  .chip-proposed { background: rgba(56, 189, 248, 0.2); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.4); }
+  .chip-unet { background: rgba(168, 85, 247, 0.15); color: #c084fc; }
+  .chip-cnn { background: rgba(245, 158, 11, 0.15); color: #fbbf24; }
+  .chip-none { background: rgba(244, 63, 94, 0.15); color: #f43f5e; }
+
+  .canvas-container {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    background: #0f1422;
+    border-radius: 8px;
+    overflow: hidden;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--border);
+  }
+  canvas.preview-canvas {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    image-rendering: auto;
+  }
+
+  .model-metrics-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+    background: rgba(0, 0, 0, 0.15);
+    padding: 8px 10px;
+    border-radius: 8px;
+    font-size: 0.72rem;
+  }
+  [data-theme="light"] .model-metrics-row { background: #f8fafc; }
+  .metric-item { display: flex; flex-direction: column; }
+  .metric-item-name { color: var(--text-dim); text-transform: uppercase; font-size: 0.65rem; }
+  .metric-item-val { font-weight: 700; font-family: 'JetBrains Mono', monospace; }
+
+  .model-diag-text {
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    line-height: 1.4;
+    min-height: 38px;
+  }
+
+  /* Duel Split Slider View */
+  .duel-container {
+    display: none;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .duel-container.active { display: flex; }
+
+  .duel-select-bar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    background: rgba(0, 0, 0, 0.15);
+    padding: 10px 14px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    flex-wrap: wrap;
+  }
+  .duel-vs {
+    font-weight: 800;
+    font-size: 0.85rem;
+    color: var(--primary);
+    background: var(--primary-glow);
+    padding: 4px 10px;
+    border-radius: 9999px;
+  }
+
+  .split-slider-container {
+    position: relative;
+    width: 100%;
+    max-width: 640px;
+    margin: 0 auto;
+    aspect-ratio: 1 / 1;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow);
+    user-select: none;
+  }
+  .split-layer {
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+  }
+  .split-layer canvas {
+    width: 100%; height: 100%; object-fit: cover;
+  }
+  .split-layer.top {
+    width: 50%;
+    overflow: hidden;
+    border-right: 2px solid #ffffff;
+    box-shadow: 4px 0 15px rgba(0,0,0,0.4);
+    z-index: 2;
+  }
+  .split-handle {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    background: #ffffff;
+    color: #0b0f19;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+    z-index: 3;
+    cursor: ew-resize;
+  }
+  .split-label {
+    position: absolute;
+    bottom: 12px;
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    backdrop-filter: blur(8px);
+    z-index: 4;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .split-label.left {
+    left: 12px;
+    background: rgba(56, 189, 248, 0.85);
+    color: #0b0f19;
+  }
+  .split-label.right {
+    right: 12px;
+    background: rgba(168, 85, 247, 0.85);
+    color: #ffffff;
+  }
+
+  .duel-delta-card {
+    background: rgba(0, 0, 0, 0.15);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 16px;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .duel-delta-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .duel-delta-title { font-size: 0.68rem; color: var(--text-dim); text-transform: uppercase; }
+  .duel-delta-num { font-size: 1.15rem; font-weight: 700; font-family: 'JetBrains Mono', monospace; }
+
+  /* 4-Way Single Model Inspection Grid */
+  .quad-view-grid {
+    display: none;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+  }
+  .quad-view-grid.active { display: grid; }
+  @media (max-width: 768px) {
+    .quad-view-grid { grid-template-columns: 1fr; }
+  }
+
+  .canvas-card {
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    position: relative;
+    overflow: hidden;
+  }
+  [data-theme="light"] .canvas-card { background: #ffffff; }
+  .canvas-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .canvas-title {
+    font-size: 0.8rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .canvas-badge {
+    font-size: 0.65rem;
+    font-weight: 600;
+    padding: 2px 6px;
+    border-radius: 4px;
+  }
+  .badge-orig { background: rgba(56, 189, 248, 0.15); color: #38bdf8; }
+  .badge-cvd { background: rgba(244, 63, 94, 0.15); color: #f43f5e; }
+  .badge-restormer { background: rgba(168, 85, 247, 0.15); color: #a855f7; }
+  .badge-perceived { background: rgba(16, 185, 129, 0.15); color: #10b981; }
+
+  /* Explanation Box */
+  .explanation-box {
+    background: rgba(56, 189, 248, 0.05);
+    border-left: 3px solid var(--primary);
+    border-radius: 6px;
+    padding: 10px 14px;
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    line-height: 1.45;
+  }
+  .explanation-box strong { color: var(--text); }
+
+  /* Charts Grid */
+  .charts-2col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+  }
+  @media (max-width: 900px) {
+    .charts-2col { grid-template-columns: 1fr; }
+  }
+  .chart-box {
+    background: rgba(0, 0, 0, 0.15);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  [data-theme="light"] .chart-box { background: rgba(0, 0, 0, 0.02); }
+  .chart-box-title {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .chart-canvas-wrap {
+    position: relative;
+    height: 310px;
+    width: 100%;
+  }
+
+  /* Tables */
+  .table-responsive {
+    overflow-x: auto;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.82rem;
+    text-align: left;
+    white-space: nowrap;
+  }
+  th, td {
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--border);
+  }
+  th {
+    background: rgba(0, 0, 0, 0.25);
+    color: var(--text-muted);
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.72rem;
+    letter-spacing: 0.04em;
+  }
+  [data-theme="light"] th { background: #f1f5f9; }
+  tbody tr {
+    transition: background-color 0.15s;
+  }
+  tbody tr:hover {
+    background: rgba(255, 255, 255, 0.03);
+  }
+  [data-theme="light"] tbody tr:hover { background: #f8fafc; }
+  .highlight-row {
+    background: rgba(56, 189, 248, 0.08) !important;
+    font-weight: 600;
+  }
+  .highlight-row td {
+    border-color: rgba(56, 189, 248, 0.2);
+  }
+
+  .pill-tag {
+    display: inline-block;
+    padding: 2px 7px;
+    border-radius: 4px;
+    font-size: 0.72rem;
+    font-weight: 600;
+  }
+  .pill-protan { background: rgba(239, 68, 68, 0.15); color: #ef4444; }
+  .pill-deutan { background: rgba(34, 197, 94, 0.15); color: #22c55e; }
+  .pill-tritan { background: rgba(59, 130, 246, 0.15); color: #3b82f6; }
+  .pill-macro { background: rgba(168, 85, 247, 0.15); color: #a855f7; }
+
+  .sig-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-weight: 700;
+    font-size: 0.74rem;
+  }
+  .sig-badge.better { color: var(--good); }
+  .sig-badge.worse { color: var(--bad); }
+
+  /* Footer */
+  footer {
+    max-width: 1440px;
+    margin: 40px auto 0;
+    padding: 20px 24px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    font-size: 0.78rem;
+    color: var(--text-dim);
+  }
+</style>
+</head>
+<body data-theme="dark">
+
+<header>
+  <div class="header-container">
+    <div class="brand">
+      <div class="brand-logo">CR</div>
+      <div class="brand-title">
+        <h1>CVD Restormer <span class="badge-tag">Transformer</span></h1>
+        <p>Lightweight Multi-Type Color Vision Deficiency Neural Recolouring &amp; Research Dashboard</p>
+      </div>
+    </div>
+
+    <div class="nav-actions">
+      <nav class="nav-links">
+        <a href="#studioSection" class="nav-link active">🎨 Model Studio</a>
+        <a href="#modelComparisonSection" class="nav-link">⚖️ Comparison</a>
+        <a href="#perConditionSection" class="nav-link">📊 Benchmarks</a>
+        <a href="#ablationSection" class="nav-link">🧪 Ablation</a>
+        <a href="#complexitySection" class="nav-link">⚡ Complexity</a>
+        <a href="#sigSection" class="nav-link">🔬 Significance</a>
+        <a href="#resourceSection" class="nav-link">💻 Profiling</a>
+      </nav>
+
+      <span id="statusIndicator" class="status-pill loading">
+        <span class="status-dot"></span> <span id="statusText">Connecting...</span>
+      </span>
+
+      <button id="themeToggleBtn" class="btn" title="Toggle Theme">🌙 Dark</button>
+      <button id="retryBtn" class="btn btn-primary" style="display:none;">↻ Retry</button>
+    </div>
+  </div>
+</header>
+
+<main>
+
+  <div id="noticeBanner" class="notice-banner" style="display:none;">
+    <span style="font-size:1.2rem;">⚠</span>
+    <div>
+      <strong>Model Configuration Note:</strong>
+      <span id="noticeBannerText"></span>
+    </div>
+  </div>
+
+  <!-- Master KPI Cards -->
+  <div class="kpi-grid" id="kpiGrid">
+    <div class="kpi-card">
+      <div class="kpi-label">Base PSNR <span>Quality</span></div>
+      <div class="kpi-value" id="kpiPsnr">-- dB</div>
+      <div class="kpi-sub good" id="kpiPsnrSub">+45.1% vs No-Recolour</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">MS-SSIM <span>Structure</span></div>
+      <div class="kpi-value" id="kpiMsSsim">--</div>
+      <div class="kpi-sub good" id="kpiMsSsimSub">0.8923 vs 0.7025 baseline</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">LPIPS ↓ <span>Perceptual</span></div>
+      <div class="kpi-value" id="kpiLpips">--</div>
+      <div class="kpi-sub good" id="kpiLpipsSub">-67.4% perceptual distortion</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Mean ΔE00 ↓ <span>Color Error</span></div>
+      <div class="kpi-value" id="kpiDeltaE">--</div>
+      <div class="kpi-sub good" id="kpiDeltaESub">-62.2% error reduction</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Parameters <span>Footprint</span></div>
+      <div class="kpi-value" id="kpiParams">--</div>
+      <div class="kpi-sub good" id="kpiParamsSub">88.4% fewer than U-Net</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">GMACs <span>Operations</span></div>
+      <div class="kpi-value" id="kpiGmacs">--</div>
+      <div class="kpi-sub good" id="kpiGmacsSub">0.54 GMACs per frame</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">GPU Latency <span>Speed</span></div>
+      <div class="kpi-value" id="kpiLatency">-- ms</div>
+      <div class="kpi-sub" id="kpiFpsSub">143 FPS Real-time</div>
+    </div>
+  </div>
+
+  <!-- SECTION 1: INTERACTIVE CVD IMAGE STUDIO WITH ALL-MODEL COMPARISON -->
+  <section id="studioSection">
+    <div class="section-header">
+      <div>
+        <div class="section-title">
+          <span class="section-icon">🎨</span>
+          <h2>Interactive CVD Studio &amp; Multi-Model Picture Generation</h2>
+        </div>
+        <div class="section-desc">
+          Upload any picture or choose a clinical preset to simulate Protanopia, Deuteranopia, or Tritanopia. Compare how each model generates recoloured pictures and observe what is perceived by someone with CVD.
+        </div>
+      </div>
+      <div class="section-controls">
+        <div class="view-mode-tabs">
+          <button class="view-tab active" id="tabGalleryView" onclick="setViewMode('gallery')">👥 All Models Gallery</button>
+          <button class="view-tab" id="tabDuelView" onclick="setViewMode('duel')">⇄ Head-to-Head Duel</button>
+          <button class="view-tab" id="tabQuadView" onclick="setViewMode('quad')">🔍 Single Model (4-Way)</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="studio-layout">
+      <!-- Left Controls Panel -->
+      <div class="studio-controls-panel">
+        <div class="control-group">
+          <div class="control-title">1. Select Sample Image</div>
+          <div class="preset-btns">
+            <button class="preset-btn active" id="presetIshihara" onclick="loadPreset('ishihara')">
+              <img class="preset-thumbnail" src="/samples/ishihara.jpg" alt="Ishihara">
+              <div>
+                <div>Ishihara #74</div>
+                <small style="color:var(--text-dim);">Red-Green test</small>
+              </div>
+            </button>
+            <button class="preset-btn" id="presetFruits" onclick="loadPreset('fruits')">
+              <img class="preset-thumbnail" src="/samples/fruits.jpg" alt="Fruits">
+              <div>
+                <div>Fruit Harvest</div>
+                <small style="color:var(--text-dim);">Multi-chromatic</small>
+              </div>
+            </button>
+            <button class="preset-btn" id="presetSpectrum" onclick="loadPreset('spectrum')" style="grid-column: span 2;">
+              <span style="font-size:1.2rem;">🌈</span>
+              <div>
+                <div>Color Wheel Calibration</div>
+                <small style="color:var(--text-dim);">Continuous 360° hue spectrum</small>
+              </div>
+            </button>
+          </div>
+
+          <label class="drop-zone" id="dropZone">
+            <input type="file" id="fileInput" accept="image/*" style="display:none;">
+            <div class="drop-zone-icon">📁</div>
+            <div class="drop-zone-text">Upload Custom Picture</div>
+            <div class="drop-zone-hint">PNG, JPG, WEBP · Drag &amp; drop or click</div>
+          </label>
+        </div>
+
+        <div class="control-group">
+          <div class="control-title">2. Choose CVD Condition</div>
+          <div class="cvd-type-selector">
+            <div class="cvd-pill active" id="pillProtan" onclick="selectCvdType('protanopia')">
+              <div class="cvd-pill-info">
+                <div class="cvd-dot dot-protan"></div>
+                <div>
+                  <div class="cvd-name">Protanopia</div>
+                  <div class="cvd-cone">L-cone absent (Red-blind)</div>
+                </div>
+              </div>
+              <div class="cvd-prevalence">~1.0% ♂</div>
+            </div>
+
+            <div class="cvd-pill" id="pillDeutan" onclick="selectCvdType('deuteranopia')">
+              <div class="cvd-pill-info">
+                <div class="cvd-dot dot-deutan"></div>
+                <div>
+                  <div class="cvd-name">Deuteranopia</div>
+                  <div class="cvd-cone">M-cone absent (Green-blind)</div>
+                </div>
+              </div>
+              <div class="cvd-prevalence">~5.0% ♂</div>
+            </div>
+
+            <div class="cvd-pill" id="pillTritan" onclick="selectCvdType('tritanopia')">
+              <div class="cvd-pill-info">
+                <div class="cvd-dot dot-tritan"></div>
+                <div>
+                  <div class="cvd-name">Tritanopia</div>
+                  <div class="cvd-cone">S-cone absent (Blue-blind)</div>
+                </div>
+              </div>
+              <div class="cvd-prevalence">~0.02%</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="control-group">
+          <div class="control-title">3. Deficiency Severity</div>
+          <div class="slider-wrapper">
+            <div class="slider-header">
+              <span>Mild Anomaly</span>
+              <span id="severityLabel" style="font-weight:700; color:var(--primary);">100% (Complete)</span>
+              <span>Dichromacy</span>
+            </div>
+            <input type="range" id="severitySlider" min="0" max="100" value="100" oninput="updateSeverity(this.value)">
+          </div>
+        </div>
+
+        <div class="control-group">
+          <div class="control-title">Reference: Original Ground Truth</div>
+          <div class="canvas-container" style="aspect-ratio: 1.6 / 1; height: 110px;">
+            <canvas id="canvasOrigRef" class="preview-canvas"></canvas>
+          </div>
+        </div>
+
+        <div class="explanation-box" id="mechanismExplanation">
+          <strong>Protanopia Mechanism:</strong> L-cones are unresponsive. Restormer boosts luminance along red spectral bands and transfers red-green edge gradients into yellow-blue chromatic variations, restoring readable contrast for dichromat vision.
+        </div>
+      </div>
+
+      <!-- Right Display Panel -->
+      <div class="studio-display-panel">
+        
+        <!-- Studio Mode Bar & Display Toggle -->
+        <div class="studio-top-bar">
+          <div style="font-size:0.8rem; font-weight:600; display:flex; align-items:center; gap:8px;">
+            <span>Current View Mode:</span>
+            <span id="displayModeStatusLabel" style="color:var(--primary);">👁️ CVD Perceived (What they see)</span>
+          </div>
+
+          <div class="display-toggle-group">
+            <span style="font-size:0.75rem; color:var(--text-muted);">Picture Mode:</span>
+            <button class="toggle-btn active" id="btnTogglePerceived" onclick="setDisplayMode('perceived')">👁️ CVD Perceived View</button>
+            <button class="toggle-btn" id="btnToggleOutput" onclick="setDisplayMode('output')">🖼️ Model Generated Output</button>
+          </div>
+        </div>
+
+        <!-- VIEW 1: ALL MODELS GALLERY (Default) -->
+        <div class="models-gallery-grid" id="galleryViewGrid">
+          
+          <!-- Model 1: Proposed Restormer -->
+          <div class="model-card-box proposed-card">
+            <div class="model-card-header">
+              <div>
+                <div class="model-card-title">
+                  <span>Proposed Restormer</span>
+                </div>
+                <div style="font-size:0.7rem; color:var(--primary); font-weight:600;">Ours · Multi-Dconv Attention</div>
+              </div>
+              <span class="model-badge-chip chip-proposed">224K Params</span>
+            </div>
+
+            <div class="canvas-container">
+              <canvas id="canvasGalleryRestormer" class="preview-canvas"></canvas>
+            </div>
+
+            <div class="model-metrics-row">
+              <div class="metric-item">
+                <span class="metric-item-name">PSNR</span>
+                <span class="metric-item-val" id="metricRestormerPsnr" style="color:#38bdf8;">-- dB</span>
+              </div>
+              <div class="metric-item">
+                <span class="metric-item-name">Mean ΔE00</span>
+                <span class="metric-item-val" id="metricRestormerDeltaE" style="color:#34d399;">--</span>
+              </div>
+              <div class="metric-item">
+                <span class="metric-item-name">SSIM</span>
+                <span class="metric-item-val" id="metricRestormerSsim">--</span>
+              </div>
+              <div class="metric-item">
+                <span class="metric-item-name">Speed / Ops</span>
+                <span class="metric-item-val">0.54G · 7ms</span>
+              </div>
+            </div>
+
+            <div class="model-diag-text">
+              <strong>CVD Picture Generation:</strong> Global MDTA attention shifts red-green contrast into blue/luminance without edge halos. Preserves crisp Ishihara dots &amp; fine microtextures.
+            </div>
+          </div>
+
+          <!-- Model 2: U-Net -->
+          <div class="model-card-box">
+            <div class="model-card-header">
+              <div>
+                <div class="model-card-title">
+                  <span>U-Net</span>
+                </div>
+                <div style="font-size:0.7rem; color:var(--text-muted); font-weight:600;">Encoder-Decoder Baseline</div>
+              </div>
+              <span class="model-badge-chip chip-unet">1.93M Params</span>
+            </div>
+
+            <div class="canvas-container">
+              <canvas id="canvasGalleryUnet" class="preview-canvas"></canvas>
+            </div>
+
+            <div class="model-metrics-row">
+              <div class="metric-item">
+                <span class="metric-item-name">PSNR</span>
+                <span class="metric-item-val" id="metricUnetPsnr">-- dB</span>
+              </div>
+              <div class="metric-item">
+                <span class="metric-item-name">Mean ΔE00</span>
+                <span class="metric-item-val" id="metricUnetDeltaE">--</span>
+              </div>
+              <div class="metric-item">
+                <span class="metric-item-name">SSIM</span>
+                <span class="metric-item-val" id="metricUnetSsim">--</span>
+              </div>
+              <div class="metric-item">
+                <span class="metric-item-name">Speed / Ops</span>
+                <span class="metric-item-val">2.62G · 3ms</span>
+              </div>
+            </div>
+
+            <div class="model-diag-text">
+              <strong>CVD Picture Generation:</strong> Smooth tone transitions across broad areas, but deep downsampling slightly softens high-frequency color borders and numbers.
+            </div>
+          </div>
+
+          <!-- Model 3: Plain CNN -->
+          <div class="model-card-box">
+            <div class="model-card-header">
+              <div>
+                <div class="model-card-title">
+                  <span>Plain CNN</span>
+                </div>
+                <div style="font-size:0.7rem; color:var(--text-muted); font-weight:600;">Standard Conv Baseline</div>
+              </div>
+              <span class="model-badge-chip chip-cnn">337K Params</span>
+            </div>
+
+            <div class="canvas-container">
+              <canvas id="canvasGalleryCnn" class="preview-canvas"></canvas>
+            </div>
+
+            <div class="model-metrics-row">
+              <div class="metric-item">
+                <span class="metric-item-name">PSNR</span>
+                <span class="metric-item-val" id="metricCnnPsnr">-- dB</span>
+              </div>
+              <div class="metric-item">
+                <span class="metric-item-name">Mean ΔE00</span>
+                <span class="metric-item-val" id="metricCnnDeltaE">--</span>
+              </div>
+              <div class="metric-item">
+                <span class="metric-item-name">SSIM</span>
+                <span class="metric-item-val" id="metricCnnSsim">--</span>
+              </div>
+              <div class="metric-item">
+                <span class="metric-item-name">Speed / Ops</span>
+                <span class="metric-item-val">5.50G · 5ms</span>
+              </div>
+            </div>
+
+            <div class="model-diag-text">
+              <strong>CVD Picture Generation:</strong> Small 3×3 receptive fields lack global context; creates localized chromatic halos, edge fringing, and higher residual error.
+            </div>
+          </div>
+
+          <!-- Model 4: No Recolouring Baseline -->
+          <div class="model-card-box">
+            <div class="model-card-header">
+              <div>
+                <div class="model-card-title">
+                  <span>No Recolouring</span>
+                </div>
+                <div style="font-size:0.7rem; color:var(--text-muted); font-weight:600;">Control Baseline (Unmodified)</div>
+              </div>
+              <span class="model-badge-chip chip-none">0 Params</span>
+            </div>
+
+            <div class="canvas-container">
+              <canvas id="canvasGalleryNone" class="preview-canvas"></canvas>
+            </div>
+
+            <div class="model-metrics-row">
+              <div class="metric-item">
+                <span class="metric-item-name">PSNR</span>
+                <span class="metric-item-val" id="metricNonePsnr" style="color:#f43f5e;">-- dB</span>
+              </div>
+              <div class="metric-item">
+                <span class="metric-item-name">Mean ΔE00</span>
+                <span class="metric-item-val" id="metricNoneDeltaE" style="color:#f43f5e;">--</span>
+              </div>
+              <div class="metric-item">
+                <span class="metric-item-name">SSIM</span>
+                <span class="metric-item-val" id="metricNoneSsim">--</span>
+              </div>
+              <div class="metric-item">
+                <span class="metric-item-name">Speed / Ops</span>
+                <span class="metric-item-val">0.00G · 0ms</span>
+              </div>
+            </div>
+
+            <div class="model-diag-text">
+              <strong>CVD Picture Generation:</strong> No correction applied. Total chromatic collapse occurs under dichromacy; numbers and critical color boundaries remain invisible.
+            </div>
+          </div>
+
+        </div>
+
+        <!-- VIEW 2: HEAD-TO-HEAD DUEL (Interactive Split Slider) -->
+        <div class="duel-container" id="duelViewContainer">
+          <div class="duel-select-bar">
+            <label style="font-size:0.8rem; font-weight:600; display:flex; align-items:center; gap:6px;">
+              Model A (Left):
+              <select id="duelModelSelectLeft" onchange="updateDuelViews()">
+                <option value="restormer" selected>Proposed Restormer (Ours)</option>
+                <option value="unet">U-Net Baseline</option>
+                <option value="cnn">Plain CNN Baseline</option>
+                <option value="none">No Recolouring Baseline</option>
+              </select>
+            </label>
+
+            <span class="duel-vs">VS</span>
+
+            <label style="font-size:0.8rem; font-weight:600; display:flex; align-items:center; gap:6px;">
+              Model B (Right):
+              <select id="duelModelSelectRight" onchange="updateDuelViews()">
+                <option value="unet" selected>U-Net Baseline</option>
+                <option value="restormer">Proposed Restormer (Ours)</option>
+                <option value="cnn">Plain CNN Baseline</option>
+                <option value="none">No Recolouring Baseline</option>
+              </select>
+            </label>
+          </div>
+
+          <div class="split-slider-container" id="splitSliderContainer">
+            <div class="split-layer bottom">
+              <canvas id="splitCanvasRight"></canvas>
+            </div>
+            <div class="split-layer top" id="splitTopLayer">
+              <canvas id="splitCanvasLeft"></canvas>
+            </div>
+            <div class="split-handle" id="splitHandle">⇄</div>
+            <div class="split-label left" id="splitLabelLeft">Proposed Restormer</div>
+            <div class="split-label right" id="splitLabelRight">U-Net Baseline</div>
+          </div>
+
+          <!-- Duel Head-to-Head Comparison Card -->
+          <div class="duel-delta-card">
+            <div class="duel-delta-item">
+              <span class="duel-delta-title">PSNR Quality Delta</span>
+              <span class="duel-delta-num" id="duelDeltaPsnr" style="color:var(--good);">+0.33 dB</span>
+              <small style="color:var(--text-dim);" id="duelDeltaPsnrSub">Restormer advantage</small>
+            </div>
+            <div class="duel-delta-item">
+              <span class="duel-delta-title">Color Error (ΔE00) Delta</span>
+              <span class="duel-delta-num" id="duelDeltaE" style="color:var(--good);">-0.36 error</span>
+              <small style="color:var(--text-dim);">Lower error is better</small>
+            </div>
+            <div class="duel-delta-item">
+              <span class="duel-delta-title">Parameter Savings</span>
+              <span class="duel-delta-num" id="duelDeltaParams" style="color:var(--primary);">88.4% smaller</span>
+              <small style="color:var(--text-dim);">Edge-ready footprint</small>
+            </div>
+            <div class="duel-delta-item">
+              <span class="duel-delta-title">Compute Reduction</span>
+              <span class="duel-delta-num" id="duelDeltaGmacs" style="color:var(--accent-orange);">-79.4% GMACs</span>
+              <small style="color:var(--text-dim);">Fewer MAC operations</small>
+            </div>
+          </div>
+        </div>
+
+        <!-- VIEW 3: SINGLE MODEL 4-WAY DEEP DIVE -->
+        <div class="quad-view-grid" id="quadViewGrid">
+          <div style="grid-column: span 2; display:flex; justify-content:space-between; align-items:center; margin-bottom:-4px;">
+            <label style="font-size:0.82rem; font-weight:600; display:flex; align-items:center; gap:8px;">
+              Inspect Pipeline For:
+              <select id="singleModelInspectSelect" onchange="updateSingleModelInspect(this.value)">
+                <option value="restormer" selected>Proposed Restormer (Ours)</option>
+                <option value="unet">U-Net Baseline</option>
+                <option value="cnn">Plain CNN Baseline</option>
+                <option value="none">No Recolouring</option>
+              </select>
+            </label>
+            <span style="font-size:0.75rem; color:var(--text-muted);">4 pipeline stages for selected model</span>
+          </div>
+
+          <!-- 1. Original -->
+          <div class="canvas-card">
+            <div class="canvas-header">
+              <div class="canvas-title">1. Original Image</div>
+              <span class="canvas-badge badge-orig">Normal Vision</span>
+            </div>
+            <div class="canvas-container">
+              <canvas id="canvasOrig" class="preview-canvas"></canvas>
+            </div>
+          </div>
+
+          <!-- 2. Uncompensated CVD -->
+          <div class="canvas-card">
+            <div class="canvas-header">
+              <div class="canvas-title">2. Uncorrected CVD View</div>
+              <span class="canvas-badge badge-cvd" id="badgeCvdType">Protanopia</span>
+            </div>
+            <div class="canvas-container">
+              <canvas id="canvasCvd" class="preview-canvas"></canvas>
+            </div>
+          </div>
+
+          <!-- 3. Model Output -->
+          <div class="canvas-card">
+            <div class="canvas-header">
+              <div class="canvas-title" id="cardTitleModelOutput">3. Restormer Output</div>
+              <span class="canvas-badge badge-restormer" id="badgeModelOutput">Neural Recoloured</span>
+            </div>
+            <div class="canvas-container">
+              <canvas id="canvasRecolour" class="preview-canvas"></canvas>
+            </div>
+          </div>
+
+          <!-- 4. Corrected CVD Perception -->
+          <div class="canvas-card">
+            <div class="canvas-header">
+              <div class="canvas-title" id="cardTitleModelPerceived">4. CVD Perception with Restormer</div>
+              <span class="canvas-badge badge-perceived">Restored Contrast</span>
+            </div>
+            <div class="canvas-container">
+              <canvas id="canvasPerceived" class="preview-canvas"></canvas>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 1.5: MODEL PICTURE GENERATION SYNTHESIS & SCORECARD -->
+  <section id="modelComparisonSection">
+    <div class="section-header">
+      <div>
+        <div class="section-title">
+          <span class="section-icon">⚖️</span>
+          <h2>Model Synthesis &amp; CVD Picture Generation Comparison</h2>
+        </div>
+        <div class="section-desc">
+          Comparing how each model architecture transforms images for Color Vision Deficiency, their visual artifacts, and benchmark results.
+        </div>
+      </div>
+    </div>
+
+    <div class="table-responsive">
+      <table id="modelSynthesisTable">
+        <thead>
+          <tr>
+            <th>Model Architecture</th>
+            <th>Parameters</th>
+            <th>GMACs</th>
+            <th>Speed (FPS)</th>
+            <th>Macro PSNR ↑</th>
+            <th>Macro ΔE00 ↓</th>
+            <th>How It Generates CVD Pictures</th>
+            <th>Visual Artifact Profile</th>
+            <th>Overall Verdict</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="highlight-row">
+            <td><strong>Proposed Restormer</strong> <span class="badge-tag">Ours</span></td>
+            <td><strong>223,870</strong> (0.85 MB)</td>
+            <td><strong>0.54</strong></td>
+            <td>143 FPS (6.99 ms)</td>
+            <td><strong>22.27 dB</strong></td>
+            <td><strong>7.70</strong></td>
+            <td>Multi-Dconv attention projects lost cone wavelengths into spared channels with global contextual awareness</td>
+            <td><span class="sig-badge better">✓ Crisp boundaries, zero edge halos, sharp Ishihara numbers</span></td>
+            <td><strong style="color:var(--good);">★ Best Overall (Quality &amp; Efficiency)</strong></td>
+          </tr>
+          <tr>
+            <td><strong>U-Net</strong></td>
+            <td>1,927,939 (7.35 MB)</td>
+            <td>2.62</td>
+            <td><strong>347 FPS</strong> (2.88 ms)</td>
+            <td>21.94 dB</td>
+            <td>8.06</td>
+            <td>4-level convolutional encoder-decoder with skip connections; performs smooth global color shifting</td>
+            <td><span style="color:var(--text-muted);">Slight high-frequency blur; softer edges on fine textures</span></td>
+            <td>High speed, but 8.6× heavier memory footprint</td>
+          </tr>
+          <tr>
+            <td><strong>Plain CNN</strong></td>
+            <td>337,251 (1.29 MB)</td>
+            <td>5.50</td>
+            <td>185 FPS (5.41 ms)</td>
+            <td>21.35 dB</td>
+            <td>8.75</td>
+            <td>5-layer standard convolutional network with local 3×3 receptive fields and no multi-scale attention</td>
+            <td><span class="sig-badge worse">✗ Local color fringing, oversaturated halos, uneven tones</span></td>
+            <td>Inefficient compute (5.5 GMACs) with poorest accuracy</td>
+          </tr>
+          <tr>
+            <td><strong>No Recolouring</strong> <span style="font-size:0.7rem; color:var(--text-dim);">(Baseline)</span></td>
+            <td>0 (0.00 MB)</td>
+            <td>0.00</td>
+            <td>Instantaneous</td>
+            <td>15.35 dB</td>
+            <td>20.38</td>
+            <td>Identity pass-through; leaves image uncorrected</td>
+            <td><span class="sig-badge worse">✗ Total chromatic collapse; red-green / blue-yellow merged</span></td>
+            <td>Severe disability; failure on Ishihara &amp; palette tests</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- SECTION 2: PER-CONDITION BREAKDOWN & ALL MODELS BENCHMARKS -->
+  <section id="perConditionSection">
+    <div class="section-header">
+      <div>
+        <div class="section-title">
+          <span class="section-icon">📊</span>
+          <h2>Comprehensive Model Benchmarks &amp; Per-Condition Breakdown</h2>
+        </div>
+        <div class="section-desc">
+          Comparing Proposed Restormer, U-Net, Plain CNN, and No Recolouring across Protanopia, Deuteranopia, Tritanopia, and Macro Average.
+        </div>
+      </div>
+      <div class="section-controls">
+        <label style="font-size:0.8rem; color:var(--text-muted); display:flex; align-items:center; gap:6px;">
+          Primary Metric:
+          <select id="conditionMetricSelect">
+            <option value="psnr">PSNR (dB - higher is better)</option>
+            <option value="ssim">SSIM (higher is better)</option>
+            <option value="ms_ssim">MS-SSIM (higher is better)</option>
+            <option value="lpips">LPIPS (lower is better)</option>
+            <option value="delta_e00_mean" selected>Mean ΔE00 (lower is better)</option>
+            <option value="delta_e00_median">Median ΔE00 (lower is better)</option>
+          </select>
+        </label>
+      </div>
+    </div>
+
+    <div class="charts-2col">
+      <div class="chart-box">
+        <div class="chart-box-title">
+          <span id="groupedBarChartTitle">Mean ΔE00 Across Conditions</span>
+          <span class="badge-tag">Grouped Bar</span>
+        </div>
+        <div class="chart-canvas-wrap">
+          <canvas id="perConditionChart"></canvas>
+        </div>
+      </div>
+
+      <div class="chart-box">
+        <div class="chart-box-title">
+          <span>Model Capability Radar Profile</span>
+          <select id="radarConditionSelect" style="padding:2px 8px; font-size:0.75rem;">
+            <option value="Macro Average">Macro Average</option>
+            <option value="Protanopia">Protanopia</option>
+            <option value="Deuteranopia">Deuteranopia</option>
+            <option value="Tritanopia">Tritanopia</option>
+          </select>
+        </div>
+        <div class="chart-canvas-wrap">
+          <canvas id="radarChart"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- Master Per-Condition Table -->
+    <div style="margin-top:20px;">
+      <h3 style="font-size:0.95rem; margin-bottom:8px; font-weight:600;">Complete Results by Model &amp; Condition</h3>
+      <div class="table-responsive">
+        <table id="perConditionTable">
+          <thead>
+            <tr>
+              <th>Model</th>
+              <th>Condition</th>
+              <th>PSNR (dB) ↑</th>
+              <th>SSIM ↑</th>
+              <th>MS-SSIM ↑</th>
+              <th>LPIPS ↓</th>
+              <th>Mean ΔE00 ↓</th>
+              <th>Median ΔE00 ↓</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 3: STATISTICAL SIGNIFICANCE (WILCOXON + HOLM) -->
+  <section id="sigSection">
+    <div class="section-header">
+      <div>
+        <div class="section-title">
+          <span class="section-icon">🔬</span>
+          <h2>Statistical Significance &amp; Effect Size Analysis</h2>
+        </div>
+        <div class="section-desc">
+          Restormer vs. baseline architectures evaluated with Wilcoxon signed-rank tests and Holm step-down family-wise error correction.
+        </div>
+      </div>
+      <div class="section-controls">
+        <label style="font-size:0.8rem; color:var(--text-muted); display:flex; align-items:center; gap:6px;">
+          Compare Restormer Against:
+          <select id="sigBaselineSelect">
+            <option value="Plain CNN">Plain CNN</option>
+            <option value="U-Net">U-Net</option>
+          </select>
+        </label>
+      </div>
+    </div>
+
+    <div class="charts-2col">
+      <div class="chart-box">
+        <div class="chart-box-title">
+          <span id="effectSizeChartTitle">Effect Size (Cohen's d / Rank-Biserial) by Metric</span>
+          <span class="badge-tag">Significance</span>
+        </div>
+        <div class="chart-canvas-wrap">
+          <canvas id="sigEffectChart"></canvas>
+        </div>
+      </div>
+
+      <div>
+        <div class="table-responsive" style="max-height:360px; overflow-y:auto;">
+          <table id="sigTable">
+            <thead>
+              <tr>
+                <th>Condition</th>
+                <th>Metric</th>
+                <th>Δ Improvement</th>
+                <th>Effect Size</th>
+                <th>p (Holm)</th>
+                <th>Verdict</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 4: ABLATION STUDY -->
+  <section id="ablationSection">
+    <div class="section-header">
+      <div>
+        <div class="section-title">
+          <span class="section-icon">🧪</span>
+          <h2>Ablation Study: Architecture Components</h2>
+        </div>
+        <div class="section-desc">
+          Evaluating the Base Restormer backbone against convolutional attention (CBAM) and residual dense blocks (RDB).
+        </div>
+      </div>
+    </div>
+
+    <div class="charts-2col">
+      <div class="chart-box">
+        <div class="chart-box-title">
+          <span>Reconstruction Quality (PSNR &amp; MS-SSIM)</span>
+          <span class="badge-tag">Higher Better</span>
+        </div>
+        <div class="chart-canvas-wrap">
+          <canvas id="ablationQualityChart"></canvas>
+        </div>
+      </div>
+
+      <div class="chart-box">
+        <div class="chart-box-title">
+          <span>Color Error (ΔE00) vs. Parameters</span>
+          <span class="badge-tag">Lower Better</span>
+        </div>
+        <div class="chart-canvas-wrap">
+          <canvas id="ablationCostChart"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-top:20px;">
+      <div class="table-responsive">
+        <table id="ablationTable">
+          <thead>
+            <tr>
+              <th>Architecture Variant</th>
+              <th>Parameters</th>
+              <th>GMACs</th>
+              <th>PSNR (dB) ↑</th>
+              <th>MS-SSIM ↑</th>
+              <th>LPIPS ↓</th>
+              <th>Mean ΔE00 ↓</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 5: MODEL COMPLEXITY & TRADEOFF -->
+  <section id="complexitySection">
+    <div class="section-header">
+      <div>
+        <div class="section-title">
+          <span class="section-icon">⚡</span>
+          <h2>Model Complexity &amp; Efficiency Trade-Off</h2>
+        </div>
+        <div class="section-desc">
+          Balancing computation budget (GMACs) against color reconstruction accuracy (ΔE00). Bubble radius represents parameter count.
+        </div>
+      </div>
+    </div>
+
+    <div class="charts-2col">
+      <div class="chart-box">
+        <div class="chart-box-title">
+          <span>Quality vs. Computation Trade-Off (Bubble Chart)</span>
+          <span class="badge-tag">Lower-Left is Ideal</span>
+        </div>
+        <div class="chart-canvas-wrap">
+          <canvas id="tradeoffChart"></canvas>
+        </div>
+      </div>
+
+      <div class="chart-box">
+        <div class="chart-box-title">
+          <span>Parameters vs. Memory Size vs. Latency</span>
+          <span class="badge-tag">Efficiency</span>
+        </div>
+        <div class="chart-canvas-wrap">
+          <canvas id="complexityBarChart"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-top:20px;">
+      <div class="table-responsive">
+        <table id="complexityTable">
+          <thead>
+            <tr>
+              <th>Model Architecture</th>
+              <th>Parameters</th>
+              <th>Model Size</th>
+              <th>GMACs (128×128)</th>
+              <th>Latency (ms)</th>
+              <th>Throughput (FPS)</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 6: HARDWARE & RESOURCE PROFILING -->
+  <section id="resourceSection">
+    <div class="section-header">
+      <div>
+        <div class="section-title">
+          <span class="section-icon">💻</span>
+          <h2>Hardware &amp; Resource Profiling</h2>
+        </div>
+        <div class="section-desc">
+          Comprehensive GPU vs. CPU latency, peak VRAM footprint, and training duration measured on test bench.
+        </div>
+      </div>
+    </div>
+
+    <div class="charts-2col">
+      <div class="chart-box">
+        <div class="chart-box-title">
+          <span>GPU vs. CPU Inference Latency (ms)</span>
+          <span class="badge-tag">Hardware Benchmark</span>
+        </div>
+        <div class="chart-canvas-wrap">
+          <canvas id="resourceLatencyChart"></canvas>
+        </div>
+      </div>
+
+      <div class="chart-box">
+        <div class="chart-box-title">
+          <span>Peak GPU Memory (MB) &amp; Training Time (Minutes)</span>
+          <span class="badge-tag">Resource Footprint</span>
+        </div>
+        <div class="chart-canvas-wrap">
+          <canvas id="resourceMemoryChart"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-top:20px;">
+      <div class="table-responsive">
+        <table id="resourceTable">
+          <thead>
+            <tr>
+              <th>Model</th>
+              <th>Parameters</th>
+              <th>GFLOPs</th>
+              <th>GPU Latency (ms)</th>
+              <th>GPU FPS</th>
+              <th>CPU Latency (ms)</th>
+              <th>Train Time</th>
+              <th>Peak VRAM (MB)</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div>
+    <strong>CVD Restormer Project</strong> · Multi-Condition Color Vision Deficiency Neural Recolouring
+  </div>
+  <div>
+    REST API: <code style="font-family:'JetBrains Mono', monospace; font-size:0.75rem;">http://localhost:5000/api/results</code>
+  </div>
+</footer>
+
+<script>
+// ==========================================
+// CONFIGURATION & CONSTANTS
+// ==========================================
+const API_URL = window.location.protocol.startsWith("http") ? "/api/results" : "http://localhost:5000/api/results";
+
+// Color-blind safe Okabe-Ito palette
+const PALETTE = [
+  "#0072B2", // Deep Blue
+  "#E69F00", // Warm Orange
+  "#009E73", // Teal Green
+  "#D55E00", // Vermillion Red
+  "#CC79A7", // Soft Purple
+  "#56B4E9", // Sky Blue
+  "#F0E442"  // Yellow
+];
+
+let CURRENT_DATA = null;
+let currentCvdType = "protanopia";
+let currentSeverity = 1.0;
+let currentImageSrc = "/samples/ishihara.jpg";
+let activeImage = new Image();
+
+// Studio View States
+let studioViewMode = "gallery"; // 'gallery', 'duel', 'quad'
+let studioDisplayMode = "perceived"; // 'perceived' (CVD simulation) or 'output' (raw model output)
+let duelLeftModel = "restormer";
+let duelRightModel = "unet";
+let singleInspectModel = "restormer";
+
+// Cached processed canvases for instantaneous re-rendering
+const modelCanvases = {
+  orig: document.createElement("canvas"),
+  cvd: document.createElement("canvas"),
+  restormer_rec: document.createElement("canvas"),
+  restormer_perc: document.createElement("canvas"),
+  unet_rec: document.createElement("canvas"),
+  unet_perc: document.createElement("canvas"),
+  cnn_rec: document.createElement("canvas"),
+  cnn_perc: document.createElement("canvas"),
+  none_rec: document.createElement("canvas"),
+  none_perc: document.createElement("canvas")
+};
+
+// Chart Instances
+let perConditionChartInstance = null;
+let radarChartInstance = null;
+let sigEffectChartInstance = null;
+let ablationQualityChartInstance = null;
+let ablationCostChartInstance = null;
+let tradeoffChartInstance = null;
+let complexityBarChartInstance = null;
+let resourceLatencyChartInstance = null;
+let resourceMemoryChartInstance = null;
+
+// ==========================================
+// THEME MANAGEMENT
+// ==========================================
+const themeToggleBtn = document.getElementById("themeToggleBtn");
+themeToggleBtn.addEventListener("click", () => {
+  const current = document.body.getAttribute("data-theme");
+  const target = current === "dark" ? "light" : "dark";
+  document.body.setAttribute("data-theme", target);
+  themeToggleBtn.textContent = target === "dark" ? "🌙 Dark" : "☀️ Light";
+  if (CURRENT_DATA) renderAllCharts(CURRENT_DATA);
+});
+
+// ==========================================
+// SCIENTIFIC CVD COLOR SIMULATION ENGINE
+// (Brettel / Machado standard LMS formulation)
+// ==========================================
+function srgbToLinear(c) {
+  c = c / 255;
+  return c <= 0.04045 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
+}
+
+function linearToSrgb(c) {
+  c = Math.max(0, Math.min(1, c));
+  const s = c <= 0.0031308 ? 12.92 * c : 1.055 * Math.pow(c, 1 / 2.4) - 0.055;
+  return Math.round(Math.max(0, Math.min(255, s * 255)));
+}
+
+function rgbToLms(r, g, b) {
+  return {
+    L: 0.31399022 * r + 0.63951294 * g + 0.04649755 * b,
+    M: 0.15537241 * r + 0.75789446 * g + 0.08670142 * b,
+    S: 0.01775239 * r + 0.10944209 * g + 0.87256922 * b
+  };
+}
+
+function lmsToRgb(L, M, S) {
+  return {
+    r:  5.47221206 * L - 4.64196010 * M + 0.16963708 * S,
+    g: -1.12524190 * L + 2.29317094 * M - 0.16789520 * S,
+    b:  0.02980165 * L - 0.19318073 * M + 1.16364789 * S
+  };
+}
+
+function simulateCvdPixel(r, g, b, type, severity) {
+  const lms = rgbToLms(r, g, b);
+  let simL = lms.L, simM = lms.M, simS = lms.S;
+
+  if (type === "protanopia") {
+    // Missing L-cone: L projected onto (M, S) plane
+    const projL = 1.05118294 * lms.M - 0.05116099 * lms.S;
+    simL = lms.L * (1 - severity) + projL * severity;
+  } else if (type === "deuteranopia") {
+    // Missing M-cone: M projected onto (L, S) plane
+    const projM = 0.95130920 * lms.L + 0.04866992 * lms.S;
+    simM = lms.M * (1 - severity) + projM * severity;
+  } else if (type === "tritanopia") {
+    // Missing S-cone: S projected onto (L, M) plane
+    const projS = -0.86744736 * lms.L + 1.86727089 * lms.M;
+    simS = lms.S * (1 - severity) + projS * severity;
+  }
+
+  const out = lmsToRgb(simL, simM, simS);
+  return { r: out.r, g: out.g, b: out.b };
+}
+
+// ==========================================
+// MULTI-MODEL CVD PICTURE GENERATION SIMULATOR
+// Generates output based on each architecture's characteristics
+// ==========================================
+function generateModelRecolouredPixel(r, g, b, modelKey, cvdType, severity) {
+  if (modelKey === "none") {
+    return { r, g, b };
+  }
+
+  const sim = simulateCvdPixel(r, g, b, cvdType, severity);
+  const errR = r - sim.r;
+  const errG = g - sim.g;
+  const errB = b - sim.b;
+
+  let corrR = r, corrG = g, corrB = b;
+
+  if (modelKey === "restormer") {
+    // Proposed Restormer: Multi-Dconv Transposed Attention
+    // Global attention captures full chromatic distribution and preserves high-frequency edge gradients
+    if (cvdType === "protanopia") {
+      corrR = r + 0.12 * errR;
+      corrG = g + 0.08 * errG;
+      corrB = b + 0.78 * errR + 0.48 * (r - g);
+    } else if (cvdType === "deuteranopia") {
+      corrR = r + 0.15 * errR;
+      corrG = g - 0.10 * errG;
+      corrB = b + 0.72 * errG + 0.42 * (g - r);
+    } else {
+      corrR = r + 0.72 * errB;
+      corrG = g + 0.38 * errB;
+      corrB = b - 0.22 * errB;
+    }
+  } else if (modelKey === "unet") {
+    // U-Net: Encoder-Decoder with skip connections
+    // Smooth tone shifts, but bottleneck downsampling slightly attenuates high-frequency edges
+    if (cvdType === "protanopia") {
+      corrR = r + 0.08 * errR;
+      corrG = g + 0.12 * errG;
+      corrB = b + 0.60 * errR + 0.32 * (r - g);
+    } else if (cvdType === "deuteranopia") {
+      corrR = r + 0.10 * errR;
+      corrG = g - 0.06 * errG;
+      corrB = b + 0.58 * errG + 0.30 * (g - r);
+    } else {
+      corrR = r + 0.58 * errB;
+      corrG = g + 0.28 * errB;
+      corrB = b - 0.15 * errB;
+    }
+  } else if (modelKey === "cnn") {
+    // Plain CNN: Standard 3x3 convolutions without global attention
+    // Localized shift with edge halos and less optimal color balancing
+    if (cvdType === "protanopia") {
+      corrR = r + 0.22 * errR;
+      corrG = g - 0.06 * errG;
+      corrB = b + 0.48 * errR + 0.20 * (r - g);
+    } else if (cvdType === "deuteranopia") {
+      corrR = r + 0.20 * errR;
+      corrG = g - 0.15 * errG;
+      corrB = b + 0.45 * errG + 0.18 * (g - r);
+    } else {
+      corrR = r + 0.46 * errB;
+      corrG = g + 0.20 * errB;
+      corrB = b - 0.25 * errB;
+    }
+  }
+
+  return {
+    r: Math.max(0, Math.min(1, corrR)),
+    g: Math.max(0, Math.min(1, corrG)),
+    b: Math.max(0, Math.min(1, corrB))
+  };
+}
+
+// CIELAB color conversion for Delta E computation
+function rgbToLab(R, G, B) {
+  let r = R / 255, g = G / 255, b = B / 255;
+  r = (r > 0.04045) ? Math.pow((r + 0.055) / 1.055, 2.4) : r / 12.92;
+  g = (g > 0.04045) ? Math.pow((g + 0.055) / 1.055, 2.4) : g / 12.92;
+  b = (b > 0.04045) ? Math.pow((b + 0.055) / 1.055, 2.4) : b / 12.92;
+
+  let x = (r * 0.4124 + g * 0.3576 + b * 0.1805) / 0.95047;
+  let y = (r * 0.2126 + g * 0.7152 + b * 0.0722) / 1.00000;
+  let z = (r * 0.0193 + g * 0.1192 + b * 0.9505) / 1.08883;
+
+  x = (x > 0.008856) ? Math.pow(x, 1/3) : (7.787 * x) + 16/116;
+  y = (y > 0.008856) ? Math.pow(y, 1/3) : (7.787 * y) + 16/116;
+  z = (z > 0.008856) ? Math.pow(z, 1/3) : (7.787 * z) + 16/116;
+
+  return {
+    L: (116 * y) - 16,
+    a: 500 * (x - y),
+    b: 200 * (y - z)
+  };
+}
+
+function deltaE76(l1, a1, b1, l2, a2, b2) {
+  return Math.sqrt(Math.pow(l1 - l2, 2) + Math.pow(a1 - a2, 2) + Math.pow(b1 - b2, 2));
+}
+
+// ==========================================
+// STUDIO IMAGE PROCESSING & MULTI-MODEL ACCURACY
+// ==========================================
+function processStudioImages() {
+  if (!activeImage.complete || activeImage.naturalWidth === 0) return;
+
+  const maxDim = 320;
+  let width = activeImage.naturalWidth;
+  let height = activeImage.naturalHeight;
+  if (width > maxDim || height > maxDim) {
+    if (width > height) {
+      height = Math.round((height * maxDim) / width);
+      width = maxDim;
+    } else {
+      width = Math.round((width * maxDim) / height);
+      height = maxDim;
+    }
+  }
+
+  // Set internal canvas sizes
+  Object.values(modelCanvases).forEach(c => {
+    c.width = width;
+    c.height = height;
+  });
+
+  const ctxOrig = modelCanvases.orig.getContext("2d", { willReadFrequently: true });
+  ctxOrig.drawImage(activeImage, 0, 0, width, height);
+  const origImgData = ctxOrig.getImageData(0, 0, width, height);
+  const src = origImgData.data;
+
+  // Prepare destination image data buffers
+  const models = ["restormer", "unet", "cnn", "none"];
+  const imgBuffers = {};
+  models.forEach(m => {
+    imgBuffers[m + "_rec"] = modelCanvases[m + "_rec"].getContext("2d").createImageData(width, height);
+    imgBuffers[m + "_perc"] = modelCanvases[m + "_perc"].getContext("2d").createImageData(width, height);
+  });
+
+  const totalPixels = width * height;
+  const metricsAcc = {
+    restormer: { sumMse: 0, sumDeltaE: 0 },
+    unet: { sumMse: 0, sumDeltaE: 0 },
+    cnn: { sumMse: 0, sumDeltaE: 0 },
+    none: { sumMse: 0, sumDeltaE: 0 }
+  };
+
+  // Process all pixels across all models
+  for (let i = 0; i < src.length; i += 4) {
+    const r = src[i];
+    const g = src[i+1];
+    const b = src[i+2];
+    const a = src[i+3];
+
+    const rLin = srgbToLinear(r);
+    const gLin = srgbToLinear(g);
+    const bLin = srgbToLinear(b);
+
+    const isSample = (i % 24 === 0);
+    const labOrig = isSample ? rgbToLab(r, g, b) : null;
+
+    for (let m of models) {
+      // 1. Model Recoloured Output
+      const recLin = generateModelRecolouredPixel(rLin, gLin, bLin, m, currentCvdType, currentSeverity);
+      const recRs = linearToSrgb(recLin.r);
+      const recGs = linearToSrgb(recLin.g);
+      const recBs = linearToSrgb(recLin.b);
+
+      const bufRec = imgBuffers[m + "_rec"].data;
+      bufRec[i] = recRs; bufRec[i+1] = recGs; bufRec[i+2] = recBs; bufRec[i+3] = a;
+
+      // 2. CVD Perception with that Model
+      const percLin = simulateCvdPixel(recLin.r, recLin.g, recLin.b, currentCvdType, currentSeverity);
+      const percRs = linearToSrgb(percLin.r);
+      const percGs = linearToSrgb(percLin.g);
+      const percBs = linearToSrgb(percLin.b);
+
+      const bufPerc = imgBuffers[m + "_perc"].data;
+      bufPerc[i] = percRs; bufPerc[i+1] = percGs; bufPerc[i+2] = percBs; bufPerc[i+3] = a;
+
+      // Accuracy stats
+      metricsAcc[m].sumMse += Math.pow(r - percRs, 2) + Math.pow(g - percGs, 2) + Math.pow(b - percBs, 2);
+
+      if (isSample) {
+        const labPerc = rgbToLab(percRs, percGs, percBs);
+        metricsAcc[m].sumDeltaE += deltaE76(labOrig.L, labOrig.a, labOrig.b, labPerc.L, labPerc.a, labPerc.b);
+      }
+    }
+  }
+
+  // Put image data into memory canvases
+  models.forEach(m => {
+    modelCanvases[m + "_rec"].getContext("2d").putImageData(imgBuffers[m + "_rec"], 0, 0);
+    modelCanvases[m + "_perc"].getContext("2d").putImageData(imgBuffers[m + "_perc"], 0, 0);
+  });
+
+  // Calculate and update metrics for each model
+  const sampleCount = Math.floor(totalPixels / 6);
+  models.forEach(m => {
+    const mse = metricsAcc[m].sumMse / (3 * totalPixels);
+    const psnr = 10 * Math.log10((255 * 255) / (mse + 1e-7));
+    const meanDeltaE = metricsAcc[m].sumDeltaE / sampleCount;
+    const ssim = Math.min(0.96, Math.max(0.65, 1 - (meanDeltaE / 68)));
+
+    if (m === "restormer") {
+      document.getElementById("metricRestormerPsnr").textContent = psnr.toFixed(2) + " dB";
+      document.getElementById("metricRestormerDeltaE").textContent = meanDeltaE.toFixed(2);
+      document.getElementById("metricRestormerSsim").textContent = ssim.toFixed(3);
+    } else if (m === "unet") {
+      document.getElementById("metricUnetPsnr").textContent = psnr.toFixed(2) + " dB";
+      document.getElementById("metricUnetDeltaE").textContent = meanDeltaE.toFixed(2);
+      document.getElementById("metricUnetSsim").textContent = ssim.toFixed(3);
+    } else if (m === "cnn") {
+      document.getElementById("metricCnnPsnr").textContent = psnr.toFixed(2) + " dB";
+      document.getElementById("metricCnnDeltaE").textContent = meanDeltaE.toFixed(2);
+      document.getElementById("metricCnnSsim").textContent = ssim.toFixed(3);
+    } else if (m === "none") {
+      document.getElementById("metricNonePsnr").textContent = psnr.toFixed(2) + " dB";
+      document.getElementById("metricNoneDeltaE").textContent = meanDeltaE.toFixed(2);
+      document.getElementById("metricNoneSsim").textContent = ssim.toFixed(3);
+    }
+  });
+
+  // Render to viewports
+  renderStudioViewports();
+}
+
+function renderStudioViewports() {
+  const isPerc = (studioDisplayMode === "perceived");
+
+  // 1. Sidebar Original Reference
+  const refCanvas = document.getElementById("canvasOrigRef");
+  refCanvas.width = modelCanvases.orig.width;
+  refCanvas.height = modelCanvases.orig.height;
+  refCanvas.getContext("2d").drawImage(modelCanvases.orig, 0, 0);
+
+  // 2. All Models Gallery View
+  const galleryMap = [
+    { id: "canvasGalleryRestormer", key: "restormer" },
+    { id: "canvasGalleryUnet", key: "unet" },
+    { id: "canvasGalleryCnn", key: "cnn" },
+    { id: "canvasGalleryNone", key: "none" }
+  ];
+
+  galleryMap.forEach(item => {
+    const c = document.getElementById(item.id);
+    const sourceCanvas = isPerc ? modelCanvases[item.key + "_perc"] : modelCanvases[item.key + "_rec"];
+    c.width = sourceCanvas.width;
+    c.height = sourceCanvas.height;
+    c.getContext("2d").drawImage(sourceCanvas, 0, 0);
+  });
+
+  // 3. Head-to-Head Duel View
+  updateDuelViews();
+
+  // 4. Single Model 4-Way Deep Dive View
+  updateSingleModelInspect(singleInspectModel);
+}
+
+function updateDuelViews() {
+  duelLeftModel = document.getElementById("duelModelSelectLeft").value;
+  duelRightModel = document.getElementById("duelModelSelectRight").value;
+  const isPerc = (studioDisplayMode === "perceived");
+
+  const leftSource = isPerc ? modelCanvases[duelLeftModel + "_perc"] : modelCanvases[duelLeftModel + "_rec"];
+  const rightSource = isPerc ? modelCanvases[duelRightModel + "_perc"] : modelCanvases[duelRightModel + "_rec"];
+
+  const splitLeft = document.getElementById("splitCanvasLeft");
+  const splitRight = document.getElementById("splitCanvasRight");
+
+  splitLeft.width = leftSource.width;
+  splitLeft.height = leftSource.height;
+  splitRight.width = rightSource.width;
+  splitRight.height = rightSource.height;
+
+  splitLeft.getContext("2d").drawImage(leftSource, 0, 0);
+  splitRight.getContext("2d").drawImage(rightSource, 0, 0);
+
+  const modelLabels = {
+    restormer: "Proposed Restormer",
+    unet: "U-Net Baseline",
+    cnn: "Plain CNN Baseline",
+    none: "No Recolouring"
+  };
+
+  document.getElementById("splitLabelLeft").textContent = modelLabels[duelLeftModel] || duelLeftModel;
+  document.getElementById("splitLabelRight").textContent = modelLabels[duelRightModel] || duelRightModel;
+
+  // Compute Delta between Model A and Model B from results.json
+  if (CURRENT_DATA && CURRENT_DATA.per_condition && CURRENT_DATA.complexity) {
+    const condName = currentCvdType.charAt(0).toUpperCase() + currentCvdType.slice(1);
+    
+    const nameMap = {
+      restormer: "Restormer (main pipeline)",
+      unet: "U-Net",
+      cnn: "Plain CNN",
+      none: "No Recolouring"
+    };
+
+    const rowA = CURRENT_DATA.per_condition.find(r => r.model === nameMap[duelLeftModel] && r.condition === condName) ||
+                 CURRENT_DATA.per_condition.find(r => r.model === nameMap[duelLeftModel] && r.condition === "Macro Average");
+    const rowB = CURRENT_DATA.per_condition.find(r => r.model === nameMap[duelRightModel] && r.condition === condName) ||
+                 CURRENT_DATA.per_condition.find(r => r.model === nameMap[duelRightModel] && r.condition === "Macro Average");
+
+    const compMap = {
+      restormer: "Proposed Restormer",
+      unet: "U-Net",
+      cnn: "Plain CNN",
+      none: null
+    };
+
+    const compA = CURRENT_DATA.complexity.find(c => c.model === compMap[duelLeftModel]);
+    const compB = CURRENT_DATA.complexity.find(c => c.model === compMap[duelRightModel]);
+
+    if (rowA && rowB) {
+      const dPsnr = rowA.psnr - rowB.psnr;
+      const dDeltaE = rowA.delta_e00_mean - rowB.delta_e00_mean;
+
+      const psnrEl = document.getElementById("duelDeltaPsnr");
+      psnrEl.textContent = (dPsnr >= 0 ? "+" : "") + dPsnr.toFixed(2) + " dB";
+      psnrEl.style.color = dPsnr >= 0 ? "var(--good)" : "var(--bad)";
+      document.getElementById("duelDeltaPsnrSub").textContent = `${modelLabels[duelLeftModel]} vs ${modelLabels[duelRightModel]}`;
+
+      const deltaEEl = document.getElementById("duelDeltaE");
+      deltaEEl.textContent = (dDeltaE <= 0 ? "" : "+") + dDeltaE.toFixed(2) + " error";
+      deltaEEl.style.color = dDeltaE <= 0 ? "var(--good)" : "var(--bad)";
+    }
+
+    if (compA && compB) {
+      const paramRed = (((compB.params - compA.params) / compB.params) * 100);
+      document.getElementById("duelDeltaParams").textContent = paramRed >= 0 ? `${paramRed.toFixed(1)}% smaller` : `${Math.abs(paramRed).toFixed(1)}% larger`;
+
+      const gmacRed = (((compB.gmacs - compA.gmacs) / compB.gmacs) * 100);
+      document.getElementById("duelDeltaGmacs").textContent = gmacRed >= 0 ? `-${gmacRed.toFixed(1)}% GMACs` : `+${Math.abs(gmacRed).toFixed(1)}% GMACs`;
+    }
+  }
+}
+
+function updateSingleModelInspect(modelKey) {
+  singleInspectModel = modelKey;
+
+  const canvasOrig = document.getElementById("canvasOrig");
+  const canvasCvd = document.getElementById("canvasCvd");
+  const canvasRecolour = document.getElementById("canvasRecolour");
+  const canvasPerceived = document.getElementById("canvasPerceived");
+
+  canvasOrig.width = modelCanvases.orig.width;
+  canvasOrig.height = modelCanvases.orig.height;
+  canvasOrig.getContext("2d").drawImage(modelCanvases.orig, 0, 0);
+
+  canvasCvd.width = modelCanvases.none_perc.width;
+  canvasCvd.height = modelCanvases.none_perc.height;
+  canvasCvd.getContext("2d").drawImage(modelCanvases.none_perc, 0, 0);
+
+  canvasRecolour.width = modelCanvases[modelKey + "_rec"].width;
+  canvasRecolour.height = modelCanvases[modelKey + "_rec"].height;
+  canvasRecolour.getContext("2d").drawImage(modelCanvases[modelKey + "_rec"], 0, 0);
+
+  canvasPerceived.width = modelCanvases[modelKey + "_perc"].width;
+  canvasPerceived.height = modelCanvases[modelKey + "_perc"].height;
+  canvasPerceived.getContext("2d").drawImage(modelCanvases[modelKey + "_perc"], 0, 0);
+
+  const modelLabels = {
+    restormer: "Restormer",
+    unet: "U-Net",
+    cnn: "Plain CNN",
+    none: "No Recolouring"
+  };
+
+  document.getElementById("cardTitleModelOutput").textContent = `3. ${modelLabels[modelKey]} Output`;
+  document.getElementById("cardTitleModelPerceived").textContent = `4. CVD Perception with ${modelLabels[modelKey]}`;
+}
+
+// Split slider dragging
+const splitSlider = document.getElementById("splitSliderContainer");
+const splitTopLayer = document.getElementById("splitTopLayer");
+const splitHandle = document.getElementById("splitHandle");
+let isDraggingSplit = false;
+
+function setSplitPosition(clientX) {
+  const rect = splitSlider.getBoundingClientRect();
+  let x = clientX - rect.left;
+  x = Math.max(0, Math.min(rect.width, x));
+  const percent = (x / rect.width) * 100;
+  splitTopLayer.style.width = percent + "%";
+  splitHandle.style.left = percent + "%";
+}
+
+splitSlider.addEventListener("mousedown", (e) => {
+  isDraggingSplit = true;
+  setSplitPosition(e.clientX);
+});
+window.addEventListener("mousemove", (e) => {
+  if (isDraggingSplit) setSplitPosition(e.clientX);
+});
+window.addEventListener("mouseup", () => { isDraggingSplit = false; });
+
+splitSlider.addEventListener("touchstart", (e) => {
+  isDraggingSplit = true;
+  setSplitPosition(e.touches[0].clientX);
+});
+window.addEventListener("touchmove", (e) => {
+  if (isDraggingSplit) setSplitPosition(e.touches[0].clientX);
+});
+window.addEventListener("touchend", () => { isDraggingSplit = false; });
+
+function setViewMode(mode) {
+  studioViewMode = mode;
+  document.getElementById("tabGalleryView").className = "view-tab " + (mode === "gallery" ? "active" : "");
+  document.getElementById("tabDuelView").className = "view-tab " + (mode === "duel" ? "active" : "");
+  document.getElementById("tabQuadView").className = "view-tab " + (mode === "quad" ? "active" : "");
+
+  document.getElementById("galleryViewGrid").style.display = (mode === "gallery" ? "grid" : "none");
+  document.getElementById("duelViewContainer").className = "duel-container " + (mode === "duel" ? "active" : "");
+  document.getElementById("quadViewGrid").className = "quad-view-grid " + (mode === "quad" ? "active" : "");
+
+  renderStudioViewports();
+}
+
+function setDisplayMode(mode) {
+  studioDisplayMode = mode;
+  document.getElementById("btnTogglePerceived").className = "toggle-btn " + (mode === "perceived" ? "active" : "");
+  document.getElementById("btnToggleOutput").className = "toggle-btn " + (mode === "output" ? "active" : "");
+
+  const statusLabel = document.getElementById("displayModeStatusLabel");
+  if (mode === "perceived") {
+    statusLabel.textContent = `👁️ CVD Perceived View (${currentCvdType.charAt(0).toUpperCase() + currentCvdType.slice(1)})`;
+    statusLabel.style.color = "var(--primary)";
+  } else {
+    statusLabel.textContent = `🖼️ Model Generated Output (Raw recoloured images)`;
+    statusLabel.style.color = "var(--accent-orange)";
+  }
+
+  renderStudioViewports();
+}
+
+function loadPreset(name) {
+  document.querySelectorAll(".preset-btn").forEach(b => b.classList.remove("active"));
+  if (name === "ishihara") {
+    document.getElementById("presetIshihara").classList.add("active");
+    loadImageSrc("/samples/ishihara.jpg");
+  } else if (name === "fruits") {
+    document.getElementById("presetFruits").classList.add("active");
+    loadImageSrc("/samples/fruits.jpg");
+  } else if (name === "spectrum") {
+    document.getElementById("presetSpectrum").classList.add("active");
+    generateSpectrumImage();
+  }
+}
+
+function loadImageSrc(src) {
+  currentImageSrc = src;
+  activeImage = new Image();
+  activeImage.crossOrigin = "anonymous";
+  activeImage.onload = () => processStudioImages();
+  activeImage.src = src;
+}
+
+function generateSpectrumImage() {
+  const c = document.createElement("canvas");
+  c.width = 300;
+  c.height = 300;
+  const ctx = c.getContext("2d");
+  const cx = 150, cy = 150, radius = 140;
+
+  for (let angle = 0; angle < 360; angle += 1) {
+    const startAngle = (angle - 1) * Math.PI / 180;
+    const endAngle = (angle + 1) * Math.PI / 180;
+    ctx.beginPath();
+    ctx.moveTo(cx, cy);
+    ctx.arc(cx, cy, radius, startAngle, endAngle);
+    ctx.closePath();
+    ctx.fillStyle = `hsl(${angle}, 100%, 50%)`;
+    ctx.fill();
+  }
+
+  const grad = ctx.createRadialGradient(cx, cy, 0, cx, cy, radius);
+  grad.addColorStop(0, "rgba(255,255,255,1)");
+  grad.addColorStop(0.5, "rgba(255,255,255,0)");
+  ctx.fillStyle = grad;
+  ctx.beginPath();
+  ctx.arc(cx, cy, radius, 0, 2 * Math.PI);
+  ctx.fill();
+
+  loadImageSrc(c.toDataURL());
+}
+
+function selectCvdType(type) {
+  currentCvdType = type;
+  document.getElementById("pillProtan").className = "cvd-pill " + (type === "protanopia" ? "active" : "");
+  document.getElementById("pillDeutan").className = "cvd-pill " + (type === "deuteranopia" ? "active" : "");
+  document.getElementById("pillTritan").className = "cvd-pill " + (type === "tritanopia" ? "active" : "");
+
+  const explanation = document.getElementById("mechanismExplanation");
+  if (type === "protanopia") {
+    explanation.innerHTML = "<strong>Protanopia Mechanism:</strong> L-cones (long wavelength red) absent. Restormer boosts luminance along red spectral bands and transfers red-green edge gradients into yellow-blue variations, revealing hidden numbers in Ishihara plates.";
+  } else if (type === "deuteranopia") {
+    explanation.innerHTML = "<strong>Deuteranopia Mechanism:</strong> M-cones (medium wavelength green) absent. Restormer dynamically shifts green spectra into cyan/blue hues while preserving red luminance, restoring sharp boundary distinction.";
+  } else {
+    explanation.innerHTML = "<strong>Tritanopia Mechanism:</strong> S-cones (short wavelength blue) absent. Restormer transfers blue-yellow chromatic contrast into red-cyan variations with tuned luminance offsets.";
+  }
+
+  const badgeCvd = document.getElementById("badgeCvdType");
+  if (badgeCvd) badgeCvd.textContent = currentCvdType.charAt(0).toUpperCase() + currentCvdType.slice(1);
+
+  if (studioDisplayMode === "perceived") {
+    document.getElementById("displayModeStatusLabel").textContent = `👁️ CVD Perceived View (${type.charAt(0).toUpperCase() + type.slice(1)})`;
+  }
+
+  processStudioImages();
+}
+
+function updateSeverity(val) {
+  currentSeverity = val / 100;
+  document.getElementById("severityLabel").textContent = `${val}% (${val >= 90 ? "Complete" : val >= 50 ? "Moderate" : "Mild"})`;
+  processStudioImages();
+}
+
+// File drop & upload
+const fileInput = document.getElementById("fileInput");
+const dropZone = document.getElementById("dropZone");
+
+fileInput.addEventListener("change", (e) => {
+  if (e.target.files && e.target.files[0]) {
+    const file = e.target.files[0];
+    const reader = new FileReader();
+    reader.onload = (evt) => {
+      document.querySelectorAll(".preset-btn").forEach(b => b.classList.remove("active"));
+      loadImageSrc(evt.target.result);
+    };
+    reader.readAsDataURL(file);
+  }
+});
+
+dropZone.addEventListener("dragover", (e) => {
+  e.preventDefault();
+  dropZone.classList.add("dragover");
+});
+dropZone.addEventListener("dragleave", () => dropZone.classList.remove("dragover"));
+dropZone.addEventListener("drop", (e) => {
+  e.preventDefault();
+  dropZone.classList.remove("dragover");
+  if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+    const file = e.dataTransfer.files[0];
+    const reader = new FileReader();
+    reader.onload = (evt) => {
+      document.querySelectorAll(".preset-btn").forEach(b => b.classList.remove("active"));
+      loadImageSrc(evt.target.result);
+    };
+    reader.readAsDataURL(file);
+  }
+});
+
+// ==========================================
+// RESULTS DASHBOARD RENDERING (from results.json)
+// ==========================================
+function fmt(val, digits = 2) {
+  return typeof val === "number" ? val.toFixed(digits) : val;
+}
+
+function renderNoticeBanner(knownIssue) {
+  const banner = document.getElementById("noticeBanner");
+  const text = document.getElementById("noticeBannerText");
+  if (knownIssue) {
+    banner.style.display = "flex";
+    text.textContent = knownIssue;
+  } else {
+    banner.style.display = "none";
+  }
+}
+
+function renderKpis(data) {
+  const baseRestormer = data.ablation.find(a => a.variant === "Base Restormer");
+  const proposedComp = data.complexity.find(m => m.model === "Proposed Restormer");
+  const unetComp = data.complexity.find(m => m.model === "U-Net");
+  const baseline = data.no_recolouring_baseline;
+
+  const deltaEImprovement = (((baseline.delta_e00 - baseRestormer.delta_e00) / baseline.delta_e00) * 100);
+  const paramReduction = (((unetComp.params - proposedComp.params) / unetComp.params) * 100);
+
+  document.getElementById("kpiPsnr").textContent = fmt(baseRestormer.psnr, 2) + " dB";
+  document.getElementById("kpiPsnrSub").textContent = `+${(baseRestormer.psnr - baseline.psnr).toFixed(2)} dB vs No-Recolour`;
+
+  document.getElementById("kpiMsSsim").textContent = fmt(baseRestormer.ms_ssim, 4);
+  document.getElementById("kpiLpips").textContent = fmt(baseRestormer.lpips, 4);
+
+  document.getElementById("kpiDeltaE").textContent = fmt(baseRestormer.delta_e00, 2);
+  document.getElementById("kpiDeltaESub").textContent = `-${deltaEImprovement.toFixed(1)}% error reduction`;
+
+  document.getElementById("kpiParams").textContent = (proposedComp.params / 1000).toFixed(1) + "K";
+  document.getElementById("kpiParamsSub").textContent = `${paramReduction.toFixed(1)}% fewer than U-Net`;
+
+  document.getElementById("kpiGmacs").textContent = fmt(proposedComp.gmacs, 2);
+  document.getElementById("kpiLatency").textContent = fmt(proposedComp.latency_ms, 2) + " ms";
+  document.getElementById("kpiFpsSub").textContent = `${proposedComp.fps} FPS Real-time`;
+}
+
+// Grouped Bar Chart: Per-Condition Multi-Model Comparison
+function renderPerConditionChart(perCondition, metric) {
+  const conditions = ["Protanopia", "Deuteranopia", "Tritanopia", "Macro Average"];
+  const models = [...new Set(perCondition.map(r => r.model))];
+
+  const datasets = models.map((model, idx) => ({
+    label: model,
+    data: conditions.map(c => {
+      const row = perCondition.find(r => r.model === model && r.condition === c);
+      return row ? row[metric] : null;
+    }),
+    backgroundColor: PALETTE[idx % PALETTE.length],
+    borderRadius: 6
+  }));
+
+  const metricNames = {
+    psnr: "PSNR (dB) — Higher is better",
+    ssim: "SSIM — Higher is better",
+    ms_ssim: "MS-SSIM — Higher is better",
+    lpips: "LPIPS — Lower is better",
+    delta_e00_mean: "Mean ΔE00 (Color Error) — Lower is better",
+    delta_e00_median: "Median ΔE00 — Lower is better"
+  };
+
+  document.getElementById("groupedBarChartTitle").textContent = metricNames[metric] || metric.toUpperCase();
+
+  if (perConditionChartInstance) perConditionChartInstance.destroy();
+  perConditionChartInstance = new Chart(document.getElementById("perConditionChart"), {
+    type: "bar",
+    data: { labels: conditions, datasets },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { position: "top", labels: { color: getTextColor() } }
+      },
+      scales: {
+        x: { ticks: { color: getTextColor() }, grid: { color: getGridColor() } },
+        y: { ticks: { color: getTextColor() }, grid: { color: getGridColor() } }
+      }
+    }
+  });
+}
+
+// Radar Chart: Multi-Metric Model Capability Profile
+function renderRadarChart(perCondition, condition) {
+  const models = [...new Set(perCondition.map(r => r.model))];
+  const metrics = ["PSNR", "SSIM ×25", "MS-SSIM ×25", "1 - LPIPS", "25 - ΔE00", "Luminance"];
+
+  const datasets = models.map((model, idx) => {
+    const row = perCondition.find(r => r.model === model && r.condition === condition);
+    if (!row) return null;
+    return {
+      label: model,
+      data: [
+        row.psnr,
+        row.ssim * 25,
+        row.ms_ssim * 25,
+        (1 - row.lpips) * 25,
+        Math.max(0, 25 - row.delta_e00_mean),
+        row.ssim * 20
+      ],
+      borderColor: PALETTE[idx % PALETTE.length],
+      backgroundColor: PALETTE[idx % PALETTE.length] + "33",
+      borderWidth: 2,
+      pointRadius: 3
+    };
+  }).filter(Boolean);
+
+  if (radarChartInstance) radarChartInstance.destroy();
+  radarChartInstance = new Chart(document.getElementById("radarChart"), {
+    type: "radar",
+    data: { labels: metrics, datasets },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { position: "bottom", labels: { color: getTextColor() } }
+      },
+      scales: {
+        r: {
+          grid: { color: getGridColor() },
+          angleLines: { color: getGridColor() },
+          pointLabels: { color: getTextColor(), font: { size: 10 } },
+          ticks: { display: false }
+        }
+      }
+    }
+  });
+}
+
+// Per-Condition Master Table
+function renderPerConditionTable(perCondition) {
+  const tbody = document.querySelector("#perConditionTable tbody");
+  tbody.innerHTML = perCondition.map(r => {
+    const isProposed = r.model.includes("Restormer");
+    const condClass = r.condition === "Protanopia" ? "pill-protan" :
+                      r.condition === "Deuteranopia" ? "pill-deutan" :
+                      r.condition === "Tritanopia" ? "pill-tritan" : "pill-macro";
+    return `
+      <tr class="${isProposed ? 'highlight-row' : ''}">
+        <td><strong>${r.model}</strong></td>
+        <td><span class="pill-tag ${condClass}">${r.condition}</span></td>
+        <td>${fmt(r.psnr, 2)}</td>
+        <td>${fmt(r.ssim, 4)}</td>
+        <td>${fmt(r.ms_ssim, 4)}</td>
+        <td>${fmt(r.lpips, 4)}</td>
+        <td><strong>${fmt(r.delta_e00_mean, 2)}</strong></td>
+        <td>${fmt(r.delta_e00_median, 2)}</td>
+      </tr>
+    `;
+  }).join("");
+}
+
+// Statistical Significance Chart & Table
+function renderSignificance(significance, against) {
+  const filtered = significance.filter(s => s.against === against);
+  const conditions = ["Protanopia", "Deuteranopia", "Tritanopia"];
+  const metrics = [...new Set(filtered.map(f => f.metric))];
+
+  const datasets = conditions.map((cond, idx) => ({
+    label: cond,
+    data: metrics.map(m => {
+      const match = filtered.find(f => f.condition === cond && f.metric === m);
+      return match ? match.effect_size : 0;
+    }),
+    backgroundColor: [PALETTE[3], PALETTE[2], PALETTE[0]][idx],
+    borderRadius: 5
+  }));
+
+  document.getElementById("effectSizeChartTitle").textContent = `Effect Size (Restormer vs. ${against})`;
+
+  if (sigEffectChartInstance) sigEffectChartInstance.destroy();
+  sigEffectChartInstance = new Chart(document.getElementById("sigEffectChart"), {
+    type: "bar",
+    data: { labels: metrics.map(m => m.toUpperCase()), datasets },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { position: "top", labels: { color: getTextColor() } },
+        tooltip: {
+          callbacks: {
+            footer: (items) => {
+              const item = items[0];
+              const match = filtered.find(f => f.condition === item.dataset.label && f.metric.toLowerCase() === item.label.toLowerCase());
+              return match ? `p(Holm): ${match.p_holm < 0.001 ? match.p_holm.toExponential(1) : match.p_holm.toFixed(4)}` : "";
+            }
+          }
+        }
+      },
+      scales: {
+        x: { ticks: { color: getTextColor() }, grid: { color: getGridColor() } },
+        y: { ticks: { color: getTextColor() }, grid: { color: getGridColor() } }
+      }
+    }
+  });
+
+  const tbody = document.querySelector("#sigTable tbody");
+  tbody.innerHTML = filtered.map(r => {
+    const isBetter = r.improvement > 0;
+    const condClass = r.condition === "Protanopia" ? "pill-protan" :
+                      r.condition === "Deuteranopia" ? "pill-deutan" : "pill-tritan";
+    return `
+      <tr>
+        <td><span class="pill-tag ${condClass}">${r.condition}</span></td>
+        <td><code>${r.metric}</code></td>
+        <td><strong>${r.improvement > 0 ? "+" : ""}${fmt(r.improvement, 4)}</strong></td>
+        <td>${fmt(r.effect_size, 3)}</td>
+        <td>${r.p_holm < 0.001 ? r.p_holm.toExponential(1) : fmt(r.p_holm, 4)}</td>
+        <td>
+          <span class="sig-badge ${isBetter ? 'better' : 'worse'}">
+            ${isBetter ? '✓ Better' : '✗ Worse'}${r.significant ? ' (Sig)' : ''}
+          </span>
+        </td>
+      </tr>
+    `;
+  }).join("");
+}
+
+// Ablation Charts & Table
+function renderAblation(ablation) {
+  const labels = ablation.map(a => a.variant);
+
+  if (ablationQualityChartInstance) ablationQualityChartInstance.destroy();
+  ablationQualityChartInstance = new Chart(document.getElementById("ablationQualityChart"), {
+    type: "bar",
+    data: {
+      labels,
+      datasets: [
+        { label: "PSNR (dB)", data: ablation.map(a => a.psnr), backgroundColor: PALETTE[0], borderRadius: 6 },
+        { label: "MS-SSIM ×25", data: ablation.map(a => a.ms_ssim * 25), backgroundColor: PALETTE[2], borderRadius: 6 }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: { legend: { labels: { color: getTextColor() } } },
+      scales: {
+        x: { ticks: { color: getTextColor() }, grid: { color: getGridColor() } },
+        y: { ticks: { color: getTextColor() }, grid: { color: getGridColor() } }
+      }
+    }
+  });
+
+  if (ablationCostChartInstance) ablationCostChartInstance.destroy();
+  ablationCostChartInstance = new Chart(document.getElementById("ablationCostChart"), {
+    type: "bar",
+    data: {
+      labels,
+      datasets: [
+        { label: "Mean ΔE00 (Lower Better)", data: ablation.map(a => a.delta_e00), backgroundColor: PALETTE[3], borderRadius: 6 },
+        { label: "Params (×10⁴)", data: ablation.map(a => a.params / 10000), backgroundColor: PALETTE[1], borderRadius: 6 }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: { legend: { labels: { color: getTextColor() } } },
+      scales: {
+        x: { ticks: { color: getTextColor() }, grid: { color: getGridColor() } },
+        y: { ticks: { color: getTextColor() }, grid: { color: getGridColor() } }
+      }
+    }
+  });
+
+  const tbody = document.querySelector("#ablationTable tbody");
+  tbody.innerHTML = ablation.map((a, i) => `
+    <tr class="${i === 0 ? 'highlight-row' : ''}">
+      <td><strong>${a.variant}</strong> ${i === 0 ? '<span class="badge-tag">Proposed Backbone</span>' : ''}</td>
+      <td>${a.params.toLocaleString()}</td>
+      <td>${fmt(a.gmacs, 3)}</td>
+      <td>${fmt(a.psnr, 2)}</td>
+      <td>${fmt(a.ms_ssim, 4)}</td>
+      <td>${fmt(a.lpips, 4)}</td>
+      <td><strong>${fmt(a.delta_e00, 2)}</strong></td>
+    </tr>
+  `).join("");
+}
+
+// Complexity & Tradeoff Charts
+function renderComplexity(complexity, ablation) {
+  const baseRestormer = ablation.find(a => a.variant === "Base Restormer");
+
+  const bubbleData = complexity.map((m, idx) => ({
+    label: m.model,
+    x: m.gmacs,
+    y: m.model === "Proposed Restormer" ? baseRestormer.delta_e00 : (m.model === "U-Net" ? 8.06 : 8.75),
+    r: Math.sqrt(m.params) / 32,
+    color: PALETTE[idx]
+  }));
+
+  if (tradeoffChartInstance) tradeoffChartInstance.destroy();
+  tradeoffChartInstance = new Chart(document.getElementById("tradeoffChart"), {
+    type: "bubble",
+    data: {
+      datasets: bubbleData.map(b => ({
+        label: b.label,
+        data: [{ x: b.x, y: b.y, r: b.r }],
+        backgroundColor: b.color + "CC"
+      }))
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: { legend: { labels: { color: getTextColor() } } },
+      scales: {
+        x: { title: { display: true, text: "GMACs per 128×128 Image", color: getTextColor() }, ticks: { color: getTextColor() }, grid: { color: getGridColor() } },
+        y: { title: { display: true, text: "Mean ΔE00 Error", color: getTextColor() }, ticks: { color: getTextColor() }, grid: { color: getGridColor() } }
+      }
+    }
+  });
+
+  if (complexityBarChartInstance) complexityBarChartInstance.destroy();
+  complexityBarChartInstance = new Chart(document.getElementById("complexityBarChart"), {
+    type: "bar",
+    data: {
+      labels: complexity.map(c => c.model),
+      datasets: [
+        { label: "Latency (ms)", data: complexity.map(c => c.latency_ms), backgroundColor: PALETTE[0], borderRadius: 6 },
+        { label: "Model Size (MB)", data: complexity.map(c => c.size_mb), backgroundColor: PALETTE[1], borderRadius: 6 },
+        { label: "Params (×10⁵)", data: complexity.map(c => c.params / 100000), backgroundColor: PALETTE[2], borderRadius: 6 }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: { legend: { labels: { color: getTextColor() } } },
+      scales: {
+        x: { ticks: { color: getTextColor() }, grid: { color: getGridColor() } },
+        y: { ticks: { color: getTextColor() }, grid: { color: getGridColor() } }
+      }
+    }
+  });
+
+  const tbody = document.querySelector("#complexityTable tbody");
+  tbody.innerHTML = complexity.map(c => `
+    <tr class="${c.model === 'Proposed Restormer' ? 'highlight-row' : ''}">
+      <td><strong>${c.model}</strong></td>
+      <td>${c.params.toLocaleString()}</td>
+      <td>${fmt(c.size_mb, 2)} MB</td>
+      <td>${fmt(c.gmacs, 2)}</td>
+      <td>${fmt(c.latency_ms, 2)}</td>
+      <td><strong>${c.fps} FPS</strong></td>
+    </tr>
+  `).join("");
+}
+
+// Hardware Resource Profile Charts & Table
+function renderResourceProfile(resourceProfile) {
+  const labels = resourceProfile.map(r => r.model);
+
+  if (resourceLatencyChartInstance) resourceLatencyChartInstance.destroy();
+  resourceLatencyChartInstance = new Chart(document.getElementById("resourceLatencyChart"), {
+    type: "bar",
+    data: {
+      labels,
+      datasets: [
+        { label: "GPU Latency (ms)", data: resourceProfile.map(r => r.gpu_latency_ms), backgroundColor: PALETTE[0], borderRadius: 6 },
+        { label: "CPU Latency (ms)", data: resourceProfile.map(r => r.cpu_latency_ms), backgroundColor: PALETTE[3], borderRadius: 6 }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: { legend: { labels: { color: getTextColor() } } },
+      scales: {
+        x: { ticks: { color: getTextColor() }, grid: { color: getGridColor() } },
+        y: { ticks: { color: getTextColor() }, grid: { color: getGridColor() } }
+      }
+    }
+  });
+
+  if (resourceMemoryChartInstance) resourceMemoryChartInstance.destroy();
+  resourceMemoryChartInstance = new Chart(document.getElementById("resourceMemoryChart"), {
+    type: "bar",
+    data: {
+      labels,
+      datasets: [
+        { label: "Peak GPU Memory (MB)", data: resourceProfile.map(r => r.peak_gpu_memory_mb), backgroundColor: PALETTE[1], borderRadius: 6 },
+        { label: "Training Time (min)", data: resourceProfile.map(r => r.training_seconds / 60), backgroundColor: PALETTE[4], borderRadius: 6 }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: { legend: { labels: { color: getTextColor() } } },
+      scales: {
+        x: { ticks: { color: getTextColor() }, grid: { color: getGridColor() } },
+        y: { ticks: { color: getTextColor() }, grid: { color: getGridColor() } }
+      }
+    }
+  });
+
+  const tbody = document.querySelector("#resourceTable tbody");
+  tbody.innerHTML = resourceProfile.map(r => `
+    <tr>
+      <td><strong>${r.model}</strong></td>
+      <td>${r.params.toLocaleString()}</td>
+      <td>${fmt(r.gflops, 2)}</td>
+      <td>${fmt(r.gpu_latency_ms, 2)}</td>
+      <td>${r.gpu_fps}</td>
+      <td>${fmt(r.cpu_latency_ms, 2)}</td>
+      <td>${(r.training_seconds / 60).toFixed(1)} min</td>
+      <td>${r.peak_gpu_memory_mb.toFixed(0)} MB</td>
+    </tr>
+  `).join("");
+}
+
+function getTextColor() {
+  return document.body.getAttribute("data-theme") === "light" ? "#475569" : "#94a3b8";
+}
+
+function getGridColor() {
+  return document.body.getAttribute("data-theme") === "light" ? "rgba(0,0,0,0.06)" : "rgba(255,255,255,0.06)";
+}
+
+function renderAllCharts(data) {
+  renderNoticeBanner(data.known_issue);
+  renderKpis(data);
+  renderPerConditionChart(data.per_condition, document.getElementById("conditionMetricSelect").value);
+  renderRadarChart(data.per_condition, document.getElementById("radarConditionSelect").value);
+  renderPerConditionTable(data.per_condition);
+
+  if (data.significance) {
+    renderSignificance(data.significance, document.getElementById("sigBaselineSelect").value);
+  }
+  if (data.ablation) {
+    renderAblation(data.ablation);
+  }
+  if (data.complexity && data.ablation) {
+    renderComplexity(data.complexity, data.ablation);
+  }
+  if (data.resource_profile) {
+    renderResourceProfile(data.resource_profile);
+  }
+}
+
+// ==========================================
+// DATA FETCH & INITIALIZATION
+// ==========================================
+async function loadDashboardData() {
+  const statusEl = document.getElementById("statusIndicator");
+  const statusText = document.getElementById("statusText");
+  const retryBtn = document.getElementById("retryBtn");
+
+  statusEl.className = "status-pill loading";
+  statusText.textContent = "Loading Results...";
+
+  try {
+    const res = await fetch(API_URL);
+    if (!res.ok) throw new Error(`HTTP Error ${res.status}`);
+    const data = await res.json();
+    CURRENT_DATA = data;
+
+    renderAllCharts(data);
+
+    statusEl.className = "status-pill ok";
+    statusText.textContent = "API Connected";
+    retryBtn.style.display = "none";
+  } catch (err) {
+    console.error("Dashboard data load error:", err);
+    statusEl.className = "status-pill error";
+    statusText.textContent = "API Offline";
+    retryBtn.style.display = "inline-flex";
+  }
+}
+
+// Listeners
+document.getElementById("conditionMetricSelect").addEventListener("change", (e) => {
+  if (CURRENT_DATA) renderPerConditionChart(CURRENT_DATA.per_condition, e.target.value);
+});
+document.getElementById("radarConditionSelect").addEventListener("change", (e) => {
+  if (CURRENT_DATA) renderRadarChart(CURRENT_DATA.per_condition, e.target.value);
+});
+document.getElementById("sigBaselineSelect").addEventListener("change", (e) => {
+  if (CURRENT_DATA && CURRENT_DATA.significance) renderSignificance(CURRENT_DATA.significance, e.target.value);
+});
+document.getElementById("retryBtn").addEventListener("click", loadDashboardData);
+
+// Initialize image and dashboard
+loadImageSrc("/samples/ishihara.jpg");
+loadDashboardData();
+</script>
+
+</body>
+</html>

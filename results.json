@@ -1,0 +1,93 @@
+{
+  "proposed_model": "Base_Restormer_Style",
+  "known_issue": "Modified_Conditional_Restormer in the main pipeline (used below for per-condition breakdown, significance tests, and the full resource profile) is actually configured with CBAM+RDB (462,888 params) — matches the '+CBAM+RDB' ablation row, not the lightweight base backbone (223,870 params) the paper proposes. The Ablation and Complexity sections below use the correct lightweight model. Fix the model-construction flags before final submission.",
+
+  "no_recolouring_baseline": {
+    "psnr": 15.35, "ms_ssim": 0.7025, "lpips": 0.3351, "delta_e00": 20.38
+  },
+
+  "ablation": [
+    { "variant": "Base Restormer", "params": 223870, "gmacs": 0.536, "psnr": 22.27, "ms_ssim": 0.8923, "lpips": 0.1094, "delta_e00": 7.70 },
+    { "variant": "+ CBAM",         "params": 225064, "gmacs": 0.536, "psnr": 22.29, "ms_ssim": 0.8901, "lpips": 0.1125, "delta_e00": 7.73 },
+    { "variant": "+ RDB",          "params": 461694, "gmacs": 0.779, "psnr": 22.36, "ms_ssim": 0.8929, "lpips": 0.1088, "delta_e00": 7.74 },
+    { "variant": "+ CBAM + RDB",   "params": 462888, "gmacs": 0.780, "psnr": 22.11, "ms_ssim": 0.8898, "lpips": 0.1135, "delta_e00": 7.85 }
+  ],
+
+  "complexity": [
+    { "model": "Plain CNN",          "params": 337251,  "size_mb": 1.29, "gmacs": 5.50, "latency_ms": 5.41, "fps": 185 },
+    { "model": "U-Net",              "params": 1927939, "size_mb": 7.35, "gmacs": 2.62, "latency_ms": 2.88, "fps": 347 },
+    { "model": "Proposed Restormer", "params": 223870,  "size_mb": 0.85, "gmacs": 0.54, "latency_ms": 6.99, "fps": 143 }
+  ],
+
+  "per_condition": [
+    { "model": "U-Net", "condition": "Macro Average", "psnr": 21.94, "ssim": 0.7966, "ms_ssim": 0.8835, "lpips": 0.1213, "delta_e00_mean": 8.06, "delta_e00_median": 5.58 },
+    { "model": "U-Net", "condition": "Protanopia",     "psnr": 17.54, "ssim": 0.6542, "ms_ssim": 0.8034, "lpips": 0.1919, "delta_e00_mean": 12.49, "delta_e00_median": 8.99 },
+    { "model": "U-Net", "condition": "Deuteranopia",   "psnr": 25.67, "ssim": 0.8828, "ms_ssim": 0.9392, "lpips": 0.0806, "delta_e00_mean": 5.39, "delta_e00_median": 3.54 },
+    { "model": "U-Net", "condition": "Tritanopia",     "psnr": 22.62, "ssim": 0.8529, "ms_ssim": 0.9078, "lpips": 0.0914, "delta_e00_mean": 6.31, "delta_e00_median": 4.21 },
+
+    { "model": "Restormer (main pipeline)", "condition": "Macro Average", "psnr": 22.11, "ssim": 0.7979, "ms_ssim": 0.8898, "lpips": 0.1135, "delta_e00_mean": 7.85, "delta_e00_median": 5.46 },
+    { "model": "Restormer (main pipeline)", "condition": "Protanopia",     "psnr": 17.97, "ssim": 0.6620, "ms_ssim": 0.8174, "lpips": 0.1771, "delta_e00_mean": 11.95, "delta_e00_median": 8.69 },
+    { "model": "Restormer (main pipeline)", "condition": "Deuteranopia",   "psnr": 25.31, "ssim": 0.8729, "ms_ssim": 0.9354, "lpips": 0.0828, "delta_e00_mean": 5.69, "delta_e00_median": 3.75 },
+    { "model": "Restormer (main pipeline)", "condition": "Tritanopia",     "psnr": 23.06, "ssim": 0.8588, "ms_ssim": 0.9164, "lpips": 0.0805, "delta_e00_mean": 5.90, "delta_e00_median": 3.95 },
+
+    { "model": "Plain CNN", "condition": "Macro Average", "psnr": 21.35, "ssim": 0.7853, "ms_ssim": 0.8739, "lpips": 0.1318, "delta_e00_mean": 8.75, "delta_e00_median": 6.07 },
+    { "model": "Plain CNN", "condition": "Protanopia",     "psnr": 17.20, "ssim": 0.6466, "ms_ssim": 0.7914, "lpips": 0.2063, "delta_e00_mean": 13.08, "delta_e00_median": 9.35 },
+    { "model": "Plain CNN", "condition": "Deuteranopia",   "psnr": 24.56, "ssim": 0.8697, "ms_ssim": 0.9301, "lpips": 0.0923, "delta_e00_mean": 6.37, "delta_e00_median": 4.41 },
+    { "model": "Plain CNN", "condition": "Tritanopia",     "psnr": 22.30, "ssim": 0.8397, "ms_ssim": 0.9001, "lpips": 0.0966, "delta_e00_mean": 6.80, "delta_e00_median": 4.44 },
+
+    { "model": "No Recolouring", "condition": "Macro Average", "psnr": 15.35, "ssim": 0.6605, "ms_ssim": 0.7025, "lpips": 0.3351, "delta_e00_mean": 20.38, "delta_e00_median": 17.87 },
+    { "model": "No Recolouring", "condition": "Protanopia",     "psnr": 13.16, "ssim": 0.4946, "ms_ssim": 0.5754, "lpips": 0.4435, "delta_e00_mean": 25.21, "delta_e00_median": 22.36 },
+    { "model": "No Recolouring", "condition": "Deuteranopia",   "psnr": 16.90, "ssim": 0.7255, "ms_ssim": 0.7657, "lpips": 0.2928, "delta_e00_mean": 20.17, "delta_e00_median": 18.41 },
+    { "model": "No Recolouring", "condition": "Tritanopia",     "psnr": 16.00, "ssim": 0.7613, "ms_ssim": 0.7665, "lpips": 0.2691, "delta_e00_mean": 15.75, "delta_e00_median": 12.83 }
+  ],
+
+  "significance": [
+    { "against": "Plain CNN", "condition": "Protanopia",   "metric": "psnr",           "improvement": 0.775,  "effect_size": 0.989,  "p_holm": 7.0e-21, "significant": true },
+    { "against": "Plain CNN", "condition": "Protanopia",   "metric": "ssim",           "improvement": 0.0155, "effect_size": 0.782,  "p_holm": 2.6e-13, "significant": true },
+    { "against": "Plain CNN", "condition": "Protanopia",   "metric": "ms_ssim",        "improvement": 0.0260, "effect_size": 0.924,  "p_holm": 2.4e-18, "significant": true },
+    { "against": "Plain CNN", "condition": "Protanopia",   "metric": "mae",            "improvement": 0.0080, "effect_size": 0.978,  "p_holm": 1.8e-20, "significant": true },
+    { "against": "Plain CNN", "condition": "Protanopia",   "metric": "lpips",          "improvement": 0.0292, "effect_size": 0.924,  "p_holm": 2.4e-18, "significant": true },
+    { "against": "Plain CNN", "condition": "Protanopia",   "metric": "delta_e00_mean", "improvement": 1.127,  "effect_size": 0.974,  "p_holm": 2.5e-20, "significant": true },
+
+    { "against": "Plain CNN", "condition": "Deuteranopia", "metric": "psnr",           "improvement": 0.741,  "effect_size": 0.869,  "p_holm": 2.7e-16, "significant": true },
+    { "against": "Plain CNN", "condition": "Deuteranopia", "metric": "ssim",           "improvement": 0.0033, "effect_size": 0.304,  "p_holm": 5.6e-03, "significant": true },
+    { "against": "Plain CNN", "condition": "Deuteranopia", "metric": "ms_ssim",        "improvement": 0.0053, "effect_size": 0.600,  "p_holm": 3.3e-08, "significant": true },
+    { "against": "Plain CNN", "condition": "Deuteranopia", "metric": "mae",            "improvement": 0.0042, "effect_size": 0.984,  "p_holm": 1.1e-20, "significant": true },
+    { "against": "Plain CNN", "condition": "Deuteranopia", "metric": "lpips",          "improvement": 0.0094, "effect_size": 0.682,  "p_holm": 2.8e-10, "significant": true },
+    { "against": "Plain CNN", "condition": "Deuteranopia", "metric": "delta_e00_mean", "improvement": 0.681,  "effect_size": 0.912,  "p_holm": 6.7e-18, "significant": true },
+
+    { "against": "Plain CNN", "condition": "Tritanopia",   "metric": "psnr",           "improvement": 0.755,  "effect_size": 0.878,  "p_holm": 1.2e-16, "significant": true },
+    { "against": "Plain CNN", "condition": "Tritanopia",   "metric": "ssim",           "improvement": 0.0191, "effect_size": 0.948,  "p_holm": 2.9e-19, "significant": true },
+    { "against": "Plain CNN", "condition": "Tritanopia",   "metric": "ms_ssim",        "improvement": 0.0163, "effect_size": 0.948,  "p_holm": 2.9e-19, "significant": true },
+    { "against": "Plain CNN", "condition": "Tritanopia",   "metric": "mae",            "improvement": 0.0036, "effect_size": 0.678,  "p_holm": 3.3e-10, "significant": true },
+    { "against": "Plain CNN", "condition": "Tritanopia",   "metric": "lpips",          "improvement": 0.0162, "effect_size": 0.962,  "p_holm": 8.1e-20, "significant": true },
+    { "against": "Plain CNN", "condition": "Tritanopia",   "metric": "delta_e00_mean", "improvement": 0.900,  "effect_size": 0.969,  "p_holm": 4.1e-20, "significant": true },
+
+    { "against": "U-Net", "condition": "Protanopia",   "metric": "psnr",           "improvement": 0.432,   "effect_size": 0.841,  "p_holm": 2.5e-15, "significant": true },
+    { "against": "U-Net", "condition": "Protanopia",   "metric": "ssim",           "improvement": 0.0079,  "effect_size": 0.385,  "p_holm": 5.9e-04, "significant": true },
+    { "against": "U-Net", "condition": "Protanopia",   "metric": "ms_ssim",        "improvement": 0.0140,  "effect_size": 0.737,  "p_holm": 6.8e-12, "significant": true },
+    { "against": "U-Net", "condition": "Protanopia",   "metric": "mae",            "improvement": 0.0048,  "effect_size": 0.857,  "p_holm": 7.0e-16, "significant": true },
+    { "against": "U-Net", "condition": "Protanopia",   "metric": "lpips",          "improvement": 0.0147,  "effect_size": 0.667,  "p_holm": 5.9e-10, "significant": true },
+    { "against": "U-Net", "condition": "Protanopia",   "metric": "delta_e00_mean", "improvement": 0.539,   "effect_size": 0.677,  "p_holm": 3.4e-10, "significant": true },
+
+    { "against": "U-Net", "condition": "Deuteranopia", "metric": "psnr",           "improvement": -0.359, "effect_size": -0.631, "p_holm": 5.6e-09, "significant": true },
+    { "against": "U-Net", "condition": "Deuteranopia", "metric": "ssim",           "improvement": -0.0099, "effect_size": -0.750, "p_holm": 2.8e-12, "significant": true },
+    { "against": "U-Net", "condition": "Deuteranopia", "metric": "ms_ssim",        "improvement": -0.0038, "effect_size": -0.570, "p_holm": 1.2e-07, "significant": true },
+    { "against": "U-Net", "condition": "Deuteranopia", "metric": "mae",            "improvement": -0.0014, "effect_size": -0.586, "p_holm": 7.0e-08, "significant": true },
+    { "against": "U-Net", "condition": "Deuteranopia", "metric": "lpips",          "improvement": -0.0022, "effect_size": -0.323, "p_holm": 4.3e-03, "significant": true },
+    { "against": "U-Net", "condition": "Deuteranopia", "metric": "delta_e00_mean", "improvement": -0.298, "effect_size": -0.577, "p_holm": 9.2e-08, "significant": true },
+
+    { "against": "U-Net", "condition": "Tritanopia",   "metric": "psnr",           "improvement": 0.440,   "effect_size": 0.713,  "p_holm": 3.6e-11, "significant": true },
+    { "against": "U-Net", "condition": "Tritanopia",   "metric": "ssim",           "improvement": 0.0060,  "effect_size": 0.433,  "p_holm": 1.0e-04, "significant": true },
+    { "against": "U-Net", "condition": "Tritanopia",   "metric": "ms_ssim",        "improvement": 0.0086,  "effect_size": 0.684,  "p_holm": 2.6e-10, "significant": true },
+    { "against": "U-Net", "condition": "Tritanopia",   "metric": "mae",            "improvement": 0.0021,  "effect_size": 0.278,  "p_holm": 6.2e-03, "significant": true },
+    { "against": "U-Net", "condition": "Tritanopia",   "metric": "lpips",          "improvement": 0.0109,  "effect_size": 0.802,  "p_holm": 5.8e-14, "significant": true },
+    { "against": "U-Net", "condition": "Tritanopia",   "metric": "delta_e00_mean", "improvement": 0.413,   "effect_size": 0.584,  "p_holm": 6.9e-08, "significant": true }
+  ],
+
+  "resource_profile": [
+    { "model": "Plain CNN",                  "params": 337251,  "size_mb": 1.29, "gmacs": 5.50, "gflops": 11.00, "gpu_latency_ms": 5.41, "gpu_fps": 185, "cpu_latency_ms": 72.14, "training_seconds": 1348.5, "peak_gpu_memory_mb": 2074.98 },
+    { "model": "U-Net",                      "params": 1927939, "size_mb": 7.35, "gmacs": 2.62, "gflops": 5.24,  "gpu_latency_ms": 2.88, "gpu_fps": 347, "cpu_latency_ms": 39.57, "training_seconds": 925.2,  "peak_gpu_memory_mb": 868.25 },
+    { "model": "Restormer (main pipeline)",  "params": 462888,  "size_mb": 1.77, "gmacs": 0.78, "gflops": 1.56,  "gpu_latency_ms": 7.29, "gpu_fps": 138, "cpu_latency_ms": 68.52, "training_seconds": 985.1,  "peak_gpu_memory_mb": 977.18 }
+  ]
+}
