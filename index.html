@@ -3032,20 +3032,28 @@ async function loadDashboardData() {
   statusText.textContent = "Loading Results...";
 
   try {
-    const res = await fetch(API_URL);
-    if (!res.ok) throw new Error(`HTTP Error ${res.status}`);
+    let res = null;
+    try {
+      res = await fetch(API_URL);
+    } catch (e) {
+      console.warn("Primary API fetch failed, trying static fallback:", e);
+    }
+    if (!res || !res.ok) {
+      res = await fetch("/results.json");
+    }
+    if (!res || !res.ok) throw new Error(`HTTP Error ${res ? res.status : 'offline'}`);
     const data = await res.json();
     CURRENT_DATA = data;
 
     renderAllCharts(data);
 
     statusEl.className = "status-pill ok";
-    statusText.textContent = "API Connected";
+    statusText.textContent = "Data Connected";
     retryBtn.style.display = "none";
   } catch (err) {
     console.error("Dashboard data load error:", err);
     statusEl.className = "status-pill error";
-    statusText.textContent = "API Offline";
+    statusText.textContent = "Data Offline";
     retryBtn.style.display = "inline-flex";
   }
 }

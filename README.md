@@ -2,6 +2,8 @@
 
 Interactive research dashboard and visualization platform for **Color Vision Deficiency (CVD)** image recolouring and restoration. This tool visualizes comparative performance metrics, ablation studies, and visual reconstructions across **Protanopia**, **Deuteranopia**, and **Tritanopia**.
 
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fridwanoorrahmanrafi%2FCVD-Result-UI)
+
 ---
 
 ## 🚀 Features
