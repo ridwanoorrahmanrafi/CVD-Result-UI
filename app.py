@@ -78,7 +78,14 @@ def serve_sample(filename):
 @app.route("/data/<path:filename>")
 def serve_data(filename):
     data_dir = BASE_DIR / "data"
-    return send_from_directory(data_dir, filename)
+    target = data_dir / filename
+    if target.exists():
+        return send_from_directory(data_dir, filename)
+    preset_dir = BASE_DIR / "samples" / "presets"
+    preset_target = preset_dir / filename
+    if preset_target.exists():
+        return send_from_directory(preset_dir, filename)
+    return jsonify({"error": True, "message": f"File {filename} not found"}), 404
 
 
 @app.route("/logo.png")
