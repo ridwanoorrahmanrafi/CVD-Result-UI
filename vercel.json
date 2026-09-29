@@ -3,7 +3,15 @@
   "cleanUrls": true,
   "rewrites": [
     {
+      "source": "/ishihara",
+      "destination": "/ishihara.html"
+    },
+    {
       "source": "/api/results",
+      "destination": "/results.json"
+    },
+    {
+      "source": "/result.json",
       "destination": "/results.json"
     },
     {
@@ -24,8 +32,25 @@
       "source": "/results.json",
       "headers": [
         { "key": "Access-Control-Allow-Origin", "value": "*" },
+        { "key": "Access-Control-Allow-Methods", "value": "GET, OPTIONS" },
         { "key": "Content-Type", "value": "application/json" }
+      ]
+    },
+    {
+      "source": "/result.json",
+      "headers": [
+        { "key": "Access-Control-Allow-Origin", "value": "*" },
+        { "key": "Access-Control-Allow-Methods", "value": "GET, OPTIONS" },
+        { "key": "Content-Type", "value": "application/json" }
+      ]
+    },
+    {
+      "source": "/(report|audit).txt",
+      "headers": [
+        { "key": "Access-Control-Allow-Origin", "value": "*" },
+        { "key": "Content-Type", "value": "text/plain; charset=utf-8" }
       ]
     }
   ]
 }
+
