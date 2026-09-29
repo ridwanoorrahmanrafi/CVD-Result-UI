@@ -249,6 +249,8 @@
     max-width: 1440px;
     margin: 0 auto;
     padding: 24px 20px 80px;
+    width: 100%;
+    box-sizing: border-box;
   }
 
   /* Banner */
@@ -335,6 +337,9 @@
     margin-bottom: 28px;
     box-shadow: var(--shadow);
     backdrop-filter: blur(12px);
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
   }
   .section-header {
     display: flex;
@@ -426,8 +431,11 @@
   /* Studio / Interactive Section */
   .studio-layout {
     display: grid;
-    grid-template-columns: 340px 1fr;
-    gap: 22px;
+    grid-template-columns: 310px minmax(0, 1fr);
+    gap: 20px;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
   }
   @media (max-width: 1024px) {
     .studio-layout { grid-template-columns: 1fr; }
@@ -437,10 +445,13 @@
     background: rgba(0, 0, 0, 0.15);
     border: 1px solid var(--border);
     border-radius: 12px;
-    padding: 16px;
+    padding: 14px;
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: 14px;
+    min-width: 0;
+    width: 100%;
+    box-sizing: border-box;
   }
   [data-theme="light"] .studio-controls-panel { background: rgba(0, 0, 0, 0.02); }
 
@@ -625,12 +636,22 @@
     box-shadow: var(--shadow);
     display: none;
     animation: fadeIn 0.3s ease;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
   }
   .formula-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 12px;
     margin-top: 12px;
+    width: 100%;
+    box-sizing: border-box;
+  }
+  @media (max-width: 768px) {
+    .formula-grid {
+      grid-template-columns: 1fr;
+    }
   }
   .formula-card {
     background: rgba(11, 15, 25, 0.6);
@@ -639,6 +660,8 @@
     padding: 12px 14px;
     font-family: 'JetBrains Mono', monospace;
     font-size: 0.74rem;
+    min-width: 0;
+    box-sizing: border-box;
   }
   .formula-card-title {
     color: var(--primary);
@@ -657,11 +680,13 @@
     color: #e2e8f0;
     line-height: 1.5;
     word-break: break-word;
+    overflow-wrap: anywhere;
   }
   .formula-desc {
     color: var(--text-dim);
     font-size: 0.68rem;
     line-height: 1.4;
+    word-break: break-word;
   }
   .calib-table-wrap {
     overflow-x: auto;
@@ -806,6 +831,10 @@
     display: flex;
     flex-direction: column;
     gap: 16px;
+    min-width: 0;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
   }
 
   /* View Mode Switcher Header */
@@ -819,6 +848,8 @@
     padding: 10px 14px;
     border-radius: 10px;
     border: 1px solid var(--border);
+    width: 100%;
+    box-sizing: border-box;
   }
   [data-theme="light"] .studio-top-bar { background: #f1f5f9; }
 
@@ -829,6 +860,7 @@
     padding: 4px;
     border-radius: 8px;
     border: 1px solid var(--border);
+    flex-wrap: wrap;
   }
   [data-theme="light"] .view-mode-tabs { background: #e2e8f0; }
   .view-tab {
@@ -841,6 +873,7 @@
     background: transparent;
     color: var(--text-muted);
     transition: all 0.2s;
+    white-space: nowrap;
   }
   .view-tab.active {
     background: var(--bg-card);
@@ -852,6 +885,7 @@
     display: flex;
     align-items: center;
     gap: 8px;
+    flex-wrap: wrap;
   }
   .toggle-btn {
     font-size: 0.76rem;
@@ -2017,8 +2051,8 @@
       padding: 10px 18px;
     }
     .studio-layout {
-      grid-template-columns: 330px 1fr;
-      gap: 18px;
+      grid-template-columns: 300px minmax(0, 1fr);
+      gap: 16px;
     }
     .kpi-grid {
       grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
