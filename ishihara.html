@@ -1,0 +1,539 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>DeepCVD — Clinical Ishihara Colour Vision Test</title>
+<link rel="icon" type="image/png" href="logo.png">
+<style>
+:root{
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+  --bg:#f6f5f1;
+  --fg:#1d1d1b;
+  --mut:#6b6a64;
+  --card:#fff;
+  --line:#dcdad2;
+  --acc:#2450d6;
+  --acc-hover:#1d42b8;
+  --ok:#1a7f4b;
+  --bad:#c23b2a;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#0e121e;
+    --fg:#eeede8;
+    --mut:#9b9a94;
+    --card:#171d2d;
+    --line:#2a3348;
+    --acc:#38bdf8;
+    --acc-hover:#0ea5e9;
+    --ok:#4fc98a;
+    --bad:#ff8a78;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0e121e;
+  --fg:#eeede8;
+  --mut:#9b9a94;
+  --card:#171d2d;
+  --line:#2a3348;
+  --acc:#38bdf8;
+  --acc-hover:#0ea5e9;
+  --ok:#4fc98a;
+  --bad:#ff8a78;
+}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--fg);
+  font:16px/1.55 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  min-height:100vh;
+}
+.top-nav{
+  max-width:560px;
+  margin:0 auto;
+  padding:16px 18px 0;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+}
+.nav-brand{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  text-decoration:none;
+  color:var(--fg);
+  font-weight:700;
+  font-size:0.95rem;
+}
+.nav-brand img{
+  width:28px;
+  height:28px;
+  border-radius:6px;
+  background:#fff;
+  padding:2px;
+}
+.back-link{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  font-size:0.85rem;
+  color:var(--mut);
+  text-decoration:none;
+  padding:6px 12px;
+  border-radius:8px;
+  border:1px solid var(--line);
+  background:var(--card);
+  transition:all .15s;
+}
+.back-link:hover{
+  color:var(--fg);
+  border-color:var(--acc);
+}
+main{max-width:560px;margin:0 auto;padding:16px 18px 40px}
+h1{font-size:1.6rem;margin:.2em 0 .3em;letter-spacing:-.02em}
+p{margin:.5em 0}.mut{color:var(--mut);font-size:.92rem}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px;box-shadow:0 4px 20px -8px rgba(0,0,0,0.08)}
+ul{padding-left:1.2em;margin:.6em 0}
+button{
+  font:inherit;
+  cursor:pointer;
+  border-radius:12px;
+  border:1px solid var(--line);
+  background:var(--card);
+  color:var(--fg);
+  padding:12px 18px;
+  transition:all .15s;
+}
+button:hover{border-color:var(--acc)}
+button.pri{
+  background:var(--acc);
+  border-color:var(--acc);
+  color:#fff;
+  font-weight:600;
+}
+button.pri:hover{background:var(--acc-hover);border-color:var(--acc-hover)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) button.pri{color:#071224}}
+:root[data-theme="dark"] button.pri{color:#071224}
+button.sec{
+  background:rgba(56,189,248,0.12);
+  border-color:rgba(56,189,248,0.3);
+  color:var(--fg);
+  font-weight:600;
+}
+button.sec:hover{background:rgba(56,189,248,0.2)}
+.row{display:flex;gap:10px;margin-top:14px;flex-wrap:wrap}.row>*{flex:1;min-width:130px}
+input{
+  font:inherit;
+  font-size:1.4rem;
+  font-weight:700;
+  letter-spacing:0.08em;
+  text-align:center;
+  width:100%;
+  padding:12px;
+  border-radius:12px;
+  border:1px solid var(--line);
+  background:var(--bg);
+  color:var(--fg);
+  outline:none;
+  transition:border-color .15s;
+}
+input:focus{border-color:var(--acc);box-shadow:0 0 0 3px rgba(56,189,248,0.2)}
+canvas{
+  display:block;
+  width:100%;
+  max-width:420px;
+  aspect-ratio:1;
+  margin:14px auto;
+  border-radius:50%;
+  box-shadow:0 12px 30px -10px rgba(0,0,0,0.25);
+  background:#1a202c;
+}
+.bar{height:6px;background:var(--line);border-radius:9px;overflow:hidden}.bar i{display:block;height:100%;background:var(--acc);width:0;transition:width .25s}
+.hide{display:none}.big{font-size:1.3rem;font-weight:700;margin:.2em 0}
+table{width:100%;border-collapse:collapse;font-size:.9rem;margin-top:10px}
+td,th{padding:8px 6px;border-bottom:1px solid var(--line);text-align:left}
+.ok{color:var(--ok);font-weight:600}.bad{color:var(--bad);font-weight:600}
+.badge{
+  display:inline-block;
+  padding:3px 9px;
+  font-size:0.75rem;
+  font-weight:600;
+  border-radius:6px;
+  background:rgba(56,189,248,0.15);
+  color:var(--acc);
+}
+.quick-eval{
+  margin-top:16px;
+  padding-top:14px;
+  border-top:1px dashed var(--line);
+  display:flex;
+  align-items:center;
+  gap:8px;
+  font-size:0.8rem;
+  color:var(--mut);
+}
+.quick-eval button{
+  padding:4px 10px;
+  font-size:0.75rem;
+  border-radius:6px;
+}
+.studio-banner{
+  background:linear-gradient(135deg, rgba(56,189,248,0.12), rgba(16,185,129,0.12));
+  border:1px solid rgba(56,189,248,0.25);
+  border-radius:14px;
+  padding:16px;
+  margin-top:16px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+}
+</style>
+</head>
+<body>
+
+<header class="top-nav">
+  <a href="/" class="nav-brand">
+    <img src="logo.png" alt="DeepCVD" />
+    <span>DeepCVD Diagnostic Suite</span>
+  </a>
+  <a href="/" class="back-link">← Back to Studio</a>
+</header>
+
+<main>
+<section id="intro">
+  <div style="display:flex; align-items:center; gap:8px; margin-top:8px;">
+    <span class="badge">PHYSICALLY ACCURATE LMS SIMULATION</span>
+  </div>
+  <h1>Ishihara Colour Vision Test</h1>
+  <p class="mut">Read the number hidden in each circle of dots. 8 plates, about 2 minutes.</p>
+  
+  <div class="card">
+    <b>Before you start</b>
+    <ul>
+      <li>Set screen brightness to high (~80%) and turn off Night Shift / f.lux / blue-light / tint filters.</li>
+      <li>Sit in normal room light, at comfortable arm's length, without tinted glasses.</li>
+      <li>Type exactly what you see. Some plates hold two digits, and you might see only one. If you see nothing, press "I can't see a number".</li>
+    </ul>
+    <div class="row">
+      <button class="pri" id="start">Start Test →</button>
+    </div>
+  </div>
+
+  <div class="quick-eval">
+    <span>Quick demo test:</span>
+    <button onclick="runSimulatedTest('normal')">Simulate Normal</button>
+    <button onclick="runSimulatedTest('protan')">Simulate Protan</button>
+    <button onclick="runSimulatedTest('deutan')">Simulate Deutan</button>
+  </div>
+
+  <p class="mut" style="margin-top:16px; font-size:0.85rem; line-height:1.5;">
+    Uses the classic Ishihara palette style: orange, red, and pink dots on green and olive grounds generated through the Hunt-Pointer-Estevez LMS cone transformation matrix.
+  </p>
+</section>
+
+<section id="test" class="hide">
+  <div class="bar"><i id="prog"></i></div>
+  <p class="mut" id="count" style="text-align:center;margin-top:8px;font-weight:600;font-size:0.88rem;"></p>
+  <canvas id="cv"></canvas>
+  <input id="ans" type="text" inputmode="numeric" maxlength="4" placeholder="Number" autocomplete="off">
+  <div class="row">
+    <button id="none">I can't see a number</button>
+    <button class="pri" id="next">Next →</button>
+  </div>
+</section>
+
+<section id="result" class="hide">
+  <div style="display:flex; align-items:center; gap:8px; margin-top:8px;">
+    <span class="badge" id="reportBadge">CLINICAL SCREENING REPORT</span>
+  </div>
+  <h1>Your Diagnostic Result</h1>
+  
+  <div class="card">
+    <div class="big" id="verdict"></div>
+    <p id="detail" style="line-height:1.6;"></p>
+    
+    <div class="studio-banner" id="studioActionBanner">
+      <div>
+        <strong id="bannerCvdName">Recommended Profile</strong>
+        <div style="font-size:0.85rem; color:var(--mut);" id="bannerCvdDesc">Automatically calibrate DeepCVD Restormer Studio for this condition.</div>
+      </div>
+      <button class="pri" id="btnApplyStudio" onclick="applyDiagnosisToStudio()">Apply to Studio →</button>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:16px">
+    <b>Plate Breakdown</b>
+    <table id="tbl"></table>
+  </div>
+
+  <div class="row" style="margin-top:16px;">
+    <button class="sec" id="again">↺ Retake Test</button>
+    <button class="pri" onclick="applyDiagnosisToStudio()">🎨 Open in DeepCVD Studio →</button>
+  </div>
+  
+  <p class="mut" style="margin-top:16px; font-size:0.85rem; line-height:1.5;">
+    Screening only, not a medical diagnosis. Like the real Ishihara test, it evaluates red-green cone sensitivities (L-cone vs M-cone) and cannot detect blue-yellow deficiency. For clinical diagnosis consult an optometrist (anomaloscope or Farnsworth D-15).
+  </p>
+</section>
+</main>
+
+<script>
+const $=s=>document.querySelector(s);
+const A=[[.4124,.3576,.1805],[.2126,.7152,.0722],[.0193,.1192,.9505]];
+const B=[[.4002,.7076,-.0808],[-.2263,1.1653,.0457],[0,0,.9182]];
+const mm=(X,Y)=>X.map(r=>[0,1,2].map(j=>r[0]*Y[0][j]+r[1]*Y[1][j]+r[2]*Y[2][j]));
+const mv=(M,v)=>M.map(r=>r[0]*v[0]+r[1]*v[1]+r[2]*v[2]);
+function inv(m){
+  const[[a,b,c],[d,e,f],[g,h,i]]=m,D=a*(e*i-f*h)-b*(d*i-f*g)+c*(d*h-e*g);
+  return[[e*i-f*h,c*h-b*i,b*f-c*e],[f*g-d*i,a*i-c*g,c*d-a*f],[d*h-e*g,b*g-a*h,a*e-b*d]].map(r=>r.map(v=>v/D));
+}
+const RGB2LMS=mm(B,A),LMS2RGB=inv(RGB2LMS);
+const gam=v=>{v=Math.min(1,Math.max(0,v));return v<=.0031308?12.92*v:1.055*Math.pow(v,1/2.4)-.055};
+const lin=v=>v<=.04045?v/12.92:Math.pow((v+.055)/1.055,2.4);
+const hex=h=>[1,3,5].map(i=>parseInt(h.substr(i,2),16));
+const pick=a=>a[Math.random()*a.length|0];
+const css=v=>'rgb('+v.map(x=>Math.round(Math.min(255,Math.max(0,x)))).join(',')+')';
+const light=(h,k)=>css(hex(h).map(v=>v*k));
+
+// Shift a colour along one cone axis (0=L red, 1=M green) with overall lightness k
+function shift(h,ch,m,k){
+  const l=mv(RGB2LMS,hex(h).map(v=>lin(v/255)));
+  l[ch]*=m;
+  return css(mv(LMS2RGB,l.map(v=>v*k)).map(v=>255*gam(v)));
+}
+
+// Classic Ishihara-style palettes
+const P={
+ ctl:{fig:['#C9622A','#D8742F','#B85424'],gnd:['#DCE0A6','#CFD595','#E4E6B8']},
+ s1:{fig:['#E9853B','#F2A258','#D8672F','#EDB27A'],gnd:['#9DB05A','#B8C56C','#7D9A4E','#C5CC8A','#8BAA63']},
+ s2:{fig:['#D9605A','#E58A85','#C94A48','#EBA39B'],gnd:['#8FA08A','#A7B39B','#7C8F7A','#B9C2A9','#98A98F']},
+ s3:{fig:['#8FB05A','#A9C170','#7C9C50','#B6C880'],gnd:['#E6A45A','#D98B45','#EDBB78','#DD9A50','#E9AE6A']}
+};
+const GK=['#9a9f7a','#8c9270','#aab08a','#7f866a','#b8bc9a'];
+const NUMS=['12','15','16','17','21','23','29','35','36','37','42','45','52','56','57','58','62','63','73','74','75','76','78','79','84','85','86','89','91','92','95','96','97'];
+
+function draw(cv,s,num){
+  const N=500;
+  cv.width=cv.height=N;
+  const ctx=cv.getContext('2d');
+  const m=document.createElement('canvas');
+  m.width=m.height=N;
+  const mc=m.getContext('2d');
+  const cls=s.t==='k';
+  mc.textAlign='center';
+  mc.textBaseline='middle';
+  if(cls){
+    mc.font='900 300px Arial, Helvetica, sans-serif';
+    mc.fillStyle='#f00';
+    mc.fillText(num[0],N/2-88,N/2+16);
+    mc.fillStyle='#0f0';
+    mc.fillText(num[1],N/2+88,N/2+16);
+  } else {
+    mc.font='900 320px Arial, Helvetica, sans-serif';
+    mc.fillText(num,N/2,N/2+16);
+  }
+  const md=mc.getImageData(0,0,N,N).data;
+  const at=(x,y)=>{
+    const o=((y|0)*N+(x|0))*4;
+    return[md[o],md[o+1],md[o+3]];
+  };
+  const cs=[];
+  const R=246;
+  [[13,1200],[10,2500],[7.5,4000],[5.5,5500],[4,7000]].forEach(([r,tries])=>{
+    for(let t=0;t<tries;t++){
+      const rho=Math.sqrt(Math.random())*(R-r-2),th=Math.random()*6.283,x=N/2+rho*Math.cos(th),y=N/2+rho*Math.sin(th);
+      let ok=true;
+      for(const c of cs){
+        const dx=x-c[0],dy=y-c[1],rr=r+c[2]+1.5;
+        if(dx*dx+dy*dy<rr*rr){ok=false;break;}
+      }
+      if(ok)cs.push([x,y,r]);
+    }
+  });
+  for(const[x,y,r]of cs){
+    const[pr,pg,pa]=at(x,y),on=pa>128,k=.86+Math.random()*.28;
+    let c;
+    if(cls){
+      const base=pick(GK);
+      if(on){
+        const left=pr>pg,ch=left?s.leftCh:1-s.leftCh;
+        c=shift(base,ch,s.mult+(Math.random()-.5)*.08,k);
+      } else {
+        c=shift(base,0,1+(Math.random()-.5)*.08,k);
+      }
+    } else {
+      const p=P[s.p];
+      c=light(pick(on?p.fig:p.gnd),k);
+    }
+    ctx.fillStyle=c;
+    ctx.beginPath();
+    ctx.arc(x,y,r,0,6.283);
+    ctx.fill();
+  }
+}
+
+let plates=[],idx=0;
+let diagnosedCvdType = 'normal';
+
+const shuf=a=>{
+  for(let i=a.length-1;i>0;i--){
+    const j=Math.random()*(i+1)|0;
+    [a[i],a[j]]=[a[j],a[i]];
+  }
+  return a;
+};
+
+function begin(){
+  const nums=shuf(NUMS.slice()),ds=shuf([2,3,4,5,6,7,8,9]);
+  const mk=(o,i)=>({...o,num:nums[i],ans:null});
+  const S=shuf([{t:'s',p:'s1'},{t:'s',p:'s2'},{t:'s',p:'s3'}]).map(mk);
+  const K=shuf([{mult:1.55},{mult:1.55},{mult:1.3},{mult:1.3}]).map((o,i)=>{
+    const a=ds[i*2],b=ds[i*2+1],leftCh=Math.random()<.5?0:1;
+    // Ld = digit shifted on L axis (protans can't see it), Md = digit shifted on M axis (deutans can't see it)
+    return{t:'k',mult:o.mult,leftCh,num:''+a+b,Ld:leftCh===0?a:b,Md:leftCh===0?b:a,ans:null};
+  });
+  plates=[mk({t:'c',p:'ctl'},0),...shuf([...S,...K])];
+  idx=0;
+  show('test');
+  load();
+}
+
+function show(id){
+  ['intro','test','result'].forEach(x=>$('#'+x).classList.toggle('hide',x!==id));
+  window.scrollTo(0,0);
+}
+
+function load(){
+  $('#count').textContent='Plate '+(idx+1)+' of '+plates.length;
+  $('#prog').style.width=(idx/plates.length*100)+'%';
+  $('#ans').value='';
+  draw($('#cv'),plates[idx],plates[idx].num);
+  $('#ans').focus({preventScroll:true});
+}
+
+function submit(v){
+  plates[idx].ans=v;
+  idx++;
+  if(idx>=plates.length){
+    $('#prog').style.width='100%';
+    finish();
+  } else {
+    load();
+  }
+}
+
+$('#start').onclick=begin;
+$('#again').onclick=begin;
+$('#none').onclick=()=>submit(null);
+$('#next').onclick=()=>{
+  const v=$('#ans').value.trim();
+  submit(v||null);
+};
+$('#ans').addEventListener('keydown',e=>{
+  if(e.key==='Enter')$('#next').click();
+});
+
+function read(p){
+  if(p.t!=='k')return p.ans===p.num?'ok':'miss';
+  if(p.ans===null)return 'none';
+  if(p.ans===p.num)return 'both';
+  if(p.ans==p.Ld)return 'deut';
+  if(p.ans==p.Md)return 'prot';
+  return 'other';
+}
+
+function finish(){
+  const r=plates.map(read),ctlOK=r[0]==='ok';
+  const sMiss=plates.filter((p,i)=>p.t==='s'&&r[i]==='miss').length;
+  const K=plates.map((p,i)=>p.t==='k'?r[i]:null).filter(Boolean);
+  const cnt=x=>K.filter(v=>v===x).length,both=cnt('both'),pr=cnt('prot'),de=cnt('deut');
+  const issues=sMiss+(4-both);
+  let v,d;
+  
+  if(!ctlOK){
+    v='Inconclusive Assessment';
+    d='You missed the demonstration plate, which everyone should read. Check brightness, turn off colour filters, and retake.';
+    diagnosedCvdType = 'normal';
+  } else if(sMiss===0&&both>=3){
+    v='Normal Colour Vision (Red-Green Trichromacy)';
+    d='You read the screening plates and nearly all two-digit classification plates correctly. Your cone photopigments demonstrate full discriminative capability.';
+    diagnosedCvdType = 'normal';
+  } else if(issues<=1){
+    v='Mostly Normal, with One Slip';
+    d='One miss is not enough for a definite pattern. Retake once to confirm, or check if screen glare was a factor.';
+    diagnosedCvdType = 'normal';
+  } else {
+    const sev=(sMiss===3&&both===0)?'strong (closer to dichromacy)':'mild to moderate (anomalous trichromacy)';
+    if(pr>de){
+      v='Protan-Type Red-Green Deficiency (Protanopia / Protanomaly)';
+      d='On two-digit plates you saw only the digit visible without L-cone sensitivity, and struggled with orange/red on green plates. Estimated severity: '+sev+'. Recommended: DeepCVD Restormer Protanopia model.';
+      diagnosedCvdType = 'protanopia';
+    } else if(de>pr){
+      v='Deutan-Type Red-Green Deficiency (Deuteranopia / Deuteranomaly)';
+      d='On two-digit plates you saw only the digit visible without M-cone sensitivity, and struggled with green on red/orange plates. Estimated severity: '+sev+'. Recommended: DeepCVD Restormer Deuteranopia model.';
+      diagnosedCvdType = 'deuteranopia';
+    } else {
+      v='Red-Green Deficiency, Type Unclear';
+      d='You missed several plates across both axes. Estimated severity: '+sev+'. A clinical anomaloscope test is recommended for precise separation.';
+      diagnosedCvdType = 'deuteranopia';
+    }
+  }
+  
+  $('#verdict').textContent=v;
+  $('#detail').textContent=d;
+  
+  // Update banner
+  if(diagnosedCvdType === 'protanopia'){
+    $('#bannerCvdName').textContent = 'Profile: Protanopia (Red Deficiency)';
+    $('#bannerCvdDesc').textContent = 'Calibrate DeepCVD Restormer (+RDB) to restore L-cone lost luminance and boundary contrast.';
+  } else if(diagnosedCvdType === 'deuteranopia'){
+    $('#bannerCvdName').textContent = 'Profile: Deuteranopia (Green Deficiency)';
+    $('#bannerCvdDesc').textContent = 'Calibrate DeepCVD Restormer (+RDB) to restore M-cone green-red chromatic distinctions.';
+  } else {
+    $('#bannerCvdName').textContent = 'Profile: Normal Trichromatic Vision';
+    $('#bannerCvdDesc').textContent = 'You can still explore all models and simulate how CVD observers perceive imagery in DeepCVD Studio.';
+  }
+
+  const lab={ok:'✓ Correct',miss:'✗ Missed',both:'Both digits ✓',none:'Nothing seen ✗',prot:'One digit only (Protan reading)',deut:'One digit only (Deutan reading)',other:'✗ Other'};
+  const nm={c:'Demonstration',s:'Screening',k:'Classification'};
+  $('#tbl').innerHTML='<thead><tr><th>#</th><th>Type</th><th>Shown</th><th>Your Answer</th></tr></thead><tbody>'+plates.map((p,i)=>
+    '<tr><td>'+(i+1)+'</td><td>'+nm[p.t]+'</td><td>'+p.num+'</td><td class="'+(['ok','both'].includes(r[i])?'ok':'bad')+'">'+(p.ans||'-')+' · '+lab[r[i]]+'</td></tr>').join('')+'</tbody>';
+  
+  show('result');
+}
+
+function applyDiagnosisToStudio(){
+  const targetType = diagnosedCvdType;
+  localStorage.setItem('deepcvd_diagnosed_cvd', targetType);
+  window.location.href = `/?diagnosed=${encodeURIComponent(targetType)}#studio`;
+}
+
+function runSimulatedTest(type){
+  begin();
+  if(type === 'normal'){
+    plates.forEach(p => { p.ans = p.num; });
+  } else if(type === 'protan'){
+    plates.forEach(p => {
+      if(p.t === 'c') p.ans = p.num;
+      else if(p.t === 's') p.ans = null;
+      else if(p.t === 'k') p.ans = p.Md; // Protan sees Md
+    });
+  } else if(type === 'deutan'){
+    plates.forEach(p => {
+      if(p.t === 'c') p.ans = p.num;
+      else if(p.t === 's') p.ans = null;
+      else if(p.t === 'k') p.ans = p.Ld; // Deutan sees Ld
+    });
+  }
+  idx = plates.length;
+  finish();
+}
+</script>
+</body>
+</html>

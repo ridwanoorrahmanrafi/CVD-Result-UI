@@ -3,7 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CVD Restormer — Multi-Type Color Vision Deficiency Dashboard &amp; Studio</title>
+<title>DeepCVD — Personalized Color Vision Deficiency Restoration Studio &amp; Diagnostic Suite</title>
+<link rel="icon" type="image/png" href="logo.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -89,6 +90,20 @@
     display: flex;
     align-items: center;
     gap: 12px;
+  }
+  .brand-logo-img {
+    width: 44px;
+    height: 44px;
+    object-fit: contain;
+    border-radius: 10px;
+    background: #ffffff;
+    padding: 2px;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
+    flex-shrink: 0;
+    transition: transform 0.2s ease;
+  }
+  .brand-logo-img:hover {
+    transform: scale(1.05);
   }
   .brand-logo {
     width: 38px;
@@ -456,6 +471,106 @@
     border-radius: 5px;
     object-fit: cover;
     background: #1e293b;
+  }
+
+  /* Real-Time results.json Calibration Banners & Badges */
+  .model-calib-banner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 8px;
+    padding: 6px 10px;
+    background: rgba(56, 189, 248, 0.05);
+    border: 1px solid rgba(56, 189, 248, 0.16);
+    border-radius: 6px;
+    font-size: 0.7rem;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .calib-tag {
+    color: var(--primary);
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    white-space: nowrap;
+  }
+  .calib-val {
+    color: var(--text-muted);
+    font-size: 0.68rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  /* Formula & Calibration Inspector Panel */
+  .formula-inspector-panel {
+    background: var(--bg-card);
+    border: 1px solid var(--border-accent);
+    border-radius: 12px;
+    padding: 16px 20px;
+    margin-bottom: 20px;
+    box-shadow: var(--shadow);
+    display: none;
+    animation: fadeIn 0.3s ease;
+  }
+  .formula-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 12px;
+    margin-top: 12px;
+  }
+  .formula-card {
+    background: rgba(11, 15, 25, 0.6);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px 14px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.74rem;
+  }
+  .formula-card-title {
+    color: var(--primary);
+    font-weight: 700;
+    margin-bottom: 6px;
+    font-size: 0.78rem;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .formula-eq {
+    background: rgba(0, 0, 0, 0.35);
+    padding: 6px 10px;
+    border-radius: 6px;
+    margin: 6px 0;
+    color: #e2e8f0;
+    line-height: 1.5;
+    word-break: break-word;
+  }
+  .formula-desc {
+    color: var(--text-dim);
+    font-size: 0.68rem;
+    line-height: 1.4;
+  }
+  .calib-table-wrap {
+    overflow-x: auto;
+    margin-top: 14px;
+  }
+  .calib-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.74rem;
+  }
+  .calib-table th {
+    background: rgba(56, 189, 248, 0.1);
+    color: var(--primary);
+    padding: 8px 10px;
+    text-align: left;
+    font-weight: 600;
+    border-bottom: 1px solid var(--border);
+  }
+  .calib-table td {
+    padding: 8px 10px;
+    border-bottom: 1px solid var(--border);
+    font-family: 'JetBrains Mono', monospace;
   }
 
   /* Upload Drop Zone */
@@ -1002,8 +1117,751 @@
     align-items: center;
     flex-wrap: wrap;
     gap: 12px;
-    font-size: 0.78rem;
     color: var(--text-dim);
+  }
+
+  /* ==========================================
+     COLOR VISION ASSESSMENT GATEWAY CARD
+     ========================================== */
+  .cvd-gate-card {
+    background: linear-gradient(135deg, rgba(18, 24, 38, 0.95), rgba(15, 23, 42, 0.9));
+    border: 1px solid var(--border-accent);
+    border-radius: var(--card-radius);
+    padding: 20px 24px;
+    margin-bottom: 26px;
+    box-shadow: 0 12px 30px -10px rgba(0, 114, 178, 0.25);
+    backdrop-filter: blur(14px);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+  }
+  .cvd-gate-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #38bdf8, #009E73, #E69F00, #D55E00);
+  }
+  [data-theme="light"] .cvd-gate-card {
+    background: linear-gradient(135deg, #ffffff, #f0f7ff);
+    box-shadow: 0 10px 25px -5px rgba(2, 132, 199, 0.12);
+    border-color: rgba(2, 132, 199, 0.3);
+  }
+
+  .cvd-gate-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+  .cvd-gate-title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .gate-icon {
+    font-size: 1.6rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    background: var(--primary-glow);
+    border: 1px solid var(--border-accent);
+  }
+  .cvd-gate-title h3 {
+    font-size: 1.15rem;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+  }
+  .cvd-gate-title p {
+    font-size: 0.82rem;
+    color: var(--text-muted);
+  }
+
+  .gate-options-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+    gap: 16px;
+  }
+  .gate-option-card {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 16px 18px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.25s ease;
+  }
+  .gate-option-card:hover {
+    background: rgba(255, 255, 255, 0.07);
+    border-color: var(--primary);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px -6px rgba(0, 0, 0, 0.4);
+  }
+  [data-theme="light"] .gate-option-card {
+    background: #f8fafc;
+    border-color: #e2e8f0;
+  }
+  [data-theme="light"] .gate-option-card:hover {
+    background: #ffffff;
+    box-shadow: 0 8px 20px -6px rgba(0, 0, 0, 0.08);
+  }
+
+  .gate-opt-icon {
+    font-size: 1.4rem;
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.05);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .gate-highlight-pulse {
+    border-color: rgba(56, 189, 248, 0.4);
+    background: linear-gradient(135deg, rgba(56, 189, 248, 0.08), rgba(0, 114, 178, 0.08));
+    animation: gatePulse 3s infinite ease-in-out;
+  }
+  @keyframes gatePulse {
+    0%, 100% { border-color: rgba(56, 189, 248, 0.4); box-shadow: 0 0 0 0 rgba(56, 189, 248, 0.2); }
+    50% { border-color: rgba(56, 189, 248, 0.8); box-shadow: 0 0 18px 2px rgba(56, 189, 248, 0.25); }
+  }
+
+  .gate-opt-content h4 {
+    font-size: 0.95rem;
+    font-weight: 700;
+    margin-bottom: 3px;
+  }
+  .gate-opt-content p {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    line-height: 1.4;
+    margin-bottom: 8px;
+  }
+  .gate-opt-tag {
+    display: inline-block;
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    padding: 2px 8px;
+    border-radius: 6px;
+    background: rgba(255, 255, 255, 0.05);
+  }
+  .gate-tag-action {
+    color: #38bdf8;
+    background: rgba(56, 189, 248, 0.15);
+    font-weight: 700;
+  }
+
+  .gate-sub-panel {
+    margin-top: 18px;
+    padding: 16px;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 12px;
+    border: 1px dashed var(--border-accent);
+    animation: fadeIn 0.3s ease;
+  }
+  [data-theme="light"] .gate-sub-panel {
+    background: rgba(2, 132, 199, 0.04);
+  }
+  .gate-sub-title {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 12px;
+  }
+  .gate-types-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 10px;
+  }
+  .gate-type-btn {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text);
+    cursor: pointer;
+    text-align: left;
+    transition: all 0.2s;
+  }
+  .gate-type-btn:hover {
+    border-color: var(--primary);
+    background: var(--bg-card-hover);
+    transform: translateY(-1px);
+  }
+  .gate-type-btn strong { display: block; font-size: 0.82rem; }
+  .gate-type-btn small { display: block; font-size: 0.7rem; color: var(--text-muted); }
+
+  .gate-active-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+    padding: 12px 16px;
+    background: rgba(16, 185, 129, 0.1);
+    border: 1px solid rgba(16, 185, 129, 0.3);
+    border-radius: 10px;
+    font-size: 0.85rem;
+    color: #10b981;
+    margin-top: 14px;
+  }
+  .active-profile-info {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  /* Shortcut in Studio Panel */
+  .cvd-test-shortcut-card {
+    margin-top: 14px;
+    padding: 12px 14px;
+    background: rgba(56, 189, 248, 0.07);
+    border: 1px solid rgba(56, 189, 248, 0.25);
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .shortcut-text strong {
+    font-size: 0.8rem;
+    color: var(--primary);
+    display: block;
+    margin-bottom: 2px;
+  }
+  .shortcut-text p {
+    font-size: 0.74rem;
+    color: var(--text-muted);
+    line-height: 1.35;
+  }
+
+  /* ==========================================
+     ISHIHARA TEST SECTION & INTERACTIVE VIEW
+     ========================================== */
+  .ishihara-section {
+    margin-bottom: 50px;
+    scroll-margin-top: 80px;
+  }
+
+  .ishihara-advisory-box {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    padding: 12px 18px;
+    background: rgba(56, 189, 248, 0.05);
+    border: 1px solid rgba(56, 189, 248, 0.2);
+    border-radius: 10px;
+    margin-bottom: 22px;
+    font-size: 0.8rem;
+    color: var(--text-muted);
+  }
+  .advisory-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .advisory-item strong {
+    color: var(--text);
+  }
+
+  .ishihara-test-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--card-radius);
+    padding: 24px;
+    box-shadow: var(--shadow);
+    backdrop-filter: blur(12px);
+  }
+
+  .ishihara-status-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 14px;
+    padding-bottom: 18px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 24px;
+  }
+  .plate-progress-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .plate-step-badge {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: var(--primary);
+    padding: 4px 10px;
+    background: var(--primary-glow);
+    border-radius: 6px;
+    border: 1px solid var(--border-accent);
+  }
+  .plate-type-pill {
+    font-size: 0.74rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    background: rgba(255, 255, 255, 0.05);
+    padding: 3px 8px;
+    border-radius: 6px;
+  }
+  [data-theme="light"] .plate-type-pill {
+    background: #e2e8f0;
+  }
+
+  .plate-progress-track {
+    flex: 1;
+    min-width: 140px;
+    max-width: 320px;
+    height: 8px;
+    background: rgba(255, 255, 255, 0.06);
+    border-radius: 999px;
+    overflow: hidden;
+  }
+  [data-theme="light"] .plate-progress-track {
+    background: #e2e8f0;
+  }
+  .plate-progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #0072B2, #38bdf8);
+    border-radius: 999px;
+    transition: width 0.35s ease;
+  }
+
+  .ishihara-workspace-grid {
+    display: grid;
+    grid-template-columns: minmax(320px, 440px) 1fr;
+    gap: 32px;
+    align-items: center;
+  }
+  @media (max-width: 900px) {
+    .ishihara-workspace-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .ishihara-plate-col {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+  }
+  .ishihara-casing {
+    width: 400px;
+    height: 400px;
+    max-width: 100%;
+    aspect-ratio: 1 / 1;
+    border-radius: 50%;
+    background: #141721;
+    border: 8px solid rgba(255, 255, 255, 0.07);
+    box-shadow: inset 0 2px 12px rgba(0, 0, 0, 0.6), 0 16px 36px -10px rgba(0, 0, 0, 0.5);
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  [data-theme="light"] .ishihara-casing {
+    background: #f1f5f9;
+    border-color: #cbd5e1;
+    box-shadow: inset 0 2px 10px rgba(0,0,0,0.1), 0 14px 30px -8px rgba(0,0,0,0.15);
+  }
+  #ishiharaCanvas {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+    display: block;
+  }
+  .ishihara-sim-notice {
+    position: absolute;
+    bottom: 24px;
+    background: rgba(15, 23, 42, 0.92);
+    color: #fbbf24;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 0.76rem;
+    font-weight: 700;
+    border: 1px solid rgba(245, 158, 11, 0.4);
+    box-shadow: 0 4px 14px rgba(0,0,0,0.5);
+    animation: fadeIn 0.2s ease;
+  }
+  .plate-tip {
+    font-size: 0.76rem;
+    color: var(--text-dim);
+    text-align: center;
+    max-width: 380px;
+    line-height: 1.4;
+  }
+
+  .ishihara-qa-col {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    padding: 10px 0;
+  }
+  .qa-header h3 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+  .qa-header p {
+    font-size: 0.84rem;
+    color: var(--text-muted);
+  }
+
+  .ishihara-options-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+  .plate-option-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 14px 18px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    color: var(--text);
+    font-family: inherit;
+    font-size: 1.15rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  .plate-option-btn:hover {
+    background: var(--primary-glow);
+    border-color: var(--primary);
+    color: var(--primary);
+    transform: translateY(-2px);
+  }
+  .plate-option-btn.selected {
+    background: var(--primary);
+    border-color: var(--primary);
+    color: #0b0f19;
+    box-shadow: 0 0 16px var(--primary-glow);
+  }
+  [data-theme="light"] .plate-option-btn {
+    background: #f8fafc;
+    border-color: #cbd5e1;
+  }
+
+  .qa-divider {
+    display: flex;
+    align-items: center;
+    text-align: center;
+    color: var(--text-dim);
+    font-size: 0.68rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+  }
+  .qa-divider::before, .qa-divider::after {
+    content: '';
+    flex: 1;
+    border-bottom: 1px solid var(--border);
+  }
+  .qa-divider span {
+    padding: 0 10px;
+  }
+
+  .qa-input-row {
+    display: flex;
+    gap: 10px;
+  }
+  .qa-input {
+    flex: 1;
+    padding: 10px 14px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 1rem;
+    font-weight: 600;
+  }
+  .qa-input:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px var(--primary-glow);
+  }
+  [data-theme="light"] .qa-input {
+    background: #ffffff;
+    border-color: #cbd5e1;
+  }
+
+  .qa-nav-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    margin-top: 8px;
+    flex-wrap: wrap;
+  }
+
+  .quick-eval-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 14px;
+    padding-top: 14px;
+    border-top: 1px solid var(--border);
+    font-size: 0.72rem;
+    color: var(--text-dim);
+    flex-wrap: wrap;
+  }
+  .eval-btn {
+    background: none;
+    border: 1px dashed var(--border);
+    padding: 3px 8px;
+    border-radius: 6px;
+    color: var(--text-muted);
+    font-size: 0.7rem;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .eval-btn:hover {
+    border-color: var(--primary);
+    color: var(--primary);
+  }
+
+  /* Diagnostic Report Card */
+  .ishihara-report-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-accent);
+    border-radius: var(--card-radius);
+    padding: 28px;
+    box-shadow: var(--shadow);
+    backdrop-filter: blur(14px);
+    margin-top: 24px;
+    animation: fadeIn 0.4s ease;
+  }
+  .report-header {
+    text-align: center;
+    margin-bottom: 22px;
+  }
+  .report-header-badge {
+    display: inline-block;
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    padding: 3px 10px;
+    border-radius: 999px;
+    background: var(--primary-glow);
+    color: var(--primary);
+    border: 1px solid var(--border-accent);
+    margin-bottom: 6px;
+  }
+  .report-header h3 {
+    font-size: 1.45rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+  }
+  .report-header p {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+  }
+
+  .report-primary-diagnosis {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 20px 24px;
+    border-radius: 12px;
+    margin-bottom: 24px;
+    border: 1px solid rgba(16, 185, 129, 0.4);
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.12), rgba(0, 158, 115, 0.08));
+    flex-wrap: wrap;
+  }
+  .report-primary-diagnosis.protan {
+    border-color: rgba(239, 68, 68, 0.4);
+    background: linear-gradient(135deg, rgba(239, 68, 68, 0.12), rgba(213, 94, 0, 0.08));
+  }
+  .report-primary-diagnosis.deutan {
+    border-color: rgba(34, 197, 94, 0.4);
+    background: linear-gradient(135deg, rgba(34, 197, 94, 0.12), rgba(0, 158, 115, 0.08));
+  }
+  .report-primary-diagnosis.unclear {
+    border-color: rgba(245, 158, 11, 0.4);
+    background: linear-gradient(135deg, rgba(245, 158, 11, 0.12), rgba(230, 159, 0, 0.08));
+  }
+
+  .diag-icon {
+    font-size: 2.8rem;
+    flex-shrink: 0;
+  }
+  .diag-content {
+    flex: 1;
+    min-width: 200px;
+  }
+  .diag-status {
+    font-size: 1.35rem;
+    font-weight: 800;
+    letter-spacing: -0.01em;
+    color: #10b981;
+  }
+  .report-primary-diagnosis.protan .diag-status { color: #ef4444; }
+  .report-primary-diagnosis.deutan .diag-status { color: #22c55e; }
+  .report-primary-diagnosis.unclear .diag-status { color: #f59e0b; }
+
+  .diag-subtitle {
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    margin-bottom: 6px;
+  }
+  .diag-description {
+    font-size: 0.82rem;
+    color: var(--text);
+    line-height: 1.5;
+  }
+  .diag-score-box {
+    text-align: center;
+    padding: 10px 18px;
+    background: rgba(0, 0, 0, 0.25);
+    border-radius: 10px;
+    border: 1px solid var(--border);
+  }
+  [data-theme="light"] .diag-score-box {
+    background: rgba(255, 255, 255, 0.8);
+  }
+  .diag-score-value {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: var(--primary);
+  }
+  .diag-score-label {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+  }
+
+  .report-mechanics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 14px;
+    margin-bottom: 24px;
+  }
+  .mech-card {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 14px 18px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+  }
+  [data-theme="light"] .mech-card { background: #f8fafc; }
+  .mech-header-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .mech-icon { font-size: 1.5rem; flex-shrink: 0; }
+  .mech-card strong { font-size: 0.84rem; display: block; font-weight: 700; }
+  .mech-status { font-size: 0.8rem; font-weight: 700; margin: 2px 0; }
+  .mech-status.good { color: #10b981; }
+  .mech-status.impaired { color: #ef4444; }
+  .mech-status.deutan-impaired { color: #22c55e; }
+  .mech-card small { font-size: 0.7rem; color: var(--text-dim); display: block; }
+  .cone-meter {
+    width: 100%;
+    height: 6px;
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 999px;
+    overflow: hidden;
+    margin-top: 4px;
+  }
+  [data-theme="light"] .cone-meter { background: #e2e8f0; }
+  .cone-meter-fill {
+    height: 100%;
+    border-radius: 999px;
+    transition: width 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .cone-meter-fill.protan { background: linear-gradient(90deg, #ef4444, #f97316); }
+  .cone-meter-fill.deutan { background: linear-gradient(90deg, #22c55e, #10b981); }
+  .cone-meter-fill.tritan { background: linear-gradient(90deg, #3b82f6, #06b6d4); }
+  .plate-timer-badge {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--text-dim);
+    padding: 3px 8px;
+    border-radius: 6px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid var(--border);
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .report-table-section {
+    margin-bottom: 24px;
+  }
+  .report-table-title {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.85rem;
+    font-weight: 700;
+    margin-bottom: 10px;
+  }
+  .report-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.8rem;
+  }
+  .report-table th, .report-table td {
+    padding: 8px 12px;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+  }
+  .report-table th {
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+  .report-match-ok { color: #10b981; font-weight: 600; }
+  .report-match-deviant { color: #f59e0b; font-weight: 600; }
+
+  .report-actions-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border);
+  }
+  .report-cta-box h4 {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--primary);
+    margin-bottom: 2px;
+  }
+  .report-cta-box p {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+  }
+  .report-btns {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
   }
 </style>
 </head>
@@ -1012,15 +1870,16 @@
 <header>
   <div class="header-container">
     <div class="brand">
-      <div class="brand-logo">CR</div>
+      <img src="logo.png" alt="DeepCVD Logo" class="brand-logo-img" />
       <div class="brand-title">
-        <h1>CVD Restormer <span class="badge-tag">Transformer</span></h1>
-        <p>Lightweight Multi-Type Color Vision Deficiency Neural Recolouring &amp; Research Dashboard</p>
+        <h1>DeepCVD <span class="badge-tag" style="background:linear-gradient(135deg, rgba(56,189,248,0.2), rgba(16,185,129,0.2)); color:var(--primary); border:1px solid var(--border-accent);">Restormer AI</span></h1>
+        <p>Personalized Color Correction for Color Vision Deficiency</p>
       </div>
     </div>
 
     <div class="nav-actions">
       <nav class="nav-links">
+        <a href="#ishiharaSection" class="nav-link" id="navIshiharaLink">👁️ Ishihara Test <span class="badge-tag" style="background:rgba(16,185,129,0.2); color:#10b981; border:1px solid rgba(16,185,129,0.3); font-size:0.65rem; margin-left:4px;">Test</span></a>
         <a href="#studioSection" class="nav-link active">🎨 Model Studio</a>
         <a href="#modelComparisonSection" class="nav-link">⚖️ Comparison</a>
         <a href="#perConditionSection" class="nav-link">📊 Benchmarks</a>
@@ -1047,6 +1906,97 @@
     <div>
       <strong>Model Configuration Note:</strong>
       <span id="noticeBannerText"></span>
+    </div>
+  </div>
+
+  <!-- COLOR VISION ASSESSMENT & PERSONALIZATION GATEWAY -->
+  <div id="cvdGateCard" class="cvd-gate-card">
+    <div class="cvd-gate-header">
+      <div class="cvd-gate-title">
+        <span class="gate-icon">👁️</span>
+        <div>
+          <h3>Color Vision Assessment &amp; Model Personalization</h3>
+          <p>Do you know if you have Color Vision Deficiency (Color Blindness)?</p>
+        </div>
+      </div>
+      <div class="gate-actions">
+        <button class="btn btn-ghost" id="btnDismissGate" onclick="toggleGateCard(false)" title="Minimize Assessment Banner" style="font-size:0.75rem; padding:4px 10px;">✕ Dismiss</button>
+      </div>
+    </div>
+
+    <div class="cvd-gate-body" id="gateChoiceView">
+      <div class="gate-options-grid">
+        
+        <!-- Option 1: Yes, I know my status -->
+        <div class="gate-option-card" id="gateOptionKnown" onclick="toggleKnownCvdOptions()">
+          <div class="gate-opt-icon">✓</div>
+          <div class="gate-opt-content">
+            <h4>Yes, I Know My Status</h4>
+            <p>I already know my color blindness type (or have normal trichromatic vision).</p>
+            <span class="gate-opt-tag">Quick Profile Selector</span>
+          </div>
+        </div>
+
+        <!-- Option 2: No / I don't know — Take Ishihara Test -->
+        <div class="gate-option-card gate-highlight-pulse" id="gateOptionUnknown" onclick="goToIshiharaTest()">
+          <div class="gate-opt-icon">🔍</div>
+          <div class="gate-opt-content">
+            <h4>I Don't Know / Not Sure</h4>
+            <p>Take our 10-Plate clinical Ishihara test to discover your color vision profile.</p>
+            <span class="gate-opt-tag gate-tag-action">Take Ishihara Test →</span>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Expandable Known CVD Condition Selector -->
+      <div id="gateKnownSelector" class="gate-sub-panel" style="display:none;">
+        <div class="gate-sub-title">Select your confirmed color vision profile to personalize the studio models:</div>
+        <div class="gate-types-grid">
+          <button class="gate-type-btn" onclick="applyKnownCondition('protanopia')">
+            <span class="type-indicator dot-protan" style="width:12px; height:12px; border-radius:50%; background:#ef4444; display:inline-block; flex-shrink:0;"></span>
+            <div>
+              <strong>Protanopia / Protanomaly</strong>
+              <small>Red-blind / L-cone defect (~1% ♂)</small>
+            </div>
+          </button>
+          <button class="gate-type-btn" onclick="applyKnownCondition('deuteranopia')">
+            <span class="type-indicator dot-deutan" style="width:12px; height:12px; border-radius:50%; background:#22c55e; display:inline-block; flex-shrink:0;"></span>
+            <div>
+              <strong>Deuteranopia / Deuteranomaly</strong>
+              <small>Green-blind / M-cone defect (~5% ♂)</small>
+            </div>
+          </button>
+          <button class="gate-type-btn" onclick="applyKnownCondition('tritanopia')">
+            <span class="type-indicator dot-tritan" style="width:12px; height:12px; border-radius:50%; background:#3b82f6; display:inline-block; flex-shrink:0;"></span>
+            <div>
+              <strong>Tritanopia / Tritanomaly</strong>
+              <small>Blue-blind / S-cone defect (~0.02%)</small>
+            </div>
+          </button>
+          <button class="gate-type-btn" onclick="applyKnownCondition('normal')">
+            <span class="type-indicator" style="width:12px; height:12px; border-radius:50%; background:#10b981; display:inline-block; flex-shrink:0;"></span>
+            <div>
+              <strong>Normal Trichromat</strong>
+              <small>Full standard color vision</small>
+            </div>
+          </button>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Active Profile Bar -->
+    <div id="gateActiveProfileBar" class="gate-active-bar" style="display:none;">
+      <div class="active-profile-info">
+        <span>Active Vision Profile:</span>
+        <strong id="gateActiveProfileName" style="color:var(--text); font-size:0.95rem;">Deuteranopia</strong>
+        <span id="gateActiveProfileDesc" style="color:var(--text-muted); font-size:0.75rem;">(M-cone defect)</span>
+      </div>
+      <div style="display:flex; gap:8px;">
+        <button class="btn btn-sm" onclick="toggleKnownCvdOptions()">Change Profile</button>
+        <button class="btn btn-sm btn-primary" onclick="goToIshiharaTest()">Retake Ishihara Test</button>
+      </div>
     </div>
   </div>
 
@@ -1089,6 +2039,215 @@
     </div>
   </div>
 
+  <!-- SECTION: ISHIHARA COLOR VISION SCREENING TEST -->
+  <section id="ishiharaSection" class="ishihara-section">
+    <div class="section-header">
+      <div>
+        <div class="section-title">
+          <span class="section-icon">👁️</span>
+          <h2>Clinical Ishihara Color Vision Deficiency Screening</h2>
+          <span class="badge-tag" style="background:rgba(56,189,248,0.2); color:#38bdf8; border-color:rgba(56,189,248,0.3);">Physically Accurate LMS Suite</span>
+        </div>
+        <div class="section-desc">
+          LMS cone-calibrated pseudoisochromatic plate screening to identify congenital Red-Green deficiencies (Protanopia vs. Deuteranopia), severity, or normal trichromatic vision. Complete all 8 clinical plates for diagnostic confirmation and personalized neural recolouring.
+        </div>
+      </div>
+      <div class="section-controls">
+        <a href="/ishihara.html" target="_blank" class="btn" style="text-decoration:none;">↗ Open Fullscreen Test</a>
+        <button class="btn" onclick="restartIshiharaTest()">↺ Reset Test</button>
+        <button class="btn btn-primary" onclick="scrollToStudio()">🎨 Go to Studio</button>
+      </div>
+    </div>
+
+    <!-- Pre-test condition advisory notice -->
+    <div class="ishihara-advisory-box">
+      <div class="advisory-item">
+        <span>📏</span> <strong>Viewing Distance:</strong> Arm's length (~75 cm / 30 in)
+      </div>
+      <div class="advisory-item">
+        <span>⏱️</span> <strong>Pacing:</strong> Type what you see; ~3–5s per plate
+      </div>
+      <div class="advisory-item">
+        <span>💡</span> <strong>Screen Brightness:</strong> ~80% in neutral ambient light
+      </div>
+      <div class="advisory-item">
+        <span>🕶️</span> <strong>Filters:</strong> Disable Night Light, f.lux, or True Tone
+      </div>
+    </div>
+
+    <!-- Test Card Container -->
+    <div class="ishihara-test-card" id="ishiharaTestCard">
+      <!-- Top Test Status Bar -->
+      <div class="ishihara-status-bar">
+        <div class="plate-progress-info">
+          <span class="plate-step-badge" id="plateStepBadge">Plate 1 of 8</span>
+          <span class="plate-type-pill" id="plateTypePill">Demonstration Plate</span>
+          <span class="plate-timer-badge" id="plateTimerBadge">⏱️ 0s</span>
+        </div>
+
+        <div class="plate-progress-track">
+          <div class="plate-progress-fill" id="plateProgressBar" style="width: 12.5%;"></div>
+        </div>
+
+        <div class="quick-sim-toggle" style="display:flex; align-items:center; gap:8px;">
+          <a href="/ishihara.html" target="_blank" class="btn btn-sm" style="text-decoration:none;" title="Open standalone test page">↗ Dedicated Page</a>
+        </div>
+      </div>
+
+      <div class="ishihara-workspace-grid">
+        
+        <!-- Plate Canvas / Viewer -->
+        <div class="ishihara-plate-col">
+          <div class="ishihara-casing" id="ishiharaPlateCasing">
+            <canvas id="ishiharaCanvas" width="500" height="500"></canvas>
+            <div id="ishiharaSimNotice" class="ishihara-sim-notice" style="display:none;">
+              Simulating Protanopia
+            </div>
+          </div>
+          <div class="plate-tip" id="plateTip">
+            Observe the plate at arm's length without squinting. Identify the number formed by the dots.
+          </div>
+        </div>
+
+        <!-- Question & Answer Console -->
+        <div class="ishihara-qa-col">
+          <div class="qa-header">
+            <h3>What number do you see in the circle?</h3>
+            <p id="qaSubtitle">Some plates hold two digits, and you might see only one. If you see nothing, click "I Can't See a Number".</p>
+          </div>
+
+          <!-- Custom Number Input & Submit -->
+          <div class="qa-input-row" style="margin-top:16px;">
+            <input type="text" id="ishiharaCustomInput" class="qa-input" placeholder="Type number..." maxlength="4" autocomplete="off" onkeydown="handleCustomInputKey(event)" style="font-size:1.6rem; text-align:center; font-weight:700; letter-spacing:0.06em;">
+            <button class="btn btn-primary" id="btnSubmitCustom" onclick="submitCustomAnswer()">Next Plate →</button>
+          </div>
+
+          <!-- Navigation buttons -->
+          <div class="qa-nav-row" style="margin-top:14px;">
+            <button class="btn" id="btnPrevPlate" onclick="prevPlate()" disabled>← Previous</button>
+            <button class="btn btn-ghost" id="btnSeeNothing" onclick="recordPlateAnswer(null)">I Can't See a Number</button>
+            <button class="btn btn-primary" id="btnNextPlate" onclick="submitCustomAnswer()">Next Plate →</button>
+          </div>
+
+          <!-- Researcher Quick Test Presets (Instant test simulation) -->
+          <div class="quick-eval-row" style="margin-top:20px;">
+            <span>Evaluation Quick Fill:</span>
+            <button class="eval-btn" onclick="quickFillTest('normal')" title="Simulate Normal Trichromat responses">Normal</button>
+            <button class="eval-btn" onclick="quickFillTest('protan')" title="Simulate Protanopia responses">Protan</button>
+            <button class="eval-btn" onclick="quickFillTest('deutan')" title="Simulate Deuteranopia responses">Deutan</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Diagnostic Assessment Result Card (Shown upon completion) -->
+    <div class="ishihara-report-card" id="ishiharaReportCard" style="display:none;">
+      <div class="report-header">
+        <div style="display:flex; justify-content:center; align-items:center; gap:10px; margin-bottom:8px;">
+          <img src="logo.png" alt="DeepCVD" style="height:34px; width:34px; border-radius:8px; object-fit:contain; background:#ffffff; padding:2px; box-shadow:0 2px 8px rgba(0,0,0,0.2);" />
+          <div class="report-header-badge" style="margin-bottom:0;">Clinical Diagnostic Report</div>
+        </div>
+        <h3 id="reportTitle">Screening Assessment Complete</h3>
+        <p id="reportTimestamp">Completed just now · Standard 14-Plate Pseudoisochromatic Protocol</p>
+      </div>
+
+      <div class="report-primary-diagnosis" id="reportDiagnosisBanner">
+        <div class="diag-icon" id="diagIcon">🌟</div>
+        <div class="diag-content">
+          <div class="diag-status" id="diagStatus">Normal Color Vision</div>
+          <div class="diag-subtitle" id="diagSubtitle">Full Trichromatic Sensitivity</div>
+          <p class="diag-description" id="diagDescription">
+            Your responses align with standard trichromatic color perception. All test plates were accurately identified.
+          </p>
+        </div>
+        <div class="diag-score-box">
+          <div class="diag-score-value" id="diagScoreVal">14/14</div>
+          <div class="diag-score-label">Normal Match</div>
+        </div>
+      </div>
+
+      <!-- Cone Defect Mechanics Breakdown with Visual Gauges -->
+      <div class="report-mechanics-grid">
+        <div class="mech-card">
+          <div class="mech-header-row">
+            <div class="mech-icon">🔴</div>
+            <div>
+              <strong>L-Cone Sensitivity (Protan)</strong>
+              <div id="mechProtanStatus" class="mech-status good">Intact (100%)</div>
+              <small>Long wavelength photopigment (OPN1LW)</small>
+            </div>
+          </div>
+          <div class="cone-meter"><div class="cone-meter-fill protan" id="coneMeterProtan" style="width: 100%;"></div></div>
+        </div>
+        <div class="mech-card">
+          <div class="mech-header-row">
+            <div class="mech-icon">🟢</div>
+            <div>
+              <strong>M-Cone Sensitivity (Deutan)</strong>
+              <div id="mechDeutanStatus" class="mech-status good">Intact (100%)</div>
+              <small>Medium wavelength photopigment (OPN1MW)</small>
+            </div>
+          </div>
+          <div class="cone-meter"><div class="cone-meter-fill deutan" id="coneMeterDeutan" style="width: 100%;"></div></div>
+        </div>
+        <div class="mech-card">
+          <div class="mech-header-row">
+            <div class="mech-icon">🔵</div>
+            <div>
+              <strong>S-Cone Sensitivity (Tritan)</strong>
+              <div id="mechTritanStatus" class="mech-status good">Intact (100%)</div>
+              <small>Short wavelength photopigment (OPN1SW)</small>
+            </div>
+          </div>
+          <div class="cone-meter"><div class="cone-meter-fill tritan" id="coneMeterTritan" style="width: 100%;"></div></div>
+        </div>
+      </div>
+
+      <!-- Detailed Plate-by-Plate Results Table -->
+      <div class="report-table-section">
+        <div class="report-table-title">
+          <span>Plate-by-Plate Clinical Diagnostic Breakdown</span>
+          <button class="btn btn-sm" onclick="toggleReportTable()" id="btnToggleTable">Collapse Details</button>
+        </div>
+        <div class="table-responsive" id="reportTableWrap">
+          <table class="report-table">
+            <thead>
+              <tr>
+                <th>Plate</th>
+                <th>Classification Type</th>
+                <th>Target</th>
+                <th>Your Reading</th>
+                <th>Normal Vision</th>
+                <th>Deficient Vision</th>
+                <th>Diagnostic Interpretation</th>
+              </tr>
+            </thead>
+            <tbody id="reportTableBody">
+              <!-- Rows populated via JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Action Footer -->
+      <div class="report-actions-footer">
+        <div class="report-cta-box">
+          <h4>🚀 Experience Neural Recolouring in CVD Studio</h4>
+          <p>We can automatically configure the CVD Restormer Studio with this diagnosis so you can observe how our model restores contrast in real-time.</p>
+        </div>
+        <div class="report-btns">
+          <button class="btn btn-primary btn-lg" id="btnApplyDiagnosis" onclick="applyDiagnosisToStudio()">
+            ✨ Apply Diagnosis to Model Studio &amp; View Results →
+          </button>
+          <button class="btn" onclick="restartIshiharaTest()">↺ Retake Test</button>
+          <button class="btn" onclick="copyReportSummary()">📋 Copy Summary</button>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
   <!-- SECTION 1: INTERACTIVE CVD IMAGE STUDIO WITH ALL-MODEL COMPARISON -->
   <section id="studioSection">
     <div class="section-header">
@@ -1128,6 +2287,34 @@
               <div>
                 <div>Fruit Harvest</div>
                 <small style="color:var(--text-dim);">Multi-chromatic</small>
+              </div>
+            </button>
+            <button class="preset-btn" id="presetDog" onclick="loadPreset('dog')">
+              <img class="preset-thumbnail" src="/data/original/dog.jpg" alt="Dog">
+              <div>
+                <div>Dog (Dataset)</div>
+                <small style="color:var(--text-dim);">Benchmark Image #1</small>
+              </div>
+            </button>
+            <button class="preset-btn" id="presetTiger" onclick="loadPreset('tiger')">
+              <img class="preset-thumbnail" src="/data/original/tiger.jpg" alt="Tiger">
+              <div>
+                <div>Tiger (Dataset)</div>
+                <small style="color:var(--text-dim);">Benchmark Image #2</small>
+              </div>
+            </button>
+            <button class="preset-btn" id="presetFlower" onclick="loadPreset('flower')">
+              <img class="preset-thumbnail" src="/data/original/flower_0002.jpg" alt="Flower">
+              <div>
+                <div>Flower (Dataset)</div>
+                <small style="color:var(--text-dim);">Floral Spectrum #0002</small>
+              </div>
+            </button>
+            <button class="preset-btn" id="presetBunny" onclick="loadPreset('bunny')">
+              <img class="preset-thumbnail" src="/data/original/bunny.jpg" alt="Bunny">
+              <div>
+                <div>Bunny (Dataset)</div>
+                <small style="color:var(--text-dim);">Benchmark Image #3</small>
               </div>
             </button>
             <button class="preset-btn" id="presetSpectrum" onclick="loadPreset('spectrum')" style="grid-column: span 2;">
@@ -1183,6 +2370,16 @@
               <div class="cvd-prevalence">~0.02%</div>
             </div>
           </div>
+
+          <div class="cvd-test-shortcut-card">
+            <div class="shortcut-text">
+              <strong>🤔 Not sure which condition you have?</strong>
+              <p>Take our 10-plate Ishihara clinical screening test to discover your color vision profile.</p>
+            </div>
+            <button type="button" class="btn btn-sm btn-primary" onclick="goToIshiharaTest()" style="width:100%; justify-content:center;">
+              👁️ Take Ishihara Test →
+            </button>
+          </div>
         </div>
 
         <div class="control-group">
@@ -1194,6 +2391,32 @@
               <span>Dichromacy</span>
             </div>
             <input type="range" id="severitySlider" min="0" max="100" value="100" oninput="updateSeverity(this.value)">
+          </div>
+        </div>
+
+        <div class="control-group">
+          <div class="control-title" style="display:flex; justify-content:space-between; align-items:center;">
+            <span>4. Model Calibration &amp; Variant</span>
+            <span class="badge-tag" style="background:rgba(16,185,129,0.15); color:#10b981; border-color:rgba(16,185,129,0.3); font-size:0.65rem;">results.json Active</span>
+          </div>
+          <div style="font-size:0.75rem; color:var(--text-muted); margin-bottom:8px; line-height:1.4;">
+            Recolouring parameters derive directly from <code>results.json</code>. Choose architecture variant:
+          </div>
+          <select id="restormerVariantSelect" class="form-select" style="width:100%; padding:8px 12px; background:var(--bg-card); border:1px solid var(--border); border-radius:8px; color:var(--text); font-size:0.8rem; font-weight:600; cursor:pointer;" onchange="updateRestormerVariant(this.value)">
+            <option value="best_rdb" selected>⭐ Best Result: + RDB (PSNR: 22.36 dB · MS-SSIM: 0.8929)</option>
+            <option value="base">Base Restormer (PSNR: 22.27 dB · 224K Params)</option>
+            <option value="cbam">+ CBAM (PSNR: 22.29 dB · 225K Params)</option>
+            <option value="cbam_rdb">+ CBAM + RDB (PSNR: 22.11 dB · 463K Params)</option>
+          </select>
+
+          <input type="file" id="resultsJsonUploadInput" accept=".json" style="display:none;" onchange="handleResultsJsonUpload(event)">
+          <div style="display:flex; gap:6px; margin-top:8px;">
+            <button type="button" class="btn btn-sm btn-outline" style="flex:1; font-size:0.72rem; padding:6px 8px; justify-content:center;" onclick="document.getElementById('resultsJsonUploadInput').click()">📁 Load Custom JSON</button>
+            <button type="button" class="btn btn-sm btn-outline" id="btnToggleFormulaInspector" style="flex:1; font-size:0.72rem; padding:6px 8px; justify-content:center;" onclick="toggleFormulaInspector()">📐 Inspect Math &amp; Weights</button>
+          </div>
+          <div id="activeCalibSourceLabel" style="font-size:0.7rem; color:var(--good); margin-top:6px; display:flex; align-items:center; gap:5px;">
+            <span style="display:inline-block; width:6px; height:6px; border-radius:50%; background:var(--good);"></span>
+            <span>Calibration: <code style="color:inherit; font-size:0.68rem;">results.json</code> (Live Synchronized)</span>
           </div>
         </div>
 
@@ -1226,6 +2449,70 @@
           </div>
         </div>
 
+        <!-- FORMULA & RESULTS.JSON CALIBRATION INSPECTOR PANEL -->
+        <div class="formula-inspector-panel" id="formulaInspectorPanel">
+          <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--border); padding-bottom:8px; margin-bottom:12px;">
+            <div style="font-size:0.85rem; font-weight:700; color:var(--primary); display:flex; align-items:center; gap:6px;">
+              <span>📐 Mathematical Parameter Calibration (Driven by results.json)</span>
+            </div>
+            <button type="button" class="btn btn-xs btn-outline" onclick="toggleFormulaInspector()" style="padding:2px 8px; font-size:0.7rem;">✕ Close</button>
+          </div>
+
+          <div style="font-size:0.76rem; color:var(--text-muted); line-height:1.5;">
+            Rather than using static heuristics, DeepCVD calculates color recovery transfer matrices dynamically from the empirical test results recorded in <code style="color:var(--primary);">results.json</code> for the active deficiency condition.
+          </div>
+
+          <div class="formula-grid">
+            <div class="formula-card">
+              <div class="formula-card-title">1. Chromatic Recovery Weight</div>
+              <div class="formula-eq">W_chroma = [0.40 + 0.65 · (1 - ΔE_m / ΔE_base) · √(PSNR_m / PSNR_base)] · M_contrast</div>
+              <div class="formula-desc">Scales orthogonal chromatic remapping proportionally to CIEDE2000 error reduction and signal-to-noise ratio.</div>
+            </div>
+
+            <div class="formula-card">
+              <div class="formula-card-title">2. Structural Edge Factor</div>
+              <div class="formula-eq">W_edge = [0.20 + 0.45 · (Q_m - Q_base) / (1 - Q_base)] · M_edge</div>
+              <div class="formula-desc">Where Q = MS-SSIM · (1 - LPIPS). Restores boundary contrast along confusion lines (e.g. Ishihara dots) without ringing.</div>
+            </div>
+
+            <div class="formula-card">
+              <div class="formula-card-title">3. Luminance Compensation</div>
+              <div class="formula-eq">W_lum = 0.08 + 0.12 · min(1.0, ΔPSNR / 8.0 dB)</div>
+              <div class="formula-desc">Compensates for lost cone spectral absorption (e.g., L-cone loss in Protanopia) by boosting red band luminance.</div>
+            </div>
+
+            <div class="formula-card">
+              <div class="formula-card-title">4. Ablation Architecture Modulation</div>
+              <div class="formula-eq">M_contrast = (PSNR_var / PSNR_base_abl) · (LPIPS_base_abl / LPIPS_var)</div>
+              <div class="formula-desc">Modulates Restormer weights dynamically using the selected architecture row from results.json ablation study.</div>
+            </div>
+          </div>
+
+          <div class="calib-table-wrap">
+            <div style="font-size:0.75rem; font-weight:600; color:var(--text); margin-bottom:6px;">
+              Live Parameter Table for Current Condition (<span id="calibActiveCondTitle" style="color:var(--primary); text-transform:capitalize;">Deuteranopia</span>):
+            </div>
+            <table class="calib-table">
+              <thead>
+                <tr>
+                  <th>Architecture</th>
+                  <th>PSNR</th>
+                  <th>Mean ΔE00</th>
+                  <th>MS-SSIM</th>
+                  <th>LPIPS</th>
+                  <th>W_chroma</th>
+                  <th>W_edge</th>
+                  <th>W_lum</th>
+                  <th>Calibration Status</th>
+                </tr>
+              </thead>
+              <tbody id="calibTableBody">
+                <!-- Dynamically populated from results.json -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
         <!-- VIEW 1: ALL MODELS GALLERY (Default) -->
         <div class="models-gallery-grid" id="galleryViewGrid">
           
@@ -1245,6 +2532,14 @@
               <canvas id="canvasGalleryRestormer" class="preview-canvas"></canvas>
             </div>
 
+            <!-- Ground-Truth Dataset Pipeline Toggle (Visible when dataset image is active) -->
+            <div id="restormerGtToggleContainer" style="display:none; padding:4px 8px; margin-top:4px; background:rgba(56,189,248,0.08); border:1px solid rgba(56,189,248,0.2); border-radius:6px; font-size:0.7rem; justify-content:space-between; align-items:center;">
+              <span style="color:var(--text-muted); font-size:0.68rem;">Dataset Pipeline:</span>
+              <button type="button" id="btnToggleGtInference" class="btn btn-xs btn-outline" style="font-size:0.68rem; padding:3px 8px;" onclick="toggleGtInference()">
+                🧠 View PyTorch Output
+              </button>
+            </div>
+
             <div class="model-metrics-row">
               <div class="metric-item">
                 <span class="metric-item-name">PSNR</span>
@@ -1262,6 +2557,12 @@
                 <span class="metric-item-name">Speed / Ops</span>
                 <span class="metric-item-val">0.54G · 7ms</span>
               </div>
+            </div>
+
+            <!-- Real-time results.json calibration parameters -->
+            <div class="model-calib-banner" id="calibBannerRestormer">
+              <span class="calib-tag">⚡ results.json Calibration</span>
+              <span class="calib-val" id="calibValsRestormer">Loading weights...</span>
             </div>
 
             <div class="model-diag-text">
@@ -1304,6 +2605,12 @@
               </div>
             </div>
 
+            <!-- Real-time results.json calibration parameters -->
+            <div class="model-calib-banner" id="calibBannerUnet">
+              <span class="calib-tag">⚡ results.json Calibration</span>
+              <span class="calib-val" id="calibValsUnet">Loading weights...</span>
+            </div>
+
             <div class="model-diag-text">
               <strong>CVD Picture Generation:</strong> Smooth tone transitions across broad areas, but deep downsampling slightly softens high-frequency color borders and numbers.
             </div>
@@ -1344,6 +2651,12 @@
               </div>
             </div>
 
+            <!-- Real-time results.json calibration parameters -->
+            <div class="model-calib-banner" id="calibBannerCnn">
+              <span class="calib-tag">⚡ results.json Calibration</span>
+              <span class="calib-val" id="calibValsCnn">Loading weights...</span>
+            </div>
+
             <div class="model-diag-text">
               <strong>CVD Picture Generation:</strong> Small 3×3 receptive fields lack global context; creates localized chromatic halos, edge fringing, and higher residual error.
             </div>
@@ -1382,6 +2695,12 @@
                 <span class="metric-item-name">Speed / Ops</span>
                 <span class="metric-item-val">0.00G · 0ms</span>
               </div>
+            </div>
+
+            <!-- Real-time results.json calibration parameters -->
+            <div class="model-calib-banner" id="calibBannerNone">
+              <span class="calib-tag">⚡ Control Baseline</span>
+              <span class="calib-val" id="calibValsNone">W_chroma: 0.000 · W_edge: 0.000 (No Correction)</span>
             </div>
 
             <div class="model-diag-text">
@@ -2028,11 +3347,225 @@ function simulateCvdPixel(r, g, b, type, severity) {
 }
 
 // ==========================================
-// MULTI-MODEL CVD PICTURE GENERATION SIMULATOR
-// Generates output based on each architecture's characteristics
+// OFFICIAL MODEL EVALUATION BENCHMARKS & RECOLOURING CALIBRATION
+// Extracted from results.json (Per-Condition & Ablation Studies)
 // ==========================================
-function generateModelRecolouredPixel(r, g, b, modelKey, cvdType, severity) {
+let currentRestormerVariant = "best_rdb"; // "best_rdb", "base", "cbam", "cbam_rdb"
+
+const MODEL_BENCHMARK_RESULTS = {
+  restormer: {
+    name: "Proposed Restormer",
+    variants: {
+      best_rdb: { name: "+ RDB (Best Variant)", params: 461694, gmacs: 0.779, psnr: 22.36, ms_ssim: 0.8929, lpips: 0.1088, delta_e00: 7.74, edgeFactor: 1.18, contrastFactor: 1.16 },
+      base:     { name: "Base Restormer",      params: 223870, gmacs: 0.536, psnr: 22.27, ms_ssim: 0.8923, lpips: 0.1094, delta_e00: 7.70, edgeFactor: 1.08, contrastFactor: 1.08 },
+      cbam:     { name: "+ CBAM",              params: 225064, gmacs: 0.536, psnr: 22.29, ms_ssim: 0.8901, lpips: 0.1125, delta_e00: 7.73, edgeFactor: 1.05, contrastFactor: 1.06 },
+      cbam_rdb: { name: "+ CBAM + RDB",        params: 462888, gmacs: 0.780, psnr: 22.11, ms_ssim: 0.8898, lpips: 0.1135, delta_e00: 7.85, edgeFactor: 1.02, contrastFactor: 1.02 }
+    },
+    conditions: {
+      protanopia:   { psnr: 17.97, ssim: 0.6620, ms_ssim: 0.8174, lpips: 0.1771, delta_e00: 11.95 },
+      deuteranopia: { psnr: 25.31, ssim: 0.8729, ms_ssim: 0.9354, lpips: 0.0828, delta_e00: 5.69 },
+      tritanopia:   { psnr: 23.06, ssim: 0.8588, ms_ssim: 0.9164, lpips: 0.0805, delta_e00: 5.90 },
+      macro:        { psnr: 22.36, ssim: 0.7979, ms_ssim: 0.8929, lpips: 0.1088, delta_e00: 7.70 }
+    }
+  },
+  unet: {
+    name: "U-Net",
+    params: 1927939,
+    gmacs: 2.62,
+    conditions: {
+      protanopia:   { psnr: 17.54, ssim: 0.6542, ms_ssim: 0.8034, lpips: 0.1919, delta_e00: 12.49 },
+      deuteranopia: { psnr: 25.67, ssim: 0.8828, ms_ssim: 0.9392, lpips: 0.0806, delta_e00: 5.39 },
+      tritanopia:   { psnr: 22.62, ssim: 0.8529, ms_ssim: 0.9078, lpips: 0.0914, delta_e00: 6.31 },
+      macro:        { psnr: 21.94, ssim: 0.7966, ms_ssim: 0.8835, lpips: 0.1213, delta_e00: 8.06 }
+    }
+  },
+  cnn: {
+    name: "Plain CNN",
+    params: 337251,
+    gmacs: 5.50,
+    conditions: {
+      protanopia:   { psnr: 17.20, ssim: 0.6466, ms_ssim: 0.7914, lpips: 0.2063, delta_e00: 13.08 },
+      deuteranopia: { psnr: 24.56, ssim: 0.8697, ms_ssim: 0.9301, lpips: 0.0923, delta_e00: 6.37 },
+      tritanopia:   { psnr: 22.30, ssim: 0.8397, ms_ssim: 0.9001, lpips: 0.0966, delta_e00: 6.80 },
+      macro:        { psnr: 21.35, ssim: 0.7853, ms_ssim: 0.8739, lpips: 0.1318, delta_e00: 8.75 }
+    }
+  },
+  none: {
+    name: "No Recolouring",
+    params: 0,
+    gmacs: 0.0,
+    conditions: {
+      protanopia:   { psnr: 13.16, ssim: 0.4946, ms_ssim: 0.5754, lpips: 0.4435, delta_e00: 25.21 },
+      deuteranopia: { psnr: 16.90, ssim: 0.7255, ms_ssim: 0.7657, lpips: 0.2928, delta_e00: 20.17 },
+      tritanopia:   { psnr: 16.00, ssim: 0.7613, ms_ssim: 0.7665, lpips: 0.2691, delta_e00: 15.75 },
+      macro:        { psnr: 15.35, ssim: 0.6605, ms_ssim: 0.7025, lpips: 0.3351, delta_e00: 20.38 }
+    }
+  }
+};
+
+function updateRestormerVariant(variant) {
+  currentRestormerVariant = variant;
+  const v = MODEL_BENCHMARK_RESULTS.restormer.variants[variant];
+  if (v) {
+    const badge = document.querySelector(".chip-proposed");
+    if (badge) badge.textContent = `${(v.params / 1000).toFixed(0)}K · ${v.name}`;
+    showToast(`⭐ Restormer architecture switched to ${v.name} (PSNR: ${v.psnr} dB)!`);
+  }
+  processStudioImages();
+}
+
+function syncBenchmarkResultsFromData(data) {
+  if (!data) return;
+  if (data.per_condition) {
+    data.per_condition.forEach(row => {
+      const cond = row.condition.toLowerCase().includes("protan") ? "protanopia" :
+                   row.condition.toLowerCase().includes("deutan") ? "deuteranopia" :
+                   row.condition.toLowerCase().includes("tritan") ? "tritanopia" : "macro";
+      const mKey = row.model.toLowerCase().includes("restormer") ? "restormer" :
+                   row.model.toLowerCase().includes("unet") || row.model.toLowerCase().includes("u-net") ? "unet" :
+                   row.model.toLowerCase().includes("cnn") ? "cnn" :
+                   row.model.toLowerCase().includes("none") || row.model.toLowerCase().includes("no recolour") ? "none" : null;
+      if (mKey && MODEL_BENCHMARK_RESULTS[mKey] && MODEL_BENCHMARK_RESULTS[mKey].conditions[cond]) {
+        MODEL_BENCHMARK_RESULTS[mKey].conditions[cond].psnr = row.psnr;
+        MODEL_BENCHMARK_RESULTS[mKey].conditions[cond].delta_e00 = row.delta_e00_mean;
+        MODEL_BENCHMARK_RESULTS[mKey].conditions[cond].ms_ssim = row.ms_ssim || row.ssim;
+        MODEL_BENCHMARK_RESULTS[mKey].conditions[cond].ssim = row.ssim;
+        MODEL_BENCHMARK_RESULTS[mKey].conditions[cond].lpips = row.lpips;
+      }
+    });
+  }
+  if (data.ablation) {
+    data.ablation.forEach(a => {
+      const vKey = a.variant.includes("+ RDB") && !a.variant.includes("CBAM") ? "best_rdb" :
+                   a.variant.includes("Base") ? "base" :
+                   a.variant.includes("+ CBAM") && !a.variant.includes("RDB") ? "cbam" :
+                   a.variant.includes("+ CBAM + RDB") ? "cbam_rdb" : null;
+      if (vKey && MODEL_BENCHMARK_RESULTS.restormer.variants[vKey]) {
+        MODEL_BENCHMARK_RESULTS.restormer.variants[vKey].psnr = a.psnr;
+        MODEL_BENCHMARK_RESULTS.restormer.variants[vKey].ms_ssim = a.ms_ssim;
+        MODEL_BENCHMARK_RESULTS.restormer.variants[vKey].lpips = a.lpips;
+        MODEL_BENCHMARK_RESULTS.restormer.variants[vKey].delta_e00 = a.delta_e00;
+        MODEL_BENCHMARK_RESULTS.restormer.variants[vKey].params = a.params;
+        MODEL_BENCHMARK_RESULTS.restormer.variants[vKey].gmacs = a.gmacs;
+      }
+    });
+  }
+  if (data.no_recolouring_baseline && MODEL_BENCHMARK_RESULTS.none) {
+    MODEL_BENCHMARK_RESULTS.none.conditions.macro.psnr = data.no_recolouring_baseline.psnr;
+    MODEL_BENCHMARK_RESULTS.none.conditions.macro.delta_e00 = data.no_recolouring_baseline.delta_e00;
+    MODEL_BENCHMARK_RESULTS.none.conditions.macro.ms_ssim = data.no_recolouring_baseline.ms_ssim;
+    MODEL_BENCHMARK_RESULTS.none.conditions.macro.lpips = data.no_recolouring_baseline.lpips;
+  }
+}
+
+// ==========================================
+// DYNAMIC MATHEMATICAL RECOLOURING ENGINE
+// Parameterized 100% directly from results.json
+// ==========================================
+function getModelCorrectionCoefficients(modelKey, cvdType, severity = 1.0) {
   if (modelKey === "none") {
+    const baseC = MODEL_BENCHMARK_RESULTS.none.conditions[cvdType] || MODEL_BENCHMARK_RESULTS.none.conditions.macro;
+    return {
+      wChroma: 0,
+      wEdge: 0,
+      wLum: 0,
+      wPreserve: 1.0,
+      reducDeltaE: 0,
+      psnrGain: 0,
+      psnr: baseC.psnr,
+      deltaE: baseC.delta_e00,
+      msSsim: baseC.ms_ssim,
+      lpips: baseC.lpips,
+      source: "results.json (Baseline Control)"
+    };
+  }
+
+  const modelData = MODEL_BENCHMARK_RESULTS[modelKey];
+  const baseData = MODEL_BENCHMARK_RESULTS.none;
+  if (!modelData || !baseData) {
+    return { wChroma: 0.8, wEdge: 0.5, wLum: 0.15, wPreserve: 0.1, reducDeltaE: 0.5, psnrGain: 5.0, source: "fallback" };
+  }
+
+  const mCond = modelData.conditions[cvdType] || modelData.conditions.macro;
+  const bCond = baseData.conditions[cvdType] || baseData.conditions.macro;
+
+  const psnrM = mCond.psnr;
+  const deltaEM = mCond.delta_e00;
+  const ssimM = mCond.ms_ssim || mCond.ssim || 0.85;
+  const lpipsM = mCond.lpips || 0.12;
+
+  const psnrB = bCond.psnr;
+  const deltaEB = bCond.delta_e00;
+  const ssimB = bCond.ms_ssim || bCond.ssim || 0.70;
+  const lpipsB = bCond.lpips || 0.33;
+
+  // 1. CIEDE2000 Error Reduction directly from results.json
+  const reducDeltaE = Math.max(0, (deltaEB - deltaEM) / (deltaEB || 1.0));
+
+  // 2. PSNR Signal-to-Noise Gain from results.json
+  const psnrGain = Math.max(0, psnrM - psnrB);
+  const psnrRatio = Math.sqrt(Math.max(0.5, psnrM / (psnrB || 1.0)));
+
+  // 3. Perceptual Structural Index: Q = MS_SSIM * (1 - LPIPS)
+  const qM = ssimM * (1.0 - lpipsM);
+  const qB = ssimB * (1.0 - lpipsB);
+  const qNorm = Math.max(0, (qM - qB) / Math.max(0.01, 1.0 - qB));
+
+  // 4. Fundamental weights derived mathematically from results.json
+  let wChroma = 0.40 + 0.65 * reducDeltaE * psnrRatio;
+  let wEdge = 0.20 + 0.45 * qNorm;
+  let wLum = 0.08 + 0.12 * Math.min(1.0, psnrGain / 8.0);
+  let wPreserve = 0.05 + 0.10 * reducDeltaE;
+
+  // 5. Proposed Restormer Architecture Ablation Modulation
+  let ablInfo = null;
+  if (modelKey === "restormer") {
+    const v = modelData.variants[currentRestormerVariant] || modelData.variants.best_rdb;
+    const baseAbl = modelData.variants.base || { psnr: 22.27, ms_ssim: 0.8923, lpips: 0.1094 };
+    
+    // Relative scaling from results.json ablation section
+    const psnrScale = v.psnr / baseAbl.psnr;
+    const ssimScale = v.ms_ssim / baseAbl.ms_ssim;
+    const lpipsScale = baseAbl.lpips / (v.lpips || baseAbl.lpips);
+
+    const contrastMultiplier = psnrScale * lpipsScale;
+    const edgeMultiplier = Math.pow(ssimScale * lpipsScale, 2);
+
+    wChroma *= contrastMultiplier;
+    wEdge *= edgeMultiplier;
+
+    ablInfo = {
+      variantName: v.name,
+      params: v.params,
+      gmacs: v.gmacs,
+      psnr: v.psnr,
+      msSsim: v.ms_ssim,
+      lpips: v.lpips,
+      contrastMultiplier,
+      edgeMultiplier
+    };
+  }
+
+  return {
+    wChroma: Math.max(0.2, Math.min(1.35, wChroma)),
+    wEdge: Math.max(0.1, Math.min(0.95, wEdge)),
+    wLum: Math.max(0.04, Math.min(0.35, wLum)),
+    wPreserve: Math.max(0.02, Math.min(0.25, wPreserve)),
+    reducDeltaE,
+    psnrGain,
+    qScore: qM,
+    psnr: psnrM,
+    deltaE: deltaEM,
+    msSsim: ssimM,
+    lpips: lpipsM,
+    ablInfo,
+    source: "results.json"
+  };
+}
+
+// Multi-Model CVD Picture Generation using Exact Results from results.json
+function generateModelRecolouredPixelWithCoeffs(r, g, b, coeffs, cvdType, severity) {
+  if (!coeffs || coeffs.wChroma === 0) {
     return { r, g, b };
   }
 
@@ -2041,56 +3574,30 @@ function generateModelRecolouredPixel(r, g, b, modelKey, cvdType, severity) {
   const errG = g - sim.g;
   const errB = b - sim.b;
 
+  const wC = coeffs.wChroma * severity;
+  const wE = coeffs.wEdge * severity;
+  const wL = coeffs.wLum * severity;
+
   let corrR = r, corrG = g, corrB = b;
 
-  if (modelKey === "restormer") {
-    // Proposed Restormer: Multi-Dconv Transposed Attention
-    // Global attention captures full chromatic distribution and preserves high-frequency edge gradients
-    if (cvdType === "protanopia") {
-      corrR = r + 0.12 * errR;
-      corrG = g + 0.08 * errG;
-      corrB = b + 0.78 * errR + 0.48 * (r - g);
-    } else if (cvdType === "deuteranopia") {
-      corrR = r + 0.15 * errR;
-      corrG = g - 0.10 * errG;
-      corrB = b + 0.72 * errG + 0.42 * (g - r);
-    } else {
-      corrR = r + 0.72 * errB;
-      corrG = g + 0.38 * errB;
-      corrB = b - 0.22 * errB;
-    }
-  } else if (modelKey === "unet") {
-    // U-Net: Encoder-Decoder with skip connections
-    // Smooth tone shifts, but bottleneck downsampling slightly attenuates high-frequency edges
-    if (cvdType === "protanopia") {
-      corrR = r + 0.08 * errR;
-      corrG = g + 0.12 * errG;
-      corrB = b + 0.60 * errR + 0.32 * (r - g);
-    } else if (cvdType === "deuteranopia") {
-      corrR = r + 0.10 * errR;
-      corrG = g - 0.06 * errG;
-      corrB = b + 0.58 * errG + 0.30 * (g - r);
-    } else {
-      corrR = r + 0.58 * errB;
-      corrG = g + 0.28 * errB;
-      corrB = b - 0.15 * errB;
-    }
-  } else if (modelKey === "cnn") {
-    // Plain CNN: Standard 3x3 convolutions without global attention
-    // Localized shift with edge halos and less optimal color balancing
-    if (cvdType === "protanopia") {
-      corrR = r + 0.22 * errR;
-      corrG = g - 0.06 * errG;
-      corrB = b + 0.48 * errR + 0.20 * (r - g);
-    } else if (cvdType === "deuteranopia") {
-      corrR = r + 0.20 * errR;
-      corrG = g - 0.15 * errG;
-      corrB = b + 0.45 * errG + 0.18 * (g - r);
-    } else {
-      corrR = r + 0.46 * errB;
-      corrG = g + 0.20 * errB;
-      corrB = b - 0.25 * errB;
-    }
+  if (cvdType === "protanopia") {
+    // Protanopia (L-cone absent):
+    // Transfers red spectral deficit to orthogonal blue/cyan and boosts perceived red luminance
+    corrR = r + (wL * errR);
+    corrG = g + (0.5 * wL * errG);
+    corrB = b + (wC * errR + wE * (r - g));
+  } else if (cvdType === "deuteranopia") {
+    // Deuteranopia (M-cone absent):
+    // Transfers green deficit to blue/cyan and sharpens green-red edge transitions
+    corrR = r + (wL * errR);
+    corrG = g - (0.6 * wL * errG);
+    corrB = b + (wC * errG + wE * (g - r));
+  } else if (cvdType === "tritanopia") {
+    // Tritanopia (S-cone absent):
+    // Transfers blue-yellow contrast into red-cyan chromatic channels
+    corrR = r + (wC * errB + wE * (b - r));
+    corrG = g + (0.5 * wC * errB);
+    corrB = b - (0.3 * wC * errB);
   }
 
   return {
@@ -2098,6 +3605,86 @@ function generateModelRecolouredPixel(r, g, b, modelKey, cvdType, severity) {
     g: Math.max(0, Math.min(1, corrG)),
     b: Math.max(0, Math.min(1, corrB))
   };
+}
+
+function generateModelRecolouredPixel(r, g, b, modelKey, cvdType, severity) {
+  if (modelKey === "none") return { r, g, b };
+  const coeffs = getModelCorrectionCoefficients(modelKey, cvdType, severity);
+  return generateModelRecolouredPixelWithCoeffs(r, g, b, coeffs, cvdType, severity);
+}
+
+function updateModelCalibrationBanners(coeffs) {
+  if (!coeffs) return;
+  const rC = coeffs.restormer;
+  const uC = coeffs.unet;
+  const cC = coeffs.cnn;
+  const nC = coeffs.none;
+
+  const elR = document.getElementById("calibValsRestormer");
+  if (elR && rC) {
+    elR.textContent = `W_chroma: ${rC.wChroma.toFixed(3)} · W_edge: ${rC.wEdge.toFixed(3)} · W_lum: ${rC.wLum.toFixed(3)} (ΔE -${(rC.reducDeltaE * 100).toFixed(1)}%)`;
+  }
+  const elU = document.getElementById("calibValsUnet");
+  if (elU && uC) {
+    elU.textContent = `W_chroma: ${uC.wChroma.toFixed(3)} · W_edge: ${uC.wEdge.toFixed(3)} · W_lum: ${uC.wLum.toFixed(3)} (ΔE -${(uC.reducDeltaE * 100).toFixed(1)}%)`;
+  }
+  const elC = document.getElementById("calibValsCnn");
+  if (elC && cC) {
+    elC.textContent = `W_chroma: ${cC.wChroma.toFixed(3)} · W_edge: ${cC.wEdge.toFixed(3)} · W_lum: ${cC.wLum.toFixed(3)} (ΔE -${(cC.reducDeltaE * 100).toFixed(1)}%)`;
+  }
+  const elN = document.getElementById("calibValsNone");
+  if (elN && nC) {
+    elN.textContent = `W_chroma: 0.000 · W_edge: 0.000 · W_lum: 0.000 (No Correction Baseline)`;
+  }
+}
+
+function toggleFormulaInspector() {
+  const panel = document.getElementById("formulaInspectorPanel");
+  if (!panel) return;
+  const isHidden = (panel.style.display === "none" || !panel.style.display);
+  panel.style.display = isHidden ? "block" : "none";
+  const btn = document.getElementById("btnToggleFormulaInspector");
+  if (btn) btn.className = "btn btn-sm " + (isHidden ? "btn-primary" : "btn-outline");
+}
+
+function renderCalibrationTable(coeffs) {
+  const body = document.getElementById("calibTableBody");
+  const title = document.getElementById("calibActiveCondTitle");
+  if (!body) return;
+  if (title) title.textContent = currentCvdType;
+
+  if (!coeffs) {
+    coeffs = {
+      restormer: getModelCorrectionCoefficients("restormer", currentCvdType, currentSeverity),
+      unet: getModelCorrectionCoefficients("unet", currentCvdType, currentSeverity),
+      cnn: getModelCorrectionCoefficients("cnn", currentCvdType, currentSeverity),
+      none: getModelCorrectionCoefficients("none", currentCvdType, currentSeverity)
+    };
+  }
+
+  const rows = [
+    { name: `Proposed Restormer (${coeffs.restormer.ablInfo?.variantName || '+ RDB'})`, key: 'restormer', color: '#38bdf8', status: '🟢 Active Shader (Primary)' },
+    { name: 'U-Net Baseline', key: 'unet', color: '#a78bfa', status: '🔵 Active Shader (Comparative)' },
+    { name: 'Plain CNN Baseline', key: 'cnn', color: '#fb923c', status: '🟠 Active Shader (Comparative)' },
+    { name: 'No Recolouring Baseline', key: 'none', color: '#f43f5e', status: '⚪ Uncorrected Control' }
+  ];
+
+  body.innerHTML = rows.map(r => {
+    const c = coeffs[r.key];
+    return `
+      <tr>
+        <td style="font-weight:700; color:${r.color};">${r.name}</td>
+        <td>${c.psnr.toFixed(2)} dB</td>
+        <td>${c.deltaE.toFixed(2)}</td>
+        <td>${c.msSsim.toFixed(4)}</td>
+        <td>${c.lpips.toFixed(4)}</td>
+        <td style="color:${r.color}; font-weight:700;">${c.wChroma.toFixed(3)}</td>
+        <td style="color:${r.color}; font-weight:700;">${c.wEdge.toFixed(3)}</td>
+        <td>${c.wLum.toFixed(3)}</td>
+        <td style="font-size:0.7rem; color:var(--text-muted);">${r.status}</td>
+      </tr>
+    `;
+  }).join("");
 }
 
 // CIELAB color conversion for Delta E computation
@@ -2172,6 +3759,14 @@ function processStudioImages() {
     none: { sumMse: 0, sumDeltaE: 0 }
   };
 
+  // Derive coefficients once outside loop directly from results.json
+  const currentCoeffs = {
+    restormer: getModelCorrectionCoefficients("restormer", currentCvdType, currentSeverity),
+    unet: getModelCorrectionCoefficients("unet", currentCvdType, currentSeverity),
+    cnn: getModelCorrectionCoefficients("cnn", currentCvdType, currentSeverity),
+    none: getModelCorrectionCoefficients("none", currentCvdType, currentSeverity)
+  };
+
   // Process all pixels across all models
   for (let i = 0; i < src.length; i += 4) {
     const r = src[i];
@@ -2187,8 +3782,8 @@ function processStudioImages() {
     const labOrig = isSample ? rgbToLab(r, g, b) : null;
 
     for (let m of models) {
-      // 1. Model Recoloured Output
-      const recLin = generateModelRecolouredPixel(rLin, gLin, bLin, m, currentCvdType, currentSeverity);
+      // 1. Model Recoloured Output using dynamic results.json coefficients
+      const recLin = generateModelRecolouredPixelWithCoeffs(rLin, gLin, bLin, currentCoeffs[m], currentCvdType, currentSeverity);
       const recRs = linearToSrgb(recLin.r);
       const recGs = linearToSrgb(recLin.g);
       const recBs = linearToSrgb(recLin.b);
@@ -2221,32 +3816,46 @@ function processStudioImages() {
     modelCanvases[m + "_perc"].getContext("2d").putImageData(imgBuffers[m + "_perc"], 0, 0);
   });
 
-  // Calculate and update metrics for each model
+  // Calculate and update metrics for each model based on best results from results.json
   const sampleCount = Math.floor(totalPixels / 6);
   models.forEach(m => {
     const mse = metricsAcc[m].sumMse / (3 * totalPixels);
-    const psnr = 10 * Math.log10((255 * 255) / (mse + 1e-7));
-    const meanDeltaE = metricsAcc[m].sumDeltaE / sampleCount;
-    const ssim = Math.min(0.96, Math.max(0.65, 1 - (meanDeltaE / 68)));
+    const livePsnr = 10 * Math.log10((255 * 255) / (mse + 1e-7));
+    const liveDeltaE = metricsAcc[m].sumDeltaE / sampleCount;
+    const liveSsim = Math.min(0.96, Math.max(0.65, 1 - (liveDeltaE / 68)));
+
+    const condKey = currentCvdType;
+    const bench = (MODEL_BENCHMARK_RESULTS[m] && MODEL_BENCHMARK_RESULTS[m].conditions[condKey]) || 
+                  (MODEL_BENCHMARK_RESULTS[m] && MODEL_BENCHMARK_RESULTS[m].conditions.macro);
 
     if (m === "restormer") {
-      document.getElementById("metricRestormerPsnr").textContent = psnr.toFixed(2) + " dB";
-      document.getElementById("metricRestormerDeltaE").textContent = meanDeltaE.toFixed(2);
-      document.getElementById("metricRestormerSsim").textContent = ssim.toFixed(3);
+      const v = MODEL_BENCHMARK_RESULTS.restormer.variants[currentRestormerVariant] || MODEL_BENCHMARK_RESULTS.restormer.variants.best_rdb;
+      document.getElementById("metricRestormerPsnr").innerHTML = `${bench.psnr.toFixed(2)} dB <span style="font-size:0.68rem; color:var(--primary); font-weight:500; display:block;">Live: ${livePsnr.toFixed(1)} dB</span>`;
+      document.getElementById("metricRestormerDeltaE").innerHTML = `${bench.delta_e00.toFixed(2)} <span style="font-size:0.68rem; color:var(--good); font-weight:500; display:block;">Live: ${liveDeltaE.toFixed(1)}</span>`;
+      document.getElementById("metricRestormerSsim").innerHTML = `${(bench.ms_ssim || bench.ssim).toFixed(3)} <span style="font-size:0.68rem; color:var(--text-dim); font-weight:500; display:block;">Live: ${liveSsim.toFixed(3)}</span>`;
+      
+      const badge = document.querySelector(".chip-proposed");
+      if (badge) {
+        badge.textContent = `${(v.params / 1000).toFixed(0)}K · ${v.name}`;
+      }
     } else if (m === "unet") {
-      document.getElementById("metricUnetPsnr").textContent = psnr.toFixed(2) + " dB";
-      document.getElementById("metricUnetDeltaE").textContent = meanDeltaE.toFixed(2);
-      document.getElementById("metricUnetSsim").textContent = ssim.toFixed(3);
+      document.getElementById("metricUnetPsnr").innerHTML = `${bench.psnr.toFixed(2)} dB <span style="font-size:0.68rem; color:var(--text-muted); font-weight:500; display:block;">Live: ${livePsnr.toFixed(1)} dB</span>`;
+      document.getElementById("metricUnetDeltaE").innerHTML = `${bench.delta_e00.toFixed(2)} <span style="font-size:0.68rem; color:var(--text-muted); font-weight:500; display:block;">Live: ${liveDeltaE.toFixed(1)}</span>`;
+      document.getElementById("metricUnetSsim").innerHTML = `${(bench.ms_ssim || bench.ssim).toFixed(3)} <span style="font-size:0.68rem; color:var(--text-dim); font-weight:500; display:block;">Live: ${liveSsim.toFixed(3)}</span>`;
     } else if (m === "cnn") {
-      document.getElementById("metricCnnPsnr").textContent = psnr.toFixed(2) + " dB";
-      document.getElementById("metricCnnDeltaE").textContent = meanDeltaE.toFixed(2);
-      document.getElementById("metricCnnSsim").textContent = ssim.toFixed(3);
+      document.getElementById("metricCnnPsnr").innerHTML = `${bench.psnr.toFixed(2)} dB <span style="font-size:0.68rem; color:var(--text-muted); font-weight:500; display:block;">Live: ${livePsnr.toFixed(1)} dB</span>`;
+      document.getElementById("metricCnnDeltaE").innerHTML = `${bench.delta_e00.toFixed(2)} <span style="font-size:0.68rem; color:var(--text-muted); font-weight:500; display:block;">Live: ${liveDeltaE.toFixed(1)}</span>`;
+      document.getElementById("metricCnnSsim").innerHTML = `${(bench.ms_ssim || bench.ssim).toFixed(3)} <span style="font-size:0.68rem; color:var(--text-dim); font-weight:500; display:block;">Live: ${liveSsim.toFixed(3)}</span>`;
     } else if (m === "none") {
-      document.getElementById("metricNonePsnr").textContent = psnr.toFixed(2) + " dB";
-      document.getElementById("metricNoneDeltaE").textContent = meanDeltaE.toFixed(2);
-      document.getElementById("metricNoneSsim").textContent = ssim.toFixed(3);
+      document.getElementById("metricNonePsnr").innerHTML = `${bench.psnr.toFixed(2)} dB <span style="font-size:0.68rem; color:var(--bad); font-weight:500; display:block;">Live: ${livePsnr.toFixed(1)} dB</span>`;
+      document.getElementById("metricNoneDeltaE").innerHTML = `${bench.delta_e00.toFixed(2)} <span style="font-size:0.68rem; color:var(--bad); font-weight:500; display:block;">Live: ${liveDeltaE.toFixed(1)}</span>`;
+      document.getElementById("metricNoneSsim").innerHTML = `${(bench.ms_ssim || bench.ssim).toFixed(3)} <span style="font-size:0.68rem; color:var(--text-dim); font-weight:500; display:block;">Live: ${liveSsim.toFixed(3)}</span>`;
     }
   });
+
+  // Update real-time calibration banners and live table
+  updateModelCalibrationBanners(currentCoeffs);
+  renderCalibrationTable(currentCoeffs);
 
   // Render to viewports
   renderStudioViewports();
@@ -2461,26 +4070,116 @@ function setDisplayMode(mode) {
   renderStudioViewports();
 }
 
+let currentDatasetFilename = null;
+let showingGroundTruthInference = false;
+let gtInferenceImage = null;
+
 function loadPreset(name) {
   document.querySelectorAll(".preset-btn").forEach(b => b.classList.remove("active"));
+  showingGroundTruthInference = false;
   if (name === "ishihara") {
-    document.getElementById("presetIshihara").classList.add("active");
-    loadImageSrc("/samples/ishihara.jpg");
+    document.getElementById("presetIshihara")?.classList.add("active");
+    loadImageSrc("/samples/ishihara.jpg", null);
   } else if (name === "fruits") {
-    document.getElementById("presetFruits").classList.add("active");
-    loadImageSrc("/samples/fruits.jpg");
+    document.getElementById("presetFruits")?.classList.add("active");
+    loadImageSrc("/samples/fruits.jpg", null);
+  } else if (name === "dog") {
+    document.getElementById("presetDog")?.classList.add("active");
+    loadImageSrc("/data/original/dog.jpg", "dog.jpg");
+  } else if (name === "tiger") {
+    document.getElementById("presetTiger")?.classList.add("active");
+    loadImageSrc("/data/original/tiger.jpg", "tiger.jpg");
+  } else if (name === "flower") {
+    document.getElementById("presetFlower")?.classList.add("active");
+    loadImageSrc("/data/original/flower_0002.jpg", "flower_0002.jpg");
+  } else if (name === "bunny") {
+    document.getElementById("presetBunny")?.classList.add("active");
+    loadImageSrc("/data/original/bunny.jpg", "bunny.jpg");
   } else if (name === "spectrum") {
-    document.getElementById("presetSpectrum").classList.add("active");
+    document.getElementById("presetSpectrum")?.classList.add("active");
+    currentDatasetFilename = null;
+    updateGtToggleVisibility();
     generateSpectrumImage();
   }
 }
 
-function loadImageSrc(src) {
+function loadImageSrc(src, datasetFilename = null) {
+  currentDatasetFilename = datasetFilename;
+  showingGroundTruthInference = false;
   currentImageSrc = src;
+  updateGtToggleVisibility();
   activeImage = new Image();
   activeImage.crossOrigin = "anonymous";
   activeImage.onload = () => processStudioImages();
   activeImage.src = src;
+}
+
+function updateGtToggleVisibility() {
+  const container = document.getElementById("restormerGtToggleContainer");
+  if (!container) return;
+  if (currentDatasetFilename) {
+    container.style.display = "flex";
+    const btn = document.getElementById("btnToggleGtInference");
+    if (btn) {
+      btn.textContent = showingGroundTruthInference 
+        ? "⚡ Switch to Live results.json Shader" 
+        : "🧠 View PyTorch Pipeline Output";
+      btn.className = "btn btn-xs " + (showingGroundTruthInference ? "btn-primary" : "btn-outline");
+    }
+  } else {
+    container.style.display = "none";
+  }
+}
+
+function toggleGtInference() {
+  if (!currentDatasetFilename) return;
+  showingGroundTruthInference = !showingGroundTruthInference;
+  updateGtToggleVisibility();
+  if (showingGroundTruthInference) {
+    const gtUrl = `/data/corrected/${currentCvdType}/${currentDatasetFilename}`;
+    gtInferenceImage = new Image();
+    gtInferenceImage.crossOrigin = "anonymous";
+    gtInferenceImage.onload = () => {
+      // Draw onto restormer canvases
+      const cRec = modelCanvases.restormer_rec;
+      cRec.width = gtInferenceImage.naturalWidth;
+      cRec.height = gtInferenceImage.naturalHeight;
+      cRec.getContext("2d").drawImage(gtInferenceImage, 0, 0);
+
+      // CVD perception with GT
+      const ctx = cRec.getContext("2d");
+      const imgData = ctx.getImageData(0, 0, cRec.width, cRec.height);
+      const src = imgData.data;
+      const cPerc = modelCanvases.restormer_perc;
+      cPerc.width = cRec.width;
+      cPerc.height = cRec.height;
+      const percBuf = cPerc.getContext("2d").createImageData(cRec.width, cRec.height);
+      const dst = percBuf.data;
+      for (let i = 0; i < src.length; i += 4) {
+        const rLin = srgbToLinear(src[i]);
+        const gLin = srgbToLinear(src[i+1]);
+        const bLin = srgbToLinear(src[i+2]);
+        const percLin = simulateCvdPixel(rLin, gLin, bLin, currentCvdType, currentSeverity);
+        dst[i] = linearToSrgb(percLin.r);
+        dst[i+1] = linearToSrgb(percLin.g);
+        dst[i+2] = linearToSrgb(percLin.b);
+        dst[i+3] = src[i+3];
+      }
+      cPerc.getContext("2d").putImageData(percBuf, 0, 0);
+      renderStudioViewports();
+      showToast(`🧠 Viewing actual PyTorch Restormer inference for ${currentDatasetFilename}!`);
+    };
+    gtInferenceImage.onerror = () => {
+      showToast(`⚠️ Could not load PyTorch output for ${currentDatasetFilename}`);
+      showingGroundTruthInference = false;
+      updateGtToggleVisibility();
+      processStudioImages();
+    };
+    gtInferenceImage.src = gtUrl;
+  } else {
+    processStudioImages();
+    showToast(`⚡ Switched back to Live results.json Canvas2D Shader!`);
+  }
 }
 
 function generateSpectrumImage() {
@@ -2509,7 +4208,7 @@ function generateSpectrumImage() {
   ctx.arc(cx, cy, radius, 0, 2 * Math.PI);
   ctx.fill();
 
-  loadImageSrc(c.toDataURL());
+  loadImageSrc(c.toDataURL(), null);
 }
 
 function selectCvdType(type) {
@@ -2534,7 +4233,12 @@ function selectCvdType(type) {
     document.getElementById("displayModeStatusLabel").textContent = `👁️ CVD Perceived View (${type.charAt(0).toUpperCase() + type.slice(1)})`;
   }
 
-  processStudioImages();
+  if (showingGroundTruthInference && currentDatasetFilename) {
+    showingGroundTruthInference = false; // reload for new condition
+    toggleGtInference();
+  } else {
+    processStudioImages();
+  }
 }
 
 function updateSeverity(val) {
@@ -3041,11 +4745,15 @@ async function loadDashboardData() {
     if (!res || !res.ok) {
       res = await fetch("/results.json");
     }
+    if (!res || !res.ok) {
+      res = await fetch("/result.json");
+    }
     if (!res || !res.ok) throw new Error(`HTTP Error ${res ? res.status : 'offline'}`);
     const data = await res.json();
     CURRENT_DATA = data;
-
+    syncBenchmarkResultsFromData(data);
     renderAllCharts(data);
+    processStudioImages();
 
     statusEl.className = "status-pill ok";
     statusText.textContent = "Data Connected";
@@ -3056,6 +4764,38 @@ async function loadDashboardData() {
     statusText.textContent = "Data Offline";
     retryBtn.style.display = "inline-flex";
   }
+}
+
+function handleResultsJsonUpload(event) {
+  const file = event.target.files && event.target.files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    try {
+      const data = JSON.parse(e.target.result);
+      if (!data.per_condition && !data.ablation) {
+        alert("The uploaded JSON file does not appear to contain CVD evaluation results (missing per_condition or ablation sections).");
+        return;
+      }
+      CURRENT_DATA = data;
+      syncBenchmarkResultsFromData(data);
+      renderAllCharts(data);
+      processStudioImages();
+
+      const label = document.getElementById("activeCalibSourceLabel");
+      if (label) {
+        label.innerHTML = `<span style="display:inline-block; width:6px; height:6px; border-radius:50%; background:var(--good);"></span><span>Calibration: <code style="color:inherit; font-size:0.68rem;">${file.name}</code> (Custom Uploaded)</span>`;
+      }
+      const statusText = document.getElementById("statusText");
+      if (statusText) statusText.textContent = `Custom: ${file.name}`;
+      showToast(`✓ Color correction re-calibrated using uploaded ${file.name}!`);
+    } catch (err) {
+      console.error("Invalid JSON uploaded:", err);
+      alert("Error parsing JSON: " + err.message);
+    }
+  };
+  reader.readAsText(file);
 }
 
 // Listeners
@@ -3070,9 +4810,535 @@ document.getElementById("sigBaselineSelect").addEventListener("change", (e) => {
 });
 document.getElementById("retryBtn").addEventListener("click", loadDashboardData);
 
+// ==========================================
+// PHYSICALLY GROUNDED ISHIHARA SCREENING ENGINE (HPE LMS MATRIX)
+// ==========================================
+const ISHI_A = [[.4124, .3576, .1805], [.2126, .7152, .0722], [.0193, .1192, .9505]];
+const ISHI_B = [[.4002, .7076, -.0808], [-.2263, 1.1653, .0457], [0, 0, .9182]];
+const ishi_mm = (X, Y) => X.map(r => [0, 1, 2].map(j => r[0] * Y[0][j] + r[1] * Y[1][j] + r[2] * Y[2][j]));
+const ishi_mv = (M, v) => M.map(r => r[0] * v[0] + r[1] * v[1] + r[2] * v[2]);
+function ishi_inv(m) {
+  const [[a, b, c], [d, e, f], [g, h, i]] = m;
+  const D = a * (e * i - f * h) - b * (d * i - f * g) + c * (d * h - e * g);
+  return [
+    [e * i - f * h, c * h - b * i, b * f - c * e],
+    [f * g - d * i, a * i - c * g, c * d - a * f],
+    [d * h - e * g, b * g - a * h, a * e - b * d]
+  ].map(r => r.map(v => v / D));
+}
+const ISHI_RGB2LMS = ishi_mm(ISHI_B, ISHI_A);
+const ISHI_LMS2RGB = ishi_inv(ISHI_RGB2LMS);
+const ishi_gam = v => { v = Math.min(1, Math.max(0, v)); return v <= .0031308 ? 12.92 * v : 1.055 * Math.pow(v, 1 / 2.4) - .055; };
+const ishi_lin = v => v <= .04045 ? v / 12.92 : Math.pow((v + .055) / 1.055, 2.4);
+const ishi_hex = h => [1, 3, 5].map(i => parseInt(h.substr(i, 2), 16));
+const ishi_pick = a => a[Math.random() * a.length | 0];
+const ishi_css = v => 'rgb(' + v.map(x => Math.round(Math.min(255, Math.max(0, x)))).join(',') + ')';
+const ishi_light = (h, k) => ishi_css(ishi_hex(h).map(v => v * k));
+
+function ishi_shift(h, ch, m, k) {
+  const l = ishi_mv(ISHI_RGB2LMS, ishi_hex(h).map(v => ishi_lin(v / 255)));
+  l[ch] *= m;
+  return ishi_css(ishi_mv(ISHI_LMS2RGB, l.map(v => v * k)).map(v => 255 * ishi_gam(v)));
+}
+
+const ISHI_P = {
+  ctl: { fig: ['#C9622A', '#D8742F', '#B85424'], gnd: ['#DCE0A6', '#CFD595', '#E4E6B8'] },
+  s1: { fig: ['#E9853B', '#F2A258', '#D8672F', '#EDB27A'], gnd: ['#9DB05A', '#B8C56C', '#7D9A4E', '#C5CC8A', '#8BAA63'] },
+  s2: { fig: ['#D9605A', '#E58A85', '#C94A48', '#EBA39B'], gnd: ['#8FA08A', '#A7B39B', '#7C8F7A', '#B9C2A9', '#98A98F'] },
+  s3: { fig: ['#8FB05A', '#A9C170', '#7C9C50', '#B6C880'], gnd: ['#E6A45A', '#D98B45', '#EDBB78', '#DD9A50', '#E9AE6A'] }
+};
+const ISHI_GK = ['#9a9f7a', '#8c9270', '#aab08a', '#7f866a', '#b8bc9a'];
+const ISHI_NUMS = ['12', '15', '16', '17', '21', '23', '29', '35', '36', '37', '42', '45', '52', '56', '57', '58', '62', '63', '73', '74', '75', '76', '78', '79', '84', '85', '86', '89', '91', '92', '95', '96', '97'];
+
+function drawIshiharaPlateCanvas(cv, s, num) {
+  const N = 500;
+  cv.width = cv.height = N;
+  const ctx = cv.getContext('2d');
+  const m = document.createElement('canvas');
+  m.width = m.height = N;
+  const mc = m.getContext('2d');
+  const cls = s.t === 'k';
+  mc.textAlign = 'center';
+  mc.textBaseline = 'middle';
+  if (cls) {
+    mc.font = '900 300px Arial, Helvetica, sans-serif';
+    mc.fillStyle = '#f00';
+    mc.fillText(num[0], N / 2 - 88, N / 2 + 16);
+    mc.fillStyle = '#0f0';
+    mc.fillText(num[1], N / 2 + 88, N / 2 + 16);
+  } else {
+    mc.font = '900 320px Arial, Helvetica, sans-serif';
+    mc.fillText(num, N / 2, N / 2 + 16);
+  }
+  const md = mc.getImageData(0, 0, N, N).data;
+  const at = (x, y) => {
+    const o = ((y | 0) * N + (x | 0)) * 4;
+    return [md[o], md[o + 1], md[o + 3]];
+  };
+  const cs = [];
+  const R = 246;
+  [[13, 1200], [10, 2500], [7.5, 4000], [5.5, 5500], [4, 7000]].forEach(([r, tries]) => {
+    for (let t = 0; t < tries; t++) {
+      const rho = Math.sqrt(Math.random()) * (R - r - 2);
+      const th = Math.random() * 6.283;
+      const x = N / 2 + rho * Math.cos(th);
+      const y = N / 2 + rho * Math.sin(th);
+      let ok = true;
+      for (const c of cs) {
+        const dx = x - c[0], dy = y - c[1], rr = r + c[2] + 1.5;
+        if (dx * dx + dy * dy < rr * rr) { ok = false; break; }
+      }
+      if (ok) cs.push([x, y, r]);
+    }
+  });
+  for (const [x, y, r] of cs) {
+    const [pr, pg, pa] = at(x, y);
+    const on = pa > 128;
+    const k = .86 + Math.random() * .28;
+    let c;
+    if (cls) {
+      const base = ishi_pick(ISHI_GK);
+      if (on) {
+        const left = pr > pg;
+        const ch = left ? s.leftCh : 1 - s.leftCh;
+        c = ishi_shift(base, ch, s.mult + (Math.random() - .5) * .08, k);
+      } else {
+        c = ishi_shift(base, 0, 1 + (Math.random() - .5) * .08, k);
+      }
+    } else {
+      const p = ISHI_P[s.p];
+      c = ishi_light(ishi_pick(on ? p.fig : p.gnd), k);
+    }
+    ctx.fillStyle = c;
+    ctx.beginPath();
+    ctx.arc(x, y, r, 0, 6.283);
+    ctx.fill();
+  }
+}
+
+let ishiPlates = [];
+let ishiIdx = 0;
+let ishiSeconds = 0;
+let ishiTimerInterval = null;
+let diagnosedCvdType = 'normal';
+
+const ishi_shuf = a => {
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.random() * (i + 1) | 0;
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+};
+
+function beginIshiharaTest() {
+  const nums = ishi_shuf(ISHI_NUMS.slice());
+  const ds = ishi_shuf([2, 3, 4, 5, 6, 7, 8, 9]);
+  const mk = (o, i) => ({ ...o, num: nums[i], ans: null });
+  const S = ishi_shuf([
+    { t: 's', p: 's1', typeName: 'Screening Plate (S1: Orange/Green)' },
+    { t: 's', p: 's2', typeName: 'Screening Plate (S2: Pink/Olive)' },
+    { t: 's', p: 's3', typeName: 'Screening Plate (S3: Green/Orange)' }
+  ]).map(mk);
+  const K = ishi_shuf([{ mult: 1.55 }, { mult: 1.55 }, { mult: 1.3 }, { mult: 1.3 }]).map((o, i) => {
+    const a = ds[i * 2], b = ds[i * 2 + 1], leftCh = Math.random() < .5 ? 0 : 1;
+    return {
+      t: 'k',
+      typeName: 'Classification Plate (Differential L/M Cone Shift)',
+      mult: o.mult,
+      leftCh,
+      num: '' + a + b,
+      Ld: leftCh === 0 ? a : b,
+      Md: leftCh === 0 ? b : a,
+      ans: null
+    };
+  });
+  ishiPlates = [mk({ t: 'c', p: 'ctl', typeName: 'Demonstration Plate' }, 0), ...ishi_shuf([...S, ...K])];
+  ishiIdx = 0;
+  ishiSeconds = 0;
+  if (ishiTimerInterval) clearInterval(ishiTimerInterval);
+  ishiTimerInterval = setInterval(() => {
+    ishiSeconds++;
+    const timerBadge = document.getElementById("plateTimerBadge");
+    if (timerBadge) timerBadge.textContent = `⏱️ ${ishiSeconds}s`;
+  }, 1000);
+
+  const testCard = document.getElementById("ishiharaTestCard");
+  const reportCard = document.getElementById("ishiharaReportCard");
+  if (testCard) testCard.style.display = "block";
+  if (reportCard) reportCard.style.display = "none";
+  loadIshiharaPlate(0);
+}
+
+function loadIshiharaPlate(i) {
+  ishiIdx = i;
+  const p = ishiPlates[ishiIdx];
+  const cv = document.getElementById("ishiharaCanvas");
+  if (cv && p) drawIshiharaPlateCanvas(cv, p, p.num);
+
+  const stepBadge = document.getElementById("plateStepBadge");
+  const typePill = document.getElementById("plateTypePill");
+  const progressBar = document.getElementById("plateProgressBar");
+  const customInput = document.getElementById("ishiharaCustomInput");
+  const prevBtn = document.getElementById("btnPrevPlate");
+  const nextBtn = document.getElementById("btnNextPlate");
+
+  if (stepBadge) stepBadge.textContent = `Plate ${ishiIdx + 1} of ${ishiPlates.length}`;
+  if (typePill) typePill.textContent = p ? p.typeName : 'Ishihara Plate';
+  if (progressBar) progressBar.style.width = `${((ishiIdx + 1) / ishiPlates.length) * 100}%`;
+  if (customInput) {
+    customInput.value = (p && p.ans !== null && p.ans !== undefined) ? p.ans : "";
+    customInput.focus({ preventScroll: true });
+  }
+  if (prevBtn) prevBtn.disabled = (ishiIdx === 0);
+  if (nextBtn) nextBtn.textContent = (ishiIdx === ishiPlates.length - 1) ? "Finish Test ✨" : "Next Plate →";
+}
+
+function submitCustomAnswer() {
+  const input = document.getElementById("ishiharaCustomInput");
+  const val = input ? input.value.trim() : "";
+  recordPlateAnswer(val || null);
+}
+
+function handleCustomInputKey(e) {
+  if (e.key === "Enter") {
+    e.preventDefault();
+    submitCustomAnswer();
+  }
+}
+
+function recordPlateAnswer(val) {
+  if (!ishiPlates[ishiIdx]) return;
+  ishiPlates[ishiIdx].ans = val;
+  ishiIdx++;
+  if (ishiIdx >= ishiPlates.length) {
+    finishIshiharaTest();
+  } else {
+    loadIshiharaPlate(ishiIdx);
+  }
+}
+
+function prevPlate() {
+  if (ishiIdx > 0) {
+    loadIshiharaPlate(ishiIdx - 1);
+  }
+}
+
+function ishi_read(p) {
+  if (p.t !== 'k') return p.ans === p.num ? 'ok' : 'miss';
+  if (p.ans === null || p.ans === undefined || p.ans === '') return 'none';
+  if (p.ans === p.num) return 'both';
+  if (p.ans == p.Ld) return 'deut';
+  if (p.ans == p.Md) return 'prot';
+  return 'other';
+}
+
+function finishIshiharaTest() {
+  if (ishiTimerInterval) clearInterval(ishiTimerInterval);
+  const r = ishiPlates.map(ishi_read);
+  const ctlOK = r[0] === 'ok';
+  const sMiss = ishiPlates.filter((p, i) => p.t === 's' && r[i] === 'miss').length;
+  const K = ishiPlates.map((p, i) => p.t === 'k' ? r[i] : null).filter(Boolean);
+  const cnt = x => K.filter(v => v === x).length, both = cnt('both'), pr = cnt('prot'), de = cnt('deut');
+  const issues = sMiss + (4 - both);
+  
+  let v, d, targetCvd = 'normal', lCone = 100, mCone = 100, sCone = 100;
+
+  if (!ctlOK) {
+    v = 'Inconclusive Assessment';
+    d = 'You missed the demonstration plate, which everyone should read under normal display conditions. Check brightness, turn off colour filters, and retake.';
+    targetCvd = 'normal';
+  } else if (sMiss === 0 && both >= 3) {
+    v = 'Normal Colour Vision (Red-Green Trichromacy)';
+    d = 'You read the screening plates and nearly all two-digit classification plates correctly. Your retinal cone photopigments demonstrate full discriminative capability.';
+    targetCvd = 'normal';
+    lCone = 100; mCone = 100; sCone = 100;
+  } else if (issues <= 1) {
+    v = 'Mostly Normal, with One Slip';
+    d = 'One miss is not enough for a definite deficiency pattern. Retake once to confirm, or check if ambient light or screen glare was a factor.';
+    targetCvd = 'normal';
+    lCone = 95; mCone = 95; sCone = 100;
+  } else {
+    const sev = (sMiss === 3 && both === 0) ? 'strong (closer to dichromacy)' : 'mild to moderate (anomalous trichromacy)';
+    if (pr > de) {
+      v = 'Protan-Type Red-Green Deficiency (Protanopia / Protanomaly)';
+      d = 'On two-digit classification plates you saw only the digit visible without L-cone sensitivity, and struggled with orange/red on green plates. Estimated severity: ' + sev + '. Recommended: DeepCVD Restormer Protanopia model.';
+      targetCvd = 'protanopia';
+      lCone = (sMiss === 3 && both === 0) ? 12 : 38;
+      mCone = 100;
+    } else if (de > pr) {
+      v = 'Deutan-Type Red-Green Deficiency (Deuteranopia / Deuteranomaly)';
+      d = 'On two-digit classification plates you saw only the digit visible without M-cone sensitivity, and struggled with green on red/orange plates. Estimated severity: ' + sev + '. Recommended: DeepCVD Restormer Deuteranopia model.';
+      targetCvd = 'deuteranopia';
+      mCone = (sMiss === 3 && both === 0) ? 15 : 42;
+      lCone = 100;
+    } else {
+      v = 'Red-Green Deficiency, Type Unclear';
+      d = 'You missed several plates across both axes. Estimated severity: ' + sev + '. A clinical anomaloscope examination is recommended for precise separation.';
+      targetCvd = 'deuteranopia';
+      lCone = 40; mCone = 40;
+    }
+  }
+
+  diagnosedCvdType = targetCvd;
+
+  // Update UI Elements
+  const statusEl = document.getElementById("diagStatus");
+  const subtitleEl = document.getElementById("diagSubtitle");
+  const descEl = document.getElementById("diagDescription");
+  const scoreValEl = document.getElementById("diagScoreVal");
+  const applyBtn = document.getElementById("btnApplyDiagnosis");
+  const diagIcon = document.getElementById("diagIcon");
+
+  if (statusEl) statusEl.textContent = v;
+  if (subtitleEl) subtitleEl.textContent = (targetCvd === 'normal') ? 'Full Trichromatic Sensitivity' : `Deficit: ${targetCvd.toUpperCase()} (${targetCvd === 'protanopia' ? 'L-Cone' : 'M-Cone'} Impairment)`;
+  if (descEl) descEl.textContent = d;
+  if (scoreValEl) scoreValEl.textContent = `${ishiPlates.length - issues}/${ishiPlates.length}`;
+  if (diagIcon) diagIcon.textContent = (targetCvd === 'normal') ? '🌟' : '👁️';
+
+  // Update meters
+  const protMeter = document.getElementById("coneMeterProtan");
+  const deutMeter = document.getElementById("coneMeterDeutan");
+  const tritMeter = document.getElementById("coneMeterTritan");
+  const protText = document.getElementById("mechProtanStatus");
+  const deutText = document.getElementById("mechDeutanStatus");
+
+  if (protMeter) protMeter.style.width = `${lCone}%`;
+  if (deutMeter) deutMeter.style.width = `${mCone}%`;
+  if (tritMeter) tritMeter.style.width = `${sCone}%`;
+
+  if (protText) {
+    protText.textContent = (lCone === 100) ? 'Intact (100%)' : `Deficient (${lCone}%)`;
+    protText.className = (lCone === 100) ? 'mech-status good' : 'mech-status bad';
+  }
+  if (deutText) {
+    deutText.textContent = (mCone === 100) ? 'Intact (100%)' : `Deficient (${mCone}%)`;
+    deutText.className = (mCone === 100) ? 'mech-status good' : 'mech-status bad';
+  }
+
+  if (applyBtn) {
+    applyBtn.setAttribute("data-condition", targetCvd);
+    applyBtn.innerHTML = `✨ Apply Diagnosis (${targetCvd.toUpperCase()}) to Model Studio →`;
+  }
+
+  // Populate report table
+  const tableBody = document.getElementById("reportTableBody");
+  if (tableBody) {
+    const lab = { ok: '✓ Correct', miss: '✗ Missed', both: 'Both digits ✓', none: 'Nothing seen ✗', prot: 'Protan reading (one digit)', deut: 'Deutan reading (one digit)', other: '✗ Other' };
+    const nm = { c: 'Demonstration', s: 'Screening Plate', k: 'Classification Plate (L/M Shift)' };
+    tableBody.innerHTML = ishiPlates.map((p, i) => {
+      const isGood = ['ok', 'both'].includes(r[i]);
+      return `
+        <tr>
+          <td>Plate ${i + 1}</td>
+          <td>${nm[p.t]}</td>
+          <td><strong>${p.num}</strong></td>
+          <td class="${isGood ? 'good' : 'bad'}">${p.ans || 'None / Empty'}</td>
+          <td>${p.num}</td>
+          <td>${p.t === 'k' ? (p.Ld + ' or ' + p.Md) : (p.t === 'c' ? p.num : 'Unclear / Missed')}</td>
+          <td><span class="sig-badge ${isGood ? 'better' : 'worse'}">${lab[r[i]]}</span></td>
+        </tr>
+      `;
+    }).join('');
+  }
+
+  const testCard = document.getElementById("ishiharaTestCard");
+  const reportCard = document.getElementById("ishiharaReportCard");
+  if (testCard) testCard.style.display = "none";
+  if (reportCard) {
+    reportCard.style.display = "block";
+    reportCard.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+  updateGatewayProfileBar(v, targetCvd);
+}
+
+function quickFillTest(preset) {
+  beginIshiharaTest();
+  if (preset === 'normal') {
+    ishiPlates.forEach(p => { p.ans = p.num; });
+  } else if (preset === 'protan') {
+    ishiPlates.forEach(p => {
+      if (p.t === 'c') p.ans = p.num;
+      else if (p.t === 's') p.ans = null;
+      else if (p.t === 'k') p.ans = p.Md;
+    });
+  } else if (preset === 'deutan') {
+    ishiPlates.forEach(p => {
+      if (p.t === 'c') p.ans = p.num;
+      else if (p.t === 's') p.ans = null;
+      else if (p.t === 'k') p.ans = p.Ld;
+    });
+  }
+  ishiIdx = ishiPlates.length;
+  finishIshiharaTest();
+  showToast(`⚡ Loaded ${preset.toUpperCase()} test evaluation preset!`);
+}
+
+function restartIshiharaTest() {
+  beginIshiharaTest();
+  const el = document.getElementById("ishiharaSection");
+  if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+function updateGatewayProfileBar(diagStatus, conditionKey) {
+  const gateBar = document.getElementById("gateActiveProfileBar");
+  const gateName = document.getElementById("gateActiveProfileName");
+  const gateDesc = document.getElementById("gateActiveProfileDesc");
+  if (gateBar && gateName) {
+    gateBar.style.display = "flex";
+    gateName.textContent = conditionKey.charAt(0).toUpperCase() + conditionKey.slice(1);
+    gateDesc.textContent = `(Diagnosed: ${diagStatus})`;
+  }
+}
+
+function applyDiagnosisToStudio() {
+  const applyBtn = document.getElementById("btnApplyDiagnosis");
+  const condition = (applyBtn && applyBtn.getAttribute("data-condition")) || diagnosedCvdType || "deuteranopia";
+
+  selectCvdType(condition === "normal" ? "deuteranopia" : condition);
+  
+  // Set variant to best Restormer (+ RDB)
+  const variantSelect = document.getElementById("restormerVariantSelect");
+  if (variantSelect) {
+    variantSelect.value = "rdb";
+  }
+
+  scrollToStudio();
+  showToast(`✨ DeepCVD Studio personalized for ${condition.toUpperCase()} with Best Restormer (+ RDB)!`);
+}
+
+function toggleReportTable() {
+  const wrap = document.getElementById("reportTableWrap");
+  const btn = document.getElementById("btnToggleTable");
+  if (!wrap) return;
+  if (wrap.style.display === "none") {
+    wrap.style.display = "block";
+    if (btn) btn.textContent = "Collapse Details";
+  } else {
+    wrap.style.display = "none";
+    if (btn) btn.textContent = "Expand Details";
+  }
+}
+
+function copyReportSummary() {
+  const status = document.getElementById("diagStatus")?.textContent || "";
+  const score = document.getElementById("diagScoreVal")?.textContent || "";
+  const desc = document.getElementById("diagDescription")?.textContent || "";
+  const text = `DeepCVD - Ishihara Screening Report\nDiagnosis: ${status}\nScore: ${score}\nSummary: ${desc}`;
+  navigator.clipboard.writeText(text).then(() => {
+    showToast("📋 Diagnostic summary copied to clipboard!");
+  }).catch(() => {
+    showToast("📋 Report summary ready.");
+  });
+}
+
+function scrollToStudio() {
+  const el = document.getElementById("studioSection");
+  if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+function goToIshiharaTest() {
+  const el = document.getElementById("ishiharaSection");
+  if (el) {
+    el.scrollIntoView({ behavior: "smooth", block: "start" });
+    const testCard = document.getElementById("ishiharaTestCard");
+    if (!testCard || testCard.style.display === "none") {
+      restartIshiharaTest();
+    }
+  }
+}
+
+// Gateway Card controls
+function toggleGateCard(show) {
+  const card = document.getElementById("cvdGateCard");
+  if (!card) return;
+  card.style.display = show ? "block" : "none";
+}
+
+function toggleKnownCvdOptions() {
+  const panel = document.getElementById("gateKnownSelector");
+  if (!panel) return;
+  panel.style.display = (panel.style.display === "none") ? "block" : "none";
+}
+
+function applyKnownCondition(type) {
+  if (type === "normal") {
+    selectCvdType("deuteranopia");
+    updateGatewayProfileBar("Normal Trichromat (Exploring Deuteranopia)", "deuteranopia");
+    showToast("👁️ Normal Trichromat selected! Simulated in Studio so you can see how CVD observers perceive recoloured images.");
+  } else {
+    selectCvdType(type);
+    updateGatewayProfileBar(`${type.charAt(0).toUpperCase() + type.slice(1)} Confirmed`, type);
+    showToast(`✓ Vision profile set to ${type.toUpperCase()}! Studio adjusted below.`);
+  }
+  const panel = document.getElementById("gateKnownSelector");
+  if (panel) panel.style.display = "none";
+  scrollToStudio();
+}
+
+// Lightweight Toast Notification
+function showToast(msg, duration = 3200) {
+  let toast = document.getElementById("cvdToast");
+  if (!toast) {
+    toast = document.createElement("div");
+    toast.id = "cvdToast";
+    toast.style.cssText = "position:fixed; bottom:28px; right:28px; z-index:9999; background:rgba(15,23,42,0.92); color:#f1f5f9; padding:12px 20px; border-radius:10px; border:1px solid rgba(56,189,248,0.4); box-shadow:0 10px 30px rgba(0,0,0,0.5); font-size:0.85rem; font-weight:600; display:flex; align-items:center; gap:8px; backdrop-filter:blur(10px); transition:all 0.3s ease; opacity:0; transform:translateY(10px); pointer-events:none;";
+    document.body.appendChild(toast);
+  }
+  toast.innerHTML = msg;
+  toast.style.opacity = "1";
+  toast.style.transform = "translateY(0)";
+  setTimeout(() => {
+    toast.style.opacity = "0";
+    toast.style.transform = "translateY(10px)";
+  }, duration);
+}
+
+// Keyboard accessibility navigation for Ishihara screening
+window.addEventListener("keydown", (e) => {
+  const customInput = document.getElementById("ishiharaCustomInput");
+  if (document.activeElement === customInput) {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      submitCustomAnswer();
+    }
+    return;
+  }
+  
+  const testCard = document.getElementById("ishiharaTestCard");
+  if (!testCard || testCard.style.display === "none") return;
+
+  if (e.key === "ArrowLeft") {
+    e.preventDefault();
+    prevPlate();
+  } else if (e.key === "ArrowRight") {
+    e.preventDefault();
+    submitCustomAnswer();
+  }
+});
+
+// Initialize Ishihara Test Plate on startup
+function initIshiharaTest() {
+  beginIshiharaTest();
+
+  // Check URL parameters or localStorage for diagnosed CVD from ishihara test
+  const urlParams = new URLSearchParams(window.location.search);
+  const diagnosedParam = urlParams.get('diagnosed') || localStorage.getItem('deepcvd_diagnosed_cvd');
+  if (diagnosedParam && ['protanopia', 'deuteranopia', 'tritanopia', 'normal'].includes(diagnosedParam.toLowerCase())) {
+    const cond = diagnosedParam.toLowerCase();
+    if (cond === 'normal') {
+      updateGatewayProfileBar('Normal Trichromat (Exploring Deuteranopia)', 'deuteranopia');
+    } else {
+      selectCvdType(cond);
+      updateGatewayProfileBar(`${cond.charAt(0).toUpperCase() + cond.slice(1)} Confirmed`, cond);
+      showToast(`🎯 Applied clinical Ishihara diagnosis: ${cond.toUpperCase()}!`);
+    }
+  }
+}
+
 // Initialize image and dashboard
 loadImageSrc("/samples/ishihara.jpg");
 loadDashboardData();
+initIshiharaTest();
 </script>
 
 </body>

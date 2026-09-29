@@ -32,11 +32,34 @@ def dashboard():
     return send_from_directory(BASE_DIR, "index.html")
 
 
+@app.route("/ishihara")
+@app.route("/ishihara.html")
+def ishihara_page():
+    return send_from_directory(BASE_DIR, "ishihara.html")
+
+
+@app.route("/report.txt")
+def serve_report():
+    return send_from_directory(BASE_DIR, "report.txt", mimetype="text/plain; charset=utf-8")
+
+
+@app.route("/audit.txt")
+def serve_audit():
+    return send_from_directory(BASE_DIR, "audit.txt", mimetype="text/plain; charset=utf-8")
+
+
 @app.route("/api/results")
+@app.route("/results.json")
+@app.route("/result.json")
 def get_results():
-    if not RESULTS_PATH.exists():
-        return jsonify({"error": True, "message": "results.json not found"}), 404
-    with open(RESULTS_PATH, "r", encoding="utf-8") as f:
+    target = RESULTS_PATH
+    if not target.exists():
+        alt_target = BASE_DIR / "result.json"
+        if alt_target.exists():
+            target = alt_target
+        else:
+            return jsonify({"error": True, "message": "results.json not found"}), 404
+    with open(target, "r", encoding="utf-8") as f:
         data = json.load(f)
     return jsonify(data)
 
@@ -52,5 +75,17 @@ def serve_sample(filename):
     return send_from_directory(samples_dir, filename)
 
 
+@app.route("/data/<path:filename>")
+def serve_data(filename):
+    data_dir = BASE_DIR / "data"
+    return send_from_directory(data_dir, filename)
+
+
+@app.route("/logo.png")
+def serve_logo():
+    return send_from_directory(BASE_DIR, "logo.png")
+
+
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000, debug=True)
+

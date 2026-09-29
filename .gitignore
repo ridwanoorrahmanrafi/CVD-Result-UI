@@ -23,3 +23,6 @@ Thumbs.db
 .agents/
 .system_generated/
 *.log
+
+# Evaluation Dataset (Local only, excluded from Git & Vercel deployment limits)
+data/
