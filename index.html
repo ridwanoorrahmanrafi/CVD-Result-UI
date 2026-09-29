@@ -426,7 +426,7 @@
   /* Studio / Interactive Section */
   .studio-layout {
     display: grid;
-    grid-template-columns: 310px 1fr;
+    grid-template-columns: 340px 1fr;
     gap: 22px;
   }
   @media (max-width: 1024px) {
@@ -455,9 +455,7 @@
     text-transform: uppercase;
     letter-spacing: 0.06em;
     color: var(--text-dim);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+    margin-bottom: 2px;
   }
 
   /* Preset Image Buttons - Unified Layout & Dimensions */
@@ -469,15 +467,16 @@
   .preset-btn {
     display: flex;
     align-items: center;
-    gap: 9px;
-    padding: 8px 10px;
+    gap: 8px;
+    padding: 7px 10px;
     background: var(--bg-card);
     border: 1px solid var(--border);
-    border-radius: 10px;
+    border-radius: 9px;
     cursor: pointer;
     text-align: left;
-    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-    min-height: 56px;
+    transition: all 0.18s ease;
+    min-height: 48px;
+    box-sizing: border-box;
     overflow: hidden;
   }
   .preset-btn:hover {
@@ -489,12 +488,12 @@
   .preset-btn.active {
     background: var(--primary-glow);
     border-color: var(--primary);
-    box-shadow: 0 0 0 1px var(--primary), 0 4px 12px var(--primary-glow);
+    box-shadow: 0 0 0 1px var(--primary), 0 3px 10px var(--primary-glow);
   }
   .preset-thumbnail {
     width: 32px;
     height: 32px;
-    border-radius: 7px;
+    border-radius: 6px;
     object-fit: cover;
     background: #1e293b;
     flex-shrink: 0;
@@ -503,7 +502,7 @@
   .preset-icon-circle {
     width: 32px;
     height: 32px;
-    border-radius: 7px;
+    border-radius: 6px;
     flex-shrink: 0;
     display: flex;
     align-items: center;
@@ -517,11 +516,11 @@
     display: flex;
     flex-direction: column;
     min-width: 0;
-    overflow: hidden;
     line-height: 1.25;
+    overflow: hidden;
   }
   .preset-title {
-    font-size: 0.78rem;
+    font-size: 0.81rem;
     font-weight: 600;
     color: var(--text);
     white-space: nowrap;
@@ -532,7 +531,7 @@
     color: var(--primary);
   }
   .preset-sub {
-    font-size: 0.66rem;
+    font-size: 0.67rem;
     color: var(--text-dim);
     white-space: nowrap;
     overflow: hidden;
@@ -542,44 +541,29 @@
 
   /* Dataset Picker Card */
   .dataset-picker-card {
-    margin-top: 8px;
-    padding: 10px 12px;
+    margin-top: 4px;
+    padding: 8px 10px;
     background: var(--bg-card);
     border: 1px solid var(--border);
-    border-radius: 10px;
+    border-radius: 9px;
     transition: border-color 0.2s ease;
   }
   .dataset-picker-card:focus-within {
     border-color: var(--primary);
     box-shadow: 0 0 0 1px var(--primary-glow);
   }
-  .dataset-picker-header {
+  .dataset-picker-label {
     display: flex;
     align-items: center;
-    gap: 8px;
-    margin-bottom: 7px;
-  }
-  .dataset-picker-icon {
-    font-size: 1rem;
-    flex-shrink: 0;
-  }
-  .dataset-picker-title {
-    display: flex;
-    flex-direction: column;
-    line-height: 1.25;
-  }
-  .dataset-picker-title strong {
-    font-size: 0.76rem;
-    color: var(--text);
+    gap: 6px;
+    font-size: 0.72rem;
     font-weight: 600;
-  }
-  .dataset-picker-title small {
-    font-size: 0.65rem;
-    color: var(--text-dim);
+    color: var(--text-muted);
+    margin-bottom: 5px;
   }
   .dataset-dropdown-select {
     width: 100%;
-    padding: 7px 10px;
+    padding: 7px 9px;
     background: rgba(11, 15, 25, 0.6);
     border: 1px solid var(--border);
     border-radius: 7px;
@@ -704,32 +688,48 @@
 
   /* Upload Drop Zone */
   .drop-zone {
-    border: 2px dashed var(--border);
-    border-radius: 10px;
-    padding: 14px 12px;
-    text-align: center;
+    border: 1.5px dashed var(--border);
+    border-radius: 9px;
+    padding: 8px 12px;
     cursor: pointer;
     transition: all 0.2s;
     background: rgba(255, 255, 255, 0.01);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 6px;
+    box-sizing: border-box;
+    width: 100%;
   }
   .drop-zone:hover, .drop-zone.dragover {
     border-color: var(--primary);
     background: var(--primary-glow);
   }
   .drop-zone-icon {
-    font-size: 1.4rem;
+    font-size: 1.25rem;
     color: var(--primary);
-    margin-bottom: 2px;
+    flex-shrink: 0;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .drop-zone-text-group {
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    line-height: 1.25;
+    min-width: 0;
   }
   .drop-zone-text {
-    font-size: 0.78rem;
-    font-weight: 500;
-    color: var(--text-muted);
+    font-size: 0.77rem;
+    font-weight: 600;
+    color: var(--text);
   }
   .drop-zone-hint {
-    font-size: 0.68rem;
+    font-size: 0.65rem;
     color: var(--text-dim);
-    margin-top: 2px;
+    margin-top: 1px;
   }
 
   /* CVD Type Pills */
@@ -2017,8 +2017,8 @@
       padding: 10px 18px;
     }
     .studio-layout {
-      grid-template-columns: 280px 1fr;
-      gap: 16px;
+      grid-template-columns: 330px 1fr;
+      gap: 18px;
     }
     .kpi-grid {
       grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
@@ -2791,75 +2791,72 @@
       <!-- Left Controls Panel -->
       <div class="studio-controls-panel">
         <div class="control-group">
-          <div class="control-title">
+          <div class="control-title" style="display:flex; justify-content:space-between; align-items:center;">
             <span>1. Select Sample Image</span>
-            <span style="font-size:0.65rem; color:var(--text-dim); text-transform:none; font-weight:500;">7 Presets + 15 Benchmarks</span>
+            <span style="font-size:0.65rem; color:var(--text-dim); text-transform:none; font-weight:500;">7 Presets</span>
           </div>
           <div class="preset-btns">
             <button class="preset-btn active" id="presetIshihara" onclick="loadPreset('ishihara')" title="Ishihara #74 Diagnostic Plate">
               <img class="preset-thumbnail" src="samples/ishihara.jpg" alt="Ishihara" onerror="if(!this.dataset.retry){this.dataset.retry=1;this.src='samples/ishihara.jpg';}">
               <div class="preset-text-wrap">
-                <span class="preset-title">Ishihara Plate</span>
-                <span class="preset-sub">Red-Green #74</span>
+                <span class="preset-title">Ishihara</span>
+                <span class="preset-sub">Plate #74</span>
               </div>
             </button>
             <button class="preset-btn" id="presetFruits" onclick="loadPreset('fruits')" title="Fruit Harvest Multi-chromatic Gamut">
               <img class="preset-thumbnail" src="samples/fruits.jpg" alt="Fruits" onerror="if(!this.dataset.retry){this.dataset.retry=1;this.src='samples/fruits.jpg';}">
               <div class="preset-text-wrap">
-                <span class="preset-title">Fruit Harvest</span>
-                <span class="preset-sub">Rich color gamut</span>
+                <span class="preset-title">Fruit Bowl</span>
+                <span class="preset-sub">Rich Gamut</span>
               </div>
             </button>
             <button class="preset-btn" id="presetDog" onclick="loadPreset('dog')" title="Dataset Benchmark Image #1">
               <img class="preset-thumbnail" src="samples/presets/original/dog.jpg" alt="Dog" onerror="if(!this.dataset.retry){this.dataset.retry=1;this.src='data/original/dog.jpg';}">
               <div class="preset-text-wrap">
-                <span class="preset-title">Dog Benchmark</span>
-                <span class="preset-sub">Dataset sample #1</span>
+                <span class="preset-title">Dog</span>
+                <span class="preset-sub">Dataset #1</span>
               </div>
             </button>
             <button class="preset-btn" id="presetTiger" onclick="loadPreset('tiger')" title="Dataset Benchmark Image #2">
               <img class="preset-thumbnail" src="samples/presets/original/tiger.jpg" alt="Tiger" onerror="if(!this.dataset.retry){this.dataset.retry=1;this.src='data/original/tiger.jpg';}">
               <div class="preset-text-wrap">
-                <span class="preset-title">Tiger Benchmark</span>
-                <span class="preset-sub">Dataset sample #2</span>
+                <span class="preset-title">Tiger</span>
+                <span class="preset-sub">Dataset #2</span>
               </div>
             </button>
             <button class="preset-btn" id="presetFlower" onclick="loadPreset('flower')" title="Dataset Benchmark Floral Spectrum">
               <img class="preset-thumbnail" src="samples/presets/original/flower_0002.jpg" alt="Flower" onerror="if(!this.dataset.retry){this.dataset.retry=1;this.src='data/original/flower_0002.jpg';}">
               <div class="preset-text-wrap">
-                <span class="preset-title">Flower #0002</span>
-                <span class="preset-sub">Dataset floral test</span>
+                <span class="preset-title">Flower</span>
+                <span class="preset-sub">Floral #0002</span>
               </div>
             </button>
             <button class="preset-btn" id="presetBunny" onclick="loadPreset('bunny')" title="Dataset Benchmark Image #3">
               <img class="preset-thumbnail" src="samples/presets/original/bunny.jpg" alt="Bunny" onerror="if(!this.dataset.retry){this.dataset.retry=1;this.src='data/original/bunny.jpg';}">
               <div class="preset-text-wrap">
-                <span class="preset-title">Bunny Benchmark</span>
-                <span class="preset-sub">Dataset sample #3</span>
+                <span class="preset-title">Bunny</span>
+                <span class="preset-sub">Dataset #3</span>
               </div>
             </button>
             <button class="preset-btn" id="presetSpectrum" onclick="loadPreset('spectrum')" style="grid-column: span 2;" title="Color Wheel 360° Hue Calibration">
               <div class="preset-icon-circle">🌈</div>
               <div class="preset-text-wrap">
-                <span class="preset-title">Color Wheel Calibration</span>
-                <span class="preset-sub">Continuous 360° chromatic hue spectrum</span>
+                <span class="preset-title">Color Wheel Spectrum</span>
+                <span class="preset-sub">Continuous 360° chromatic hue test</span>
               </div>
             </button>
           </div>
 
           <div class="dataset-picker-card">
-            <div class="dataset-picker-header">
-              <span class="dataset-picker-icon">📁</span>
-              <div class="dataset-picker-title">
-                <strong>Explore Full Dataset (15 Benchmarks)</strong>
-                <small>Select from all real test photos &amp; PyTorch outputs</small>
-              </div>
+            <div class="dataset-picker-label">
+              <span>📊</span>
+              <span>Dataset Benchmark Photos (15)</span>
             </div>
             <select id="datasetSelect" class="dataset-dropdown-select" onchange="loadDatasetImage(this.value)">
               <option value="">-- Choose Benchmark Photo --</option>
               <option value="dog.jpg">🐶 Dog (Dataset Benchmark #1)</option>
               <option value="tiger.jpg">🐯 Tiger (Dataset Benchmark #2)</option>
-              <option value="flower_0002.jpg">🌸 Flower #0002 (Dataset Benchmark Floral)</option>
+              <option value="flower_0002.jpg">🌸 Flower #0002 (Dataset Floral)</option>
               <option value="bunny.jpg">🐰 Bunny (Dataset Benchmark #3)</option>
               <option value="elephant.jpg">🐘 Elephant (Texture &amp; Details)</option>
               <option value="fox.jpg">🦊 Fox (Warm Red-Orange Spectrum)</option>
@@ -2877,9 +2874,11 @@
 
           <label class="drop-zone" id="dropZone">
             <input type="file" id="fileInput" accept="image/*" style="display:none;">
-            <div class="drop-zone-icon">📁</div>
-            <div class="drop-zone-text">Upload Custom Picture</div>
-            <div class="drop-zone-hint">PNG, JPG, WEBP · Drag &amp; drop or click</div>
+            <div class="drop-zone-icon">📤</div>
+            <div class="drop-zone-text-group">
+              <span class="drop-zone-text">Upload Custom Picture</span>
+              <span class="drop-zone-hint">PNG, JPG, WEBP · Drag &amp; drop or click</span>
+            </div>
           </label>
         </div>
 
