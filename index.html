@@ -450,45 +450,156 @@
     gap: 8px;
   }
   .control-title {
-    font-size: 0.78rem;
+    font-size: 0.72rem;
     font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 0.05em;
+    letter-spacing: 0.06em;
     color: var(--text-dim);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
   }
 
-  /* Preset Image Buttons */
+  /* Preset Image Buttons - Unified Layout & Dimensions */
   .preset-btns {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: repeat(2, 1fr);
     gap: 8px;
   }
   .preset-btn {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 9px;
     padding: 8px 10px;
-    font-size: 0.78rem;
-    font-weight: 600;
     background: var(--bg-card);
     border: 1px solid var(--border);
-    border-radius: 8px;
-    color: var(--text);
+    border-radius: 10px;
     cursor: pointer;
     text-align: left;
-    transition: all 0.2s;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    min-height: 56px;
+    overflow: hidden;
   }
-  .preset-btn:hover, .preset-btn.active {
+  .preset-btn:hover {
+    background: var(--bg-card-hover);
+    border-color: var(--border-accent);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+  }
+  .preset-btn.active {
     background: var(--primary-glow);
     border-color: var(--primary);
-    color: var(--primary);
+    box-shadow: 0 0 0 1px var(--primary), 0 4px 12px var(--primary-glow);
   }
   .preset-thumbnail {
-    width: 28px;
-    height: 28px;
-    border-radius: 5px;
+    width: 32px;
+    height: 32px;
+    border-radius: 7px;
     object-fit: cover;
     background: #1e293b;
+    flex-shrink: 0;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+  }
+  .preset-icon-circle {
+    width: 32px;
+    height: 32px;
+    border-radius: 7px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    background: conic-gradient(from 0deg, #ef4444, #f59e0b, #10b981, #06b6d4, #3b82f6, #8b5cf6, #ec4899, #ef4444);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.25);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+  }
+  .preset-text-wrap {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    overflow: hidden;
+    line-height: 1.25;
+  }
+  .preset-title {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--text);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .preset-btn.active .preset-title {
+    color: var(--primary);
+  }
+  .preset-sub {
+    font-size: 0.66rem;
+    color: var(--text-dim);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-top: 1px;
+  }
+
+  /* Dataset Picker Card */
+  .dataset-picker-card {
+    margin-top: 8px;
+    padding: 10px 12px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    transition: border-color 0.2s ease;
+  }
+  .dataset-picker-card:focus-within {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 1px var(--primary-glow);
+  }
+  .dataset-picker-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 7px;
+  }
+  .dataset-picker-icon {
+    font-size: 1rem;
+    flex-shrink: 0;
+  }
+  .dataset-picker-title {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.25;
+  }
+  .dataset-picker-title strong {
+    font-size: 0.76rem;
+    color: var(--text);
+    font-weight: 600;
+  }
+  .dataset-picker-title small {
+    font-size: 0.65rem;
+    color: var(--text-dim);
+  }
+  .dataset-dropdown-select {
+    width: 100%;
+    padding: 7px 10px;
+    background: rgba(11, 15, 25, 0.6);
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    color: var(--text);
+    font-size: 0.77rem;
+    font-family: inherit;
+    font-weight: 500;
+    cursor: pointer;
+    outline: none;
+    transition: all 0.2s ease;
+  }
+  [data-theme="light"] .dataset-dropdown-select {
+    background: #ffffff;
+  }
+  .dataset-dropdown-select:hover {
+    border-color: var(--border-accent);
+  }
+  .dataset-dropdown-select:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 2px var(--primary-glow);
   }
 
   /* Real-Time results.json Calibration Banners & Badges */
@@ -2221,10 +2332,19 @@
     .preset-btn {
       padding: 6px 8px;
       font-size: 0.74rem;
+      min-height: 52px;
+      gap: 7px;
     }
-    .preset-thumbnail {
-      width: 24px;
-      height: 24px;
+    .preset-thumbnail, .preset-icon-circle {
+      width: 28px;
+      height: 28px;
+      border-radius: 6px;
+    }
+    .preset-title {
+      font-size: 0.74rem;
+    }
+    .preset-sub {
+      font-size: 0.63rem;
     }
     .model-metrics-row {
       grid-template-columns: 1fr 1fr;
@@ -2671,76 +2791,83 @@
       <!-- Left Controls Panel -->
       <div class="studio-controls-panel">
         <div class="control-group">
-          <div class="control-title">1. Select Sample Image</div>
+          <div class="control-title">
+            <span>1. Select Sample Image</span>
+            <span style="font-size:0.65rem; color:var(--text-dim); text-transform:none; font-weight:500;">7 Presets + 15 Benchmarks</span>
+          </div>
           <div class="preset-btns">
-            <button class="preset-btn active" id="presetIshihara" onclick="loadPreset('ishihara')">
+            <button class="preset-btn active" id="presetIshihara" onclick="loadPreset('ishihara')" title="Ishihara #74 Diagnostic Plate">
               <img class="preset-thumbnail" src="samples/ishihara.jpg" alt="Ishihara" onerror="if(!this.dataset.retry){this.dataset.retry=1;this.src='samples/ishihara.jpg';}">
-              <div>
-                <div>Ishihara #74</div>
-                <small style="color:var(--text-dim);">Red-Green test</small>
+              <div class="preset-text-wrap">
+                <span class="preset-title">Ishihara Plate</span>
+                <span class="preset-sub">Red-Green #74</span>
               </div>
             </button>
-            <button class="preset-btn" id="presetFruits" onclick="loadPreset('fruits')">
+            <button class="preset-btn" id="presetFruits" onclick="loadPreset('fruits')" title="Fruit Harvest Multi-chromatic Gamut">
               <img class="preset-thumbnail" src="samples/fruits.jpg" alt="Fruits" onerror="if(!this.dataset.retry){this.dataset.retry=1;this.src='samples/fruits.jpg';}">
-              <div>
-                <div>Fruit Harvest</div>
-                <small style="color:var(--text-dim);">Multi-chromatic</small>
+              <div class="preset-text-wrap">
+                <span class="preset-title">Fruit Harvest</span>
+                <span class="preset-sub">Rich color gamut</span>
               </div>
             </button>
-            <button class="preset-btn" id="presetDog" onclick="loadPreset('dog')">
+            <button class="preset-btn" id="presetDog" onclick="loadPreset('dog')" title="Dataset Benchmark Image #1">
               <img class="preset-thumbnail" src="samples/presets/original/dog.jpg" alt="Dog" onerror="if(!this.dataset.retry){this.dataset.retry=1;this.src='data/original/dog.jpg';}">
-              <div>
-                <div>Dog (Dataset)</div>
-                <small style="color:var(--text-dim);">Benchmark Image #1</small>
+              <div class="preset-text-wrap">
+                <span class="preset-title">Dog Benchmark</span>
+                <span class="preset-sub">Dataset sample #1</span>
               </div>
             </button>
-            <button class="preset-btn" id="presetTiger" onclick="loadPreset('tiger')">
+            <button class="preset-btn" id="presetTiger" onclick="loadPreset('tiger')" title="Dataset Benchmark Image #2">
               <img class="preset-thumbnail" src="samples/presets/original/tiger.jpg" alt="Tiger" onerror="if(!this.dataset.retry){this.dataset.retry=1;this.src='data/original/tiger.jpg';}">
-              <div>
-                <div>Tiger (Dataset)</div>
-                <small style="color:var(--text-dim);">Benchmark Image #2</small>
+              <div class="preset-text-wrap">
+                <span class="preset-title">Tiger Benchmark</span>
+                <span class="preset-sub">Dataset sample #2</span>
               </div>
             </button>
-            <button class="preset-btn" id="presetFlower" onclick="loadPreset('flower')">
+            <button class="preset-btn" id="presetFlower" onclick="loadPreset('flower')" title="Dataset Benchmark Floral Spectrum">
               <img class="preset-thumbnail" src="samples/presets/original/flower_0002.jpg" alt="Flower" onerror="if(!this.dataset.retry){this.dataset.retry=1;this.src='data/original/flower_0002.jpg';}">
-              <div>
-                <div>Flower (Dataset)</div>
-                <small style="color:var(--text-dim);">Floral Spectrum #0002</small>
+              <div class="preset-text-wrap">
+                <span class="preset-title">Flower #0002</span>
+                <span class="preset-sub">Dataset floral test</span>
               </div>
             </button>
-            <button class="preset-btn" id="presetBunny" onclick="loadPreset('bunny')">
+            <button class="preset-btn" id="presetBunny" onclick="loadPreset('bunny')" title="Dataset Benchmark Image #3">
               <img class="preset-thumbnail" src="samples/presets/original/bunny.jpg" alt="Bunny" onerror="if(!this.dataset.retry){this.dataset.retry=1;this.src='data/original/bunny.jpg';}">
-              <div>
-                <div>Bunny (Dataset)</div>
-                <small style="color:var(--text-dim);">Benchmark Image #3</small>
+              <div class="preset-text-wrap">
+                <span class="preset-title">Bunny Benchmark</span>
+                <span class="preset-sub">Dataset sample #3</span>
               </div>
             </button>
-            <button class="preset-btn" id="presetSpectrum" onclick="loadPreset('spectrum')" style="grid-column: span 2;">
-              <span style="font-size:1.2rem;">🌈</span>
-              <div>
-                <div>Color Wheel Calibration</div>
-                <small style="color:var(--text-dim);">Continuous 360° hue spectrum</small>
+            <button class="preset-btn" id="presetSpectrum" onclick="loadPreset('spectrum')" style="grid-column: span 2;" title="Color Wheel 360° Hue Calibration">
+              <div class="preset-icon-circle">🌈</div>
+              <div class="preset-text-wrap">
+                <span class="preset-title">Color Wheel Calibration</span>
+                <span class="preset-sub">Continuous 360° chromatic hue spectrum</span>
               </div>
             </button>
           </div>
 
-          <div style="margin-top:10px; padding:10px; background:rgba(255,255,255,0.03); border:1px solid var(--border); border-radius:10px;">
-            <label for="datasetSelect" style="font-size:0.75rem; font-weight:600; color:var(--text-muted); display:flex; align-items:center; gap:6px; margin-bottom:6px;">
-              <span>📁 Explore All Dataset Photos (15 Benchmarks):</span>
-            </label>
-            <select id="datasetSelect" onchange="loadDatasetImage(this.value)" style="width:100%; font-size:0.8rem; padding:8px 10px; background:var(--bg-card); border:1px solid var(--border-accent); color:var(--text); border-radius:8px; outline:none; cursor:pointer;">
-              <option value="">-- Select a Research Dataset Photo --</option>
+          <div class="dataset-picker-card">
+            <div class="dataset-picker-header">
+              <span class="dataset-picker-icon">📁</span>
+              <div class="dataset-picker-title">
+                <strong>Explore Full Dataset (15 Benchmarks)</strong>
+                <small>Select from all real test photos &amp; PyTorch outputs</small>
+              </div>
+            </div>
+            <select id="datasetSelect" class="dataset-dropdown-select" onchange="loadDatasetImage(this.value)">
+              <option value="">-- Choose Benchmark Photo --</option>
               <option value="dog.jpg">🐶 Dog (Dataset Benchmark #1)</option>
               <option value="tiger.jpg">🐯 Tiger (Dataset Benchmark #2)</option>
               <option value="flower_0002.jpg">🌸 Flower #0002 (Dataset Benchmark Floral)</option>
               <option value="bunny.jpg">🐰 Bunny (Dataset Benchmark #3)</option>
-              <option value="elephant.jpg">🐘 Elephant (High Texture Detail)</option>
-              <option value="fox.jpg">🦊 Fox (Warm Red-Orange Palette)</option>
+              <option value="elephant.jpg">🐘 Elephant (Texture &amp; Details)</option>
+              <option value="fox.jpg">🦊 Fox (Warm Red-Orange Spectrum)</option>
               <option value="lion.jpg">🦁 Lion (Golden-Brown Contrasts)</option>
               <option value="panda.jpg">🐼 Panda (Monochrome &amp; Green Bamboo)</option>
               <option value="zebra.jpg">🦓 Zebra (High Frequency Contrast)</option>
               <option value="quokka.jpg">🦘 Quokka (Warm Hue Detail)</option>
-              <option value="wolf.jpg">🐺 Wolf (Muted Silver-Grey Gamut)</option>
+              <option value="wolf.jpg">🐺 Wolf (Silver-Grey Gamut)</option>
               <option value="meerkat.jpg">🦡 Meerkat (Earthtone Spectrum)</option>
               <option value="orangutan.jpeg">🦧 Orangutan (Deep Reddish-Brown)</option>
               <option value="flower_0000.jpg">🌺 Flower #0000 (Magenta Petals)</option>
@@ -3643,7 +3770,10 @@
   <div>
     <strong>DeepCVD Project</strong> · Multi-Condition Color Vision Deficiency Neural Recolouring Studio &amp; Diagnostic Suite
   </div>
-  <div style="display:flex; align-items:center; justify-content:center; gap:16px; flex-wrap:wrap; margin-top:4px;">
+  <div style="font-size:0.75rem; color:var(--text-dim); margin-top:2px;">
+    United International University (UIU) · Department of Computer Science &amp; Engineering
+  </div>
+  <div style="display:flex; align-items:center; justify-content:center; gap:16px; flex-wrap:wrap; margin-top:6px;">
     <span>API: <code style="font-family:'JetBrains Mono', monospace; font-size:0.75rem;">/api/results</code></span>
     <span>·</span>
     <a href="report.txt" target="_blank" style="color:var(--primary); text-decoration:none; font-weight:500;">📄 Technical Defense Report</a>
